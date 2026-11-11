@@ -1,0 +1,17 @@
+# Zugangsdaten und lokale Werte gehören nie ins Repository
+.env
+*.env
+config.py
+*.key
+*.pem
+
+# Arbeitsstände, nicht Teil der Lieferung
+backups/
+_bau/
+_alt/
+*-vorher.json
+*_NF.json
+*.log
+
+# Konfliktkopien der Dateisynchronisation
+* (1).*

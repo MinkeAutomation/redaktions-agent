@@ -1,0 +1,327 @@
+{
+  "name": "TEST P2 Markenwissen Lesefehler (Kopie)",
+  "nodes": [
+    {
+      "id": "0ca338e2-c9ae-453e-906f-b3483d5c0824",
+      "name": "Start [Manual Trigger]",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "06b37f34-6abd-4a51-bb6a-4214b1e353a2",
+      "name": "Eingabe simulieren [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -300,
+        896
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a",
+              "name": "kuerzel",
+              "value": "test-p2",
+              "type": "string"
+            },
+            {
+              "id": "b",
+              "name": "thema",
+              "value": "Test Lesefehler",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "419522ec-729a-4528-9ab9-a9c4b905776e",
+      "name": "Eingabe prüfen [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        464,
+        896
+      ],
+      "parameters": {
+        "jsCode": "// Guardrail Ebene 2: nur gültige Kundenkennung, Thema gekürzt\nconst out = [];\nfor (const item of $input.all()) {\n  const kuerzel = String(item.json.kuerzel ?? '').trim().toLowerCase();\n  const thema = String(item.json.thema ?? '').trim().slice(0, 300);\n  const ok = /^[a-z0-9-]{2,40}$/.test(kuerzel);\n  out.push({ json: { kuerzel: kuerzel, thema: thema, eingabe_ok: ok } });\n}\nreturn out.slice(0, 1);"
+      }
+    },
+    {
+      "id": "d5d6e8c7-afcf-48d8-9e13-3646630c4422",
+      "name": "Eingabe gültig? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        704,
+        896
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.eingabe_ok }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "0cd79266-2d08-4534-af8f-cc9ff242efa9",
+      "name": "Markenwissen lesen [Supabase]",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        896
+      ],
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "k2_v_markenwissen_FALSCH",
+        "limit": 1,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "kuerzel",
+              "condition": "eq",
+              "keyValue": "={{ $json.kuerzel }}"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API | KI-AGT-2606"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "alwaysOutputData": true
+    },
+    {
+      "id": "fb92ba14-9874-4d71-9248-e49abcbee4a9",
+      "name": "Frühere Posts lesen [Supabase]",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        896
+      ],
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "k2_v_fruehere_posts",
+        "limit": 20,
+        "orderBy": "created_at.desc",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "kuerzel",
+              "condition": "eq",
+              "keyValue": "={{ $('Eingabe prüfen [Code]').first().json.kuerzel }}"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API | KI-AGT-2606"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "id": "7fee5241-ef90-473d-85e3-0a0c31df8eb1",
+      "name": "Antwort bauen [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1728,
+        896
+      ],
+      "parameters": {
+        "jsCode": "// Rückgabe an den Agenten: fester Text, Nicht-Treffer-Wert NICHT_GEFUNDEN\n// v03 (10.11.2026): Lesefehler hat Vorrang. alwaysOutputData liefert bei einem Fehler zusätzlich ein leeres Element am Erfolgsausgang (Lauf 2608), dann liefen NICHT_GEFUNDEN und FEHLER parallel und die Rückgabe hing an der Reihenfolge. Jetzt prüft dieser Knoten die Fehlerausgänge selbst.\nconst lesefehler = (name) => { try { return $(name).all(1).length > 0; } catch (e) { return false; } };\nif (lesefehler('Markenwissen lesen [Supabase]') || lesefehler('Frühere Posts lesen [Supabase]')) {\n  return [{ json: { antwort: 'FEHLER: Markenwissen konnte nicht gelesen werden, Werkzeug nicht ausgeführt.' } }];\n}\nconst marken = $('Markenwissen lesen [Supabase]').all().map(i => i.json).filter(r => r && r.kuerzel);\nif (marken.length === 0) {\n  return [{ json: { antwort: 'NICHT_GEFUNDEN: Für diese Kundenkennung gibt es keine aktive Marke.' } }];\n}\nconst m = marken[0];\nconst posts = $('Frühere Posts lesen [Supabase]').all().map(i => i.json).filter(r => r && r.topic);\nconst liste = posts.map(p => '- ' + String(p.created_at || '').slice(0, 10) + ' | ' + (p.status || '') + ' | ' + p.topic + (p.rejection_reason ? ' | abgelehnt: ' + p.rejection_reason : '')).join('\\n') || '- keine früheren Posts';\nconst thema = $('Eingabe prüfen [Code]').first().json.thema || '(nicht genannt)';\nconst zeilen = [\n  'STATUS: OK',\n  'Marke: ' + (m.name || ''),\n  'Ton: ' + (m.ton || ''),\n  'Zielgruppe: ' + (m.zielgruppe || ''),\n  'No-Gos: ' + ((m.no_gos || []).join(', ') || 'keine'),\n  'Call to Action: ' + (m.cta_text || ''),\n  'Feste Hashtags: ' + ((m.hashtags_fest || []).join(' ') || 'keine'),\n  'Thema der Anfrage: ' + thema,\n  'Frühere Posts (neueste zuerst, höchstens 20):',\n  liste\n];\nreturn [{ json: { antwort: zeilen.join('\\n') } }];\n"
+      }
+    },
+    {
+      "id": "b63f45c7-0058-433c-ab65-833ca816556b",
+      "name": "Fehler zurückgeben [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1024,
+        1184
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "antwort",
+              "name": "antwort",
+              "value": "FEHLER: ungültige Kundenkennung, Werkzeug nicht ausgeführt.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "21fedd15-5a96-4ed5-9044-1d33993d1a38",
+      "name": "Lesefehler melden [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1700,
+        1184
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "antwort",
+              "name": "antwort",
+              "value": "FEHLER: Markenwissen konnte nicht gelesen werden, Werkzeug nicht ausgeführt.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Start [Manual Trigger]": {
+      "main": [
+        [
+          {
+            "node": "Eingabe simulieren [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eingabe simulieren [Edit Fields]": {
+      "main": [
+        [
+          {
+            "node": "Eingabe prüfen [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eingabe prüfen [Code]": {
+      "main": [
+        [
+          {
+            "node": "Eingabe gültig? [If]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eingabe gültig? [If]": {
+      "main": [
+        [
+          {
+            "node": "Markenwissen lesen [Supabase]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fehler zurückgeben [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markenwissen lesen [Supabase]": {
+      "main": [
+        [
+          {
+            "node": "Frühere Posts lesen [Supabase]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Lesefehler melden [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Frühere Posts lesen [Supabase]": {
+      "main": [
+        [
+          {
+            "node": "Antwort bauen [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Lesefehler melden [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "builderVariant": "mcp"
+  },
+  "pinData": {},
+  "tags": [],
+  "id": "WORKFLOW_ID_TEST_MARKENWISSEN_LESEFEHLER",
+  "versionId": "49c4ee4a-51a6-4fa4-ba3a-ffe744688697",
+  "active": false,
+  "activeVersionId": null,
+  "description": "Testkopie von Werkzeug 1 (WORKFLOW_ID_SUB_MARKENWISSEN) mit absichtlich falschem Tabellennamen, misst den Lesefehler-Pfad. Bleibt stehen, nicht veröffentlicht.",
+  "nodeGroups": [],
+  "staticData": null,
+  "sourceWorkflowId": null,
+  "isArchived": false,
+  "parentFolder": {
+    "id": "FOLDER_ID_PROJEKTORDNER",
+    "name": "Projektordner"
+  }
+}

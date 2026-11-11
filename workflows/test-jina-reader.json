@@ -1,0 +1,191 @@
+{
+  "name": "TEST Jina Reader",
+  "nodes": [
+    {
+      "id": "e23c776f-9425-48ec-a559-528643e874df",
+      "name": "Start [Manual Trigger]",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "a5789a7d-223b-40f4-9980-6718596e970a",
+      "name": "Quelle setzen [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        300,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "q1",
+              "name": "source",
+              "value": "https://de.wikipedia.org/wiki/Handwerk",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "f55f4086-ae13-490a-b4be-d7dd3b32da99",
+      "name": "Artikel lesen [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        600,
+        0
+      ],
+      "parameters": {
+        "url": "=https://r.jina.ai/{{ $('Quelle setzen [Edit Fields]').first().json.source }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "12face6c-2b82-45f4-b662-efd24c405a78",
+      "name": "Antwort messen [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        900,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "m1",
+              "name": "jina_status",
+              "value": "ok",
+              "type": "string"
+            },
+            {
+              "id": "m2",
+              "name": "antwort_laenge",
+              "value": "={{ String($json.data).length }}",
+              "type": "number"
+            },
+            {
+              "id": "m3",
+              "name": "vorschau",
+              "value": "={{ String($json.data).slice(0, 200) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "c48552a1-63b4-47dc-93ac-830c2e6e427a",
+      "name": "Fehler festhalten [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        900,
+        200
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f1",
+              "name": "jina_status",
+              "value": "fehler",
+              "type": "string"
+            },
+            {
+              "id": "f2",
+              "name": "fehler_kurz",
+              "value": "={{ String($json.error?.message ?? $json.error ?? \"unbekannt\").slice(0, 200) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Start [Manual Trigger]": {
+      "main": [
+        [
+          {
+            "node": "Quelle setzen [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quelle setzen [Edit Fields]": {
+      "main": [
+        [
+          {
+            "node": "Artikel lesen [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Artikel lesen [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Antwort messen [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fehler festhalten [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "builderVariant": "mcp"
+  },
+  "pinData": {},
+  "tags": [],
+  "id": "WORKFLOW_ID_TEST_JINA_READER",
+  "versionId": "f24b9e38-dfb3-4bfa-bb46-58ee827089b1",
+  "active": false,
+  "activeVersionId": null,
+  "description": "Testkopie des Jina-Aufrufs aus dem K1-Knoten Artikel lesen (Manual Trigger, HTTP Request auf r.jina.ai, Zeitlimit 30.000 ms) für den Einzeltest. Nicht veröffentlichen, bleibt stehen.",
+  "nodeGroups": [],
+  "staticData": null,
+  "sourceWorkflowId": null,
+  "isArchived": false,
+  "parentFolder": {
+    "id": "FOLDER_ID_PROJEKTORDNER",
+    "name": "Projektordner"
+  }
+}

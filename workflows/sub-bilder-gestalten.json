@@ -1,0 +1,1402 @@
+{
+  "name": "SUB P2 Bilder gestalten",
+  "nodes": [
+    {
+      "id": "f79ccc7b-102e-4630-b5cc-cbe1cc10bf98",
+      "name": "Auftrag empfangen [Execute Workflow Trigger]",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        112,
+        912
+      ],
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "kuerzel"
+            },
+            {
+              "name": "paket_id"
+            },
+            {
+              "name": "trace_id"
+            },
+            {
+              "name": "test_fehler"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "85b1d206-a55c-48df-92a2-5f6ea954bf19",
+      "name": "Eingabe prüfen [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        464,
+        912
+      ],
+      "parameters": {
+        "jsCode": "// Guardrail Ebene 2: gültige Kundenkennung, gültige paket_id, die zu diesem Auftrag gehört. Die Kundenkennung setzt der Hauptworkflow fest.\n// Warum test_fehler: nur für Tests, 'foto' erzwingt den Weg ohne Pixabay-Foto, 'render' lässt Gotenberg ausfallen. Der Hauptworkflow übergibt das Feld nie.\nconst j = $input.first().json;\nconst kuerzel = String(j.kuerzel ?? '').trim().toLowerCase();\nconst paketId = String(j.paket_id ?? '').trim();\nconst trace = String(j.trace_id ?? '').trim().slice(0, 60) || 'ohne_trace_id';\nconst t = String(j.test_fehler ?? '').trim();\nconst test = (t === 'foto' || t === 'render') ? t : '';\nlet fehler = '';\nif (!/^[a-z0-9-]{2,40}$/.test(kuerzel)) fehler = 'FEHLER: ungültige Kundenkennung, keine Bilder erstellt.';\nelse if (!/^paket-[A-Za-z0-9_-]{3,100}$/.test(paketId)) fehler = 'FEHLER: paket_id fehlt oder ist ungültig, keine Bilder erstellt. Rufe zuerst Text_schreiben auf und nutze die paket_id aus dessen Antwort.';\nelse if (trace !== 'ohne_trace_id' && !paketId.startsWith('paket-' + trace + '-')) fehler = 'FEHLER: Diese paket_id gehört nicht zu diesem Auftrag, keine Bilder erstellt.';\nreturn [{ json: { kuerzel: kuerzel, paket_id: paketId, trace_id: trace, test_fehler: test, eingabe_ok: fehler === '', fehler_text: fehler } }];\n"
+      }
+    },
+    {
+      "id": "d5f58a95-14e7-41a9-856a-5a4d15f77432",
+      "name": "Eingabe gültig? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        912
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.eingabe_ok === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "d73d32b0-909e-4802-b205-31d392a6734e",
+      "name": "Paket lesen [Supabase]",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        912
+      ],
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "k2_pakete",
+        "limit": 1,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "paket_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.paket_id }}"
+            },
+            {
+              "keyName": "kuerzel",
+              "condition": "eq",
+              "keyValue": "={{ $json.kuerzel }}"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API | KI-AGT-2606"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "alwaysOutputData": true
+    },
+    {
+      "id": "df798a06-77ea-4631-9e57-17d739efc35b",
+      "name": "Branding laden [Supabase]",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        912
+      ],
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "k1_kunden",
+        "limit": 1,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "kuerzel",
+              "condition": "eq",
+              "keyValue": "={{ $('Eingabe prüfen [Code]').first().json.kuerzel }}"
+            },
+            {
+              "keyName": "aktiv",
+              "condition": "eq",
+              "keyValue": "true"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API | KI-AGT-2606"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "alwaysOutputData": true
+    },
+    {
+      "id": "919e3a82-f9be-47e9-a911-48dd255571a9",
+      "name": "Branding wählen [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1872,
+        912
+      ],
+      "parameters": {
+        "jsCode": "// Zweck (Werkzeug 4, v01): Paket und Kundenprofil zusammenführen, Markenfarben und Schriften festlegen; fehlt etwas, endet der Lauf mit NICHT_GEFUNDEN oder FEHLER.\n// Herkunft: gekürzte Fassung von \"Branding-Variante wählen\" aus Projekt 1 (Standardwerte aus dem Kundenprofil, ohne Layout 4).\nconst e = $('Eingabe prüfen [Code]').first().json;\nconst pRow = $('Paket lesen [Supabase]').first().json || {};\nconst kunde = $input.first().json || {};\nconst stopp = t => [{ json: { bereit: false, fehler_text: t } }];\nif (!pRow.paket_id) return stopp('NICHT_GEFUNDEN: Für diese paket_id liegt kein Paket vor, keine Bilder erstellt.');\nif (pRow.paket_id !== e.paket_id || pRow.kuerzel !== e.kuerzel) return stopp('FEHLER: Das Paket gehört nicht zu diesem Kunden, keine Bilder erstellt.');\nif (!kunde.kuerzel || kunde.kuerzel !== e.kuerzel) return stopp('NICHT_GEFUNDEN: Für diesen Kunden gibt es kein aktives Branding, keine Bilder erstellt.');\nlet paket = pRow.paket;\nif (typeof paket === 'string') { try { paket = JSON.parse(paket); } catch (x) { return stopp('FEHLER: Das gespeicherte Paket ist nicht lesbar, keine Bilder erstellt.'); } }\nconst folien = paket && Array.isArray(paket.slides) ? paket.slides : [];\nif (folien.length < 5 || folien.length > 8 || folien.some(f => !f || typeof f.heading !== 'string' || typeof f.text !== 'string' || (!f.heading.trim() && !f.text.trim()))) return stopp('FEHLER: Das Paket hat keine gültigen Folien (5 bis 8 mit Überschrift und Text), keine Bilder erstellt.');\nlet b = kunde.branding_pack;\nif (typeof b === 'string') { try { b = JSON.parse(b); } catch (x) { b = {}; } }\nif (!b || typeof b !== 'object' || Array.isArray(b)) b = {};\nconst farbe = (v, d) => (/^#[0-9a-fA-F]{6}$/.test(v || '') ? v : d);\nconst bf = b.farben || {};\nconst farben = {\n  primaer: farbe(bf.primaer || kunde.farbe_primaer, '#15774E'), sekundaer: farbe(bf.sekundaer || kunde.farbe_sekundaer, '#515F56'),\n  akzent: farbe(bf.akzent || kunde.farbe_akzent, '#22A26F'), hintergrund: farbe(bf.hintergrund || kunde.farbe_hintergrund, '#F4FBF7'),\n  text: farbe(bf.text || kunde.farbe_text, '#111C16') };\nconst bs = b.schriften || {};\nconst name = String(b.markenname || kunde.name || 'Kunde').slice(0, 60);\nreturn [{ json: { bereit: true, kuerzel: e.kuerzel, paket_id: e.paket_id, trace_id: e.trace_id, test_fehler: e.test_fehler, paket: paket,\n  kunde: { name: name, farben: farben, schrift_titel: String(bs.titel || kunde.schrift_titel || 'DejaVu Sans'), schrift_text: String(bs.text || kunde.schrift_text || 'DejaVu Sans') },\n  photo_query: String(paket.photo_query || '').trim().slice(0, 100) } }];\n"
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "43f0aace-68f8-410e-b952-f74c04aa93a0",
+      "name": "Bereit? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2224,
+        912
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.bereit === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "1a903d27-d9ec-4e12-a6d6-1889a81f4f3e",
+      "name": "Foto suchen [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2576,
+        912
+      ],
+      "parameters": {
+        "url": "https://pixabay.com/api/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $json.test_fehler === 'foto' ? 'qzxqzxqzxqzx' : String($json.photo_query || '').trim().slice(0, 100) }}"
+            },
+            {
+              "name": "lang",
+              "value": "en"
+            },
+            {
+              "name": "image_type",
+              "value": "photo"
+            },
+            {
+              "name": "safesearch",
+              "value": "true"
+            },
+            {
+              "name": "orientation",
+              "value": "vertical"
+            },
+            {
+              "name": "per_page",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "CREDENTIAL_ID",
+          "name": "Pixabay API | Content-Generator"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "cc80d1bc-1415-4059-9c55-e674f486f59d",
+      "name": "Foto auswerten [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2928,
+        912
+      ],
+      "parameters": {
+        "jsCode": "// Zweck (Werkzeug 4, v01): aus den Pixabay-Treffern ein passendes Foto wählen; Auth-, Timeout- und Leerantworten führen sichtbar zum KI-Bild.\n// Herkunft: gekürzte Fassung von \"Foto auswerten\" aus Projekt 1 (ganze Wörter statt Teilzeichenketten, abstrakte Wörter zählen nicht, mindestens 2 passende Wörter).\nconst basis = $('Branding wählen [Code]').first().json;\nconst r = $input.first().json || {};\nconst frage = String(basis.photo_query || '').trim();\nconst st = Number(r.statusCode);\nconst hits = r.body && Array.isArray(r.body.hits) ? r.body.hits : [];\n// Muster statt new URL: im Code-Knoten dieser Instanz verwarf new URL alle echten Treffer.\nconst safePhoto = s => typeof s === 'string' && /^https:\\/\\/(cdn\\.)?pixabay\\.com\\/[^\\s\"'<>]*$/.test(s);\nconst safeLink = s => typeof s === 'string' && /^https:\\/\\/(www\\.)?pixabay\\.com\\/[^\\s\"'<>]*$/.test(s);\nconst einzahl = w => w.length > 4 && w.endsWith('ies') ? w.slice(0, -3) + 'y' : (/(ch|sh|ss|x)es$/.test(w) ? w.slice(0, -2) : (w.length >= 4 && w.endsWith('s') && !w.endsWith('ss') ? w.slice(0, -1) : w));\nconst FUELL = new Set(['a', 'an', 'the', 'of', 'with', 'and', 'or', 'for', 'on', 'in', 'at', 'to', 'by', 'from', 'into', 'over', 'under', 'near']);\nconst ALLGEMEIN = new Set(['people', 'person', 'technology', 'tech', 'innovation', 'innovative', 'digital', 'automation', 'business'].map(einzahl));\nconst ABSTRAKT = new Set(['error', 'process', 'management', 'solution', 'strategy', 'efficiency', 'system', 'data', 'information', 'concept', 'idea', 'success', 'growth', 'quality', 'problem', 'tool', 'service', 'method', 'guide', 'tip', 'step', 'productivity', 'performance', 'benefit', 'future', 'time', 'experience', 'value', 'cost', 'result', 'goal', 'plan', 'change', 'trend', 'skill', 'knowledge', 'communication', 'security', 'risk', 'analysis', 'decision', 'marketing', 'trust', 'impact'].map(einzahl));\nconst woerterVon = s => String(s || '').toLowerCase().split(/[^\\p{L}\\p{N}]+/u).filter(Boolean).map(einzahl);\nconst inhaltVon = s => Array.from(new Set(woerterVon(s).filter(w => !FUELL.has(w) && !ALLGEMEIN.has(w) && !ABSTRAKT.has(w) && (w.length >= 3 || /\\d/.test(w)))));\nconst eigene = inhaltVon(frage);\nlet best = null, notiz = '';\nif (eigene.length < 2) {\n  notiz = 'Pixabay nicht ausgewertet (Suchbegriff \"' + frage.slice(0, 40) + '\" hat keine 2 konkreten Bildwörter), weiter mit KI-Bild.';\n} else if (r.error || !(st >= 200 && st < 300) || !hits.length) {\n  notiz = 'Pixabay lieferte keine Treffer oder die Anfrage scheiterte, weiter mit KI-Bild.';\n} else {\n  hits.forEach((h, pos) => {\n    if (!h || !safePhoto(h.largeImageURL) || !safeLink(h.pageURL)) return;\n    const tags = new Set(woerterVon(h.tags));\n    const treffer = eigene.filter(w => tags.has(w));\n    if (treffer.length < 2) return;\n    if (!best || treffer.length > best.n) best = { h, n: treffer.length, pos };\n  });\n  if (!best) notiz = 'Pixabay ohne passenden Treffer (kein Treffer mit 2 passenden Schlagwörtern zu \"' + frage.slice(0, 40) + '\"), weiter mit KI-Bild.';\n}\nconst p = best ? best.h : null;\nconst nutzerUrl = p && safeLink(p.userURL) ? p.userURL : '';\nreturn [{ json: { ...basis, photo_ok: !!p, photo_url: p ? p.largeImageURL : '',\n  photo_credit: p ? { photographer: String(p.user || ''), photographer_url: nutzerUrl, source: 'Pixabay', pixabay_url: p.pageURL, photo_id: p.id } : null,\n  photo_note: notiz }, pairedItem: { item: 0 } }];\n"
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "8f97c8e6-e08b-4a10-9c0a-6137f45858ff",
+      "name": "Foto gefunden? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3280,
+        912
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.photo_ok === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "864c5d7d-d6f1-4410-9120-223b7ac2f6c7",
+      "name": "Foto laden [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3632,
+        912
+      ],
+      "parameters": {
+        "url": "={{ $json.photo_url }}",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "foto"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "onError": "continueErrorOutput",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 2000
+    },
+    {
+      "id": "e9a76da0-d61d-4111-8725-cf7e7a484114",
+      "name": "Foto einbetten [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3984,
+        912
+      ],
+      "parameters": {
+        "jsCode": "// Binäre Speichermodi über den n8n-Helper lesen, kein direkter Zugriff auf binary.data.\nconst basis = $('Foto auswerten [Code]').first().json;\nconst item = $input.first();\nif (!item.binary?.foto) throw new Error('Foto-Download hat keine Binärdatei geliefert.');\nconst buffer = await this.helpers.getBinaryDataBuffer(0, 'foto');\nconst jpeg = buffer.length > 3 && buffer[0] === 255 && buffer[1] === 216 && buffer[2] === 255;\nconst png = buffer.length > 8 && buffer.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));\nif ((!jpeg && !png) || buffer.length > 12 * 1024 * 1024) throw new Error('Foto ist kein JPEG/PNG oder größer als 12 MiB.');\nreturn [{ json: { ...basis, photo_data_uri: 'data:' + (png ? 'image/png' : 'image/jpeg') + ';base64,' + buffer.toString('base64') }, pairedItem: { item: 0 } }];\n"
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "97db4dcc-6cd3-4814-b97e-a8da293ce430",
+      "name": "Render-Liste bauen [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4336,
+        912
+      ],
+      "parameters": {
+        "jsCode": "// Zweck (Werkzeug 4, v01): je Folie und für das Einzelbild eine index.html im Kundenbranding bauen, Gotenberg macht daraus PNG 1080 x 1350.\n// Herkunft: gekürzte Fassung der Bild-Vorlagen aus Projekt 1 (Layouts 1 bis 3: hybrid, thema, ablauf), ohne Layout 4, ohne Logo-Datei (Wortmarke).\n// Warum Escaping: Texte stammen aus Modell und Paket, sie dürfen kein HTML in die Folie schmuggeln.\nconst B = 1080, H = 1350;\nlet bild = '', quelle = 'farbverlauf', credit = null, hinweis = '', ctx;\nif ($('Bild-Fallback vorbereiten [Code]').isExecuted) {\n  ctx = $('Bild-Fallback vorbereiten [Code]').first().json;\n  hinweis = String(ctx.photo_note || '');\n  try {\n    const r = $('Einzelbild erzeugen [HTTP Request]').first().json;\n    const b64 = r && r.result && r.result.image;\n    if (typeof b64 === 'string' && b64.length > 100) { bild = 'data:' + (b64.startsWith('iVBOR') ? 'image/png' : 'image/jpeg') + ';base64,' + b64; quelle = 'flux'; }\n    else hinweis = [hinweis, 'KI-Bild lieferte kein Bild, Farbverlauf'].filter(Boolean).join('; ');\n  } catch (e) { hinweis = [hinweis, 'KI-Bild nicht aufgerufen, Farbverlauf'].filter(Boolean).join('; '); }\n} else {\n  ctx = $('Foto einbetten [Code]').first().json;\n  if (!ctx.photo_data_uri) throw new Error('Foto fehlt im Kontext.');\n  bild = ctx.photo_data_uri; quelle = 'pixabay'; credit = ctx.photo_credit;\n}\nconst k = ctx.kunde;\nconst paket = ctx.paket;\nconst esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;').replace(/'/g, '&#39;');\nconst c = k.farben;\nconst sauber = n => String(n || '').replace(/[^A-Za-z0-9 ÄÖÜäöüß-]/g, '');\nconst fTitel = \"'\" + sauber(k.schrift_titel) + \"', 'DejaVu Sans', 'Liberation Sans', Arial, sans-serif\";\nconst fText = \"'\" + sauber(k.schrift_text) + \"', 'DejaVu Sans', 'Liberation Sans', Arial, sans-serif\";\nconst folien = (paket.slides || []).map(f => ({ type: f.type, heading: String(f.heading || ''), text: String(f.text || '') }));\nif (folien.length < 5 || folien.length > 8) throw new Error('Render-Liste verlangt 5 bis 8 Folien.');\nconst n = folien.length;\nconst W = n * B;\n// Wortmarke statt Logo-Datei: Kreis mit dem ersten Buchstaben des Markennamens in den Markenfarben.\nconst ersterBuchstabe = esc(Array.from(String(k.name || '?'))[0].toUpperCase());\nconst logo = '<span class=\"wort\">' + ersterBuchstabe + '</span>';\n// Durchlaufendes Design: eine breite SVG-Fläche über alle Folien, jede Folie zeigt ihren Ausschnitt.\nlet welle = 'M0 ' + (H - 300), linie = 'M0 ' + (H - 400);\nfor (let x = 0; x <= W; x += 30) {\n  welle += ' L' + x + ' ' + (H - 300 + Math.round(Math.sin(x / 520) * 70));\n  linie += ' L' + x + ' ' + (H - 400 + Math.round(Math.sin(x / 520 + 1.3) * 80));\n}\nwelle += ' L' + W + ' ' + H + ' L0 ' + H + ' Z';\nlet kreise = '';\nfor (let i = 0; i < n; i++) {\n  const cx = i * B + (i % 2 ? 140 : 940), cy = i % 2 ? 250 : 320;\n  kreise += '<circle cx=\"' + cx + '\" cy=\"' + cy + '\" r=\"220\" fill=\"none\" stroke=\"' + c.akzent + '\" stroke-opacity=\"0.16\" stroke-width=\"46\"/>';\n}\nconst flaeche = '<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"' + W + '\" height=\"' + H + '\" viewBox=\"0 0 ' + W + ' ' + H + '\">' + kreise\n  + '<path d=\"' + welle + '\" fill=\"' + c.primaer + '\"/><path d=\"' + linie + '\" fill=\"none\" stroke=\"' + c.akzent + '\" stroke-width=\"14\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>';\nconst css = '*{margin:0;padding:0;box-sizing:border-box}'\n  + 'html,body{width:1080px;height:1350px;overflow:hidden;background:' + c.hintergrund + ';color:' + c.text + ';font-family:' + fText + '}'\n  + '.buehne{position:relative;width:1080px;height:1350px;overflow:hidden}.flaeche{position:absolute;top:0}'\n  + '.kopf{position:absolute;top:72px;left:96px;right:96px;display:flex;align-items:center;gap:20px;font-family:' + fTitel + ';font-weight:600;font-size:30px;letter-spacing:0.02em}'\n  + '.wort{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:' + c.primaer + ';color:' + c.hintergrund + ';font-size:34px;font-weight:800}'\n  + '.zaehler{margin-left:auto;font-size:28px;color:' + c.sekundaer + '}'\n  + '.inhalt{position:absolute;left:96px;right:96px;top:220px}'\n  + '.nr{font-family:' + fTitel + ';font-size:120px;font-weight:800;line-height:1;color:' + c.akzent + '}'\n  + 'h1,h2{overflow-wrap:anywhere}h1{font-family:' + fTitel + ';font-size:78px;line-height:1.08;font-weight:800;margin-top:40px}'\n  + 'h2{font-family:' + fTitel + ';font-size:62px;line-height:1.12;font-weight:800;margin-top:24px}'\n  + 'p{font-size:38px;line-height:1.4;margin-top:32px;max-width:880px;overflow-wrap:anywhere}'\n  + '.marke{display:inline-block;margin-top:44px;padding:14px 28px;border:4px solid ' + c.primaer + ';border-radius:999px;font-size:30px;font-weight:600;color:' + c.primaer + '}'\n  + '.cta{display:inline-block;margin-top:44px;padding:24px 38px;border-radius:24px;background:' + c.primaer + ';color:' + c.hintergrund + ';font-family:' + fTitel + ';font-size:40px;font-weight:800}'\n  + '.fuss{position:absolute;left:96px;right:96px;bottom:56px;display:flex;justify-content:space-between;font-size:24px;color:' + c.hintergrund + '}';\n// Layoutvariante je Paket festlegen (stabil aus der paket_id), wie die drei Layouts aus Projekt 1.\nlet hash = 0; for (const ch of String(ctx.paket_id)) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;\nconst stil = ['hybrid', 'thema', 'ablauf'][hash % 3];\nconst layoutCss = stil === 'thema' ? '.nr{display:none}.inhalt{top:300px}.marke{border-radius:0}.flaeche{opacity:.35}'\n  : (stil === 'ablauf' ? '.nr{font-size:72px}.marke{border-radius:12px}.inhalt{top:200px}'\n    : '.kopf{border-bottom:3px solid ' + c.akzent + ';padding-bottom:24px}.marke{border-radius:999px}');\nconst zwei = z => String(z).padStart(2, '0');\nconst kopf = i => '<div class=\"kopf\">' + logo + '<span>' + esc(k.name) + '</span><span class=\"zaehler\">' + zwei(i + 1) + '/' + zwei(n) + '</span></div>';\nconst fuss = '<div class=\"fuss\"><span></span><span>' + esc(k.name) + '</span></div>';\nconst seite = koerper => '<!doctype html><html lang=\"de\"><head><meta charset=\"utf-8\"><style>' + css + layoutCss + '</style></head><body><div class=\"buehne\">' + koerper + '</div></body></html>';\nconst items = [];\nconst basis = { paket_id: ctx.paket_id, kuerzel: ctx.kuerzel, bild_quelle: quelle, bild_hinweis: hinweis, ki_bild: quelle === 'flux', layout: stil, photo_credit: credit };\nfor (let i = 0; i < n; i++) {\n  const f = folien[i];\n  let mitte;\n  if (f.type === 'titel') {\n    const foto = bild ? '<div style=\"position:absolute;left:0;right:0;top:0;height:520px;background:url(' + bild + ') center/cover\"></div>' : '';\n    mitte = foto + '<div class=\"inhalt\" style=\"top:' + (bild ? 580 : 220) + 'px\"><h1>' + esc(f.heading) + '</h1><p>' + esc(f.text) + '</p><span class=\"marke\">' + esc(k.name) + '</span></div>';\n  } else if (f.type === 'abschluss') {\n    mitte = '<div class=\"inhalt\"><div class=\"nr\">' + zwei(i + 1) + '</div><h2>' + esc(f.heading) + '</h2><p>' + esc(f.text) + '</p><span class=\"cta\">' + esc(k.name) + '</span></div>';\n  } else {\n    mitte = '<div class=\"inhalt\"><div class=\"nr\">' + zwei(i) + '</div><h2>' + esc(f.heading) + '</h2><p>' + esc(f.text) + '</p></div>';\n  }\n  const html = seite('<div class=\"flaeche\" style=\"left:-' + (i * B) + 'px\">' + flaeche + '</div>' + kopf(i) + mitte + fuss);\n  const datei = 'folie-' + zwei(i + 1) + '.png';\n  const bin = await this.helpers.prepareBinaryData(Buffer.from(html, 'utf8'), 'index.html', 'text/html');\n  items.push({ json: Object.assign({ kind: 'folie', index: i + 1, file_name: datei, path: ctx.kuerzel + '/' + ctx.paket_id + '/' + datei, html_chars: html.length }, basis), binary: { index_html: bin }, pairedItem: { item: 0 } });\n}\n// Einzelbild (LinkedIn): Foto oder KI-Bild als Fläche, darüber der Titel der ersten Folie; ohne Bild ein Farbverlauf.\nconst hintergrund = bild ? 'url(' + bild + ') center/cover' : 'linear-gradient(135deg,' + c.primaer + ',' + c.akzent + ')';\nlet eb = '<div style=\"position:absolute;inset:0;background:' + hintergrund + '\"></div><div style=\"position:absolute;inset:0;background:rgba(0,0,0,.38)\"></div>';\neb += '<div class=\"kopf\" style=\"color:#fff;border:0\">' + logo + '<span>' + esc(k.name) + '</span></div>';\neb += '<div style=\"position:absolute;left:72px;right:72px;top:420px;background:' + c.hintergrund + ';color:' + c.text + ';padding:44px;border-radius:24px;font-family:' + fTitel + ';font-size:64px;line-height:1.1;font-weight:800;overflow-wrap:anywhere\">' + esc(folien[0].heading) + '</div>';\nif (credit && credit.source) eb += '<div style=\"position:absolute;left:72px;bottom:48px;color:#fff;font-size:22px\">Foto: ' + esc(credit.photographer || '') + ' / Pixabay</div>';\nconst ebHtml = '<!doctype html><html lang=\"de\"><head><meta charset=\"utf-8\"><style>' + css + '</style></head><body><div class=\"buehne\">' + eb + '</div></body></html>';\nconst ebBin = await this.helpers.prepareBinaryData(Buffer.from(ebHtml, 'utf8'), 'index.html', 'text/html');\nitems.push({ json: Object.assign({ kind: 'einzelbild', index: 0, file_name: 'einzelbild.png', path: ctx.kuerzel + '/' + ctx.paket_id + '/einzelbild.png', html_chars: ebHtml.length }, basis), binary: { index_html: ebBin }, pairedItem: { item: 0 } });\nreturn items;\n"
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "b8ce5f06-4ab8-4482-84dc-7bf55a531914",
+      "name": "Bild rendern [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4688,
+        912
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Eingabe prüfen [Code]').first().json.test_fehler === 'render' ? 'http://GOTENBERG_HOST:3999' : 'http://GOTENBERG_HOST:3000' }}/forms/chromium/screenshot/html",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "files",
+              "inputDataFieldName": "index_html"
+            },
+            {
+              "name": "width",
+              "value": "1080"
+            },
+            {
+              "name": "height",
+              "value": "1350"
+            },
+            {
+              "name": "format",
+              "value": "png"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 500
+            }
+          },
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "bild"
+            }
+          },
+          "timeout": 60000
+        }
+      },
+      "onError": "continueErrorOutput",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 3000
+    },
+    {
+      "id": "83c9060e-e534-4544-9819-f96e39527864",
+      "name": "Bild hochladen [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5040,
+        912
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://SUPABASE_URL/storage/v1/object/k1-medien/{{ $('Render-Liste bauen [Code]').item.json.path }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-upsert",
+              "value": "true"
+            },
+            {
+              "name": "Content-Type",
+              "value": "image/png"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "bild",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API | KI-AGT-2606"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000
+    },
+    {
+      "id": "0a8b6bf2-4dfc-48bd-807e-1d6408c3ff0f",
+      "name": "Bild-Adressen sammeln [Aggregate]",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        5392,
+        912
+      ],
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "Key",
+              "renameField": true,
+              "outputFieldName": "keys"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "f1d61e00-6b14-45e8-b99d-4fb49eff3fc0",
+      "name": "Bilder prüfen [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5744,
+        912
+      ],
+      "parameters": {
+        "jsCode": "// Soll gegen Ist: jedes gerenderte Bild muss hochgeladen sein, die Pfade müssen zur Render-Liste passen. Sonst Fehler statt einer unvollständigen Meldung.\nconst agg = $input.first().json || {};\nconst keys = Array.isArray(agg.keys) ? agg.keys : [];\nconst liste = $('Render-Liste bauen [Code]').all();\nconst soll = liste.length;\nif (soll < 6) throw new Error('Bilder: Render-Liste zu kurz.');\nconst meta = liste[0].json;\nconst pfade = keys.map(p => String(p).replace(/^k1-medien\\//, '')).sort();\nif (keys.length !== soll) throw new Error('Bilder: ' + keys.length + ' von ' + soll + ' hochgeladen.');\nconst erwartet = liste.map(i => i.json.path).sort();\nif (pfade.some((p, i) => p !== erwartet[i])) throw new Error('Bilder: hochgeladene Pfade passen nicht zur Render-Liste.');\nreturn [{ json: { paket_id: meta.paket_id, pfade: pfade, quelle: meta.bild_quelle, ki_bild: !!meta.ki_bild, hinweis: String(meta.bild_hinweis || '').slice(0, 300), anzahl: pfade.length, folien: soll - 1 } }];\n"
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "a7f1f8ef-837f-4475-bf12-cea2a29079be",
+      "name": "Bilder vermerken [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        6096,
+        912
+      ],
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://SUPABASE_URL/rest/v1/k2_pakete?paket_id=eq.{{ $json.paket_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ bilder: { pfade: $json.pfade, quelle: $json.quelle, ki_bild: $json.ki_bild, hinweis: $json.hinweis } }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API | KI-AGT-2606"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "2b2a38e0-6c91-4013-8ae9-87b968f965e2",
+      "name": "Ergebnis bauen [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6448,
+        912
+      ],
+      "parameters": {
+        "jsCode": "// Rückgabe an den Agenten: kurzer Text, nur das Nötige. Die Bildpfade stehen im Paket (Spalte bilder), der Agent muss sie nicht weitergeben.\nconst b = $('Bilder prüfen [Code]').first().json;\nconst row = $input.first().json || {};\nif (row.paket_id !== b.paket_id) throw new Error('Bilder: Vermerk im Paket nicht bestätigt.');\nconst quellen = { pixabay: 'Foto von Pixabay', flux: 'KI-Bild (FLUX)', farbverlauf: 'Farbverlauf ohne Foto' };\nconst zeilen = ['STATUS: OK', 'paket_id: ' + b.paket_id, 'bilder: ' + b.anzahl + ' (' + b.folien + ' Folien und 1 Einzelbild)', 'bildquelle: ' + (quellen[b.quelle] || b.quelle), 'ki_bild: ' + (b.ki_bild ? 'ja' : 'nein')];\nif (b.hinweis) zeilen.push('hinweis: ' + b.hinweis);\nzeilen.push('Die Bilder sind beim Paket vermerkt. Rufe als Nächstes Zur_Freigabe_einreichen mit der paket_id auf.');\nreturn [{ json: { antwort: zeilen.join('\\n'), paket_id: b.paket_id, anzahl: b.anzahl, quelle: b.quelle, ki_bild: b.ki_bild } }];\n"
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "e1d5d01e-f4f3-42be-9752-df0ac5d7c6ef",
+      "name": "Fehler zurückgeben [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1168,
+        1184
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "antwort",
+              "name": "antwort",
+              "value": "={{ $json.fehler_text || 'FEHLER: Bilder nicht erstellt.' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "0ace5b61-a8dd-4174-93bd-5257eee27139",
+      "name": "Bild-Fallback vorbereiten [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3280,
+        1184
+      ],
+      "parameters": {
+        "jsCode": "// Fehlerausgänge können den Kontext verlieren. Den geprüften Kontext gezielt wiederherstellen und mit dem KI-Bild weitermachen.\nconst basis = $('Branding wählen [Code]').first().json;\nlet notiz = '';\ntry { notiz = String($('Foto auswerten [Code]').first().json.photo_note || ''); } catch (e) { notiz = ''; }\nconst fehler = $input.first().json || {};\nconst grund = fehler.error ? String(fehler.error.message || fehler.error).slice(0, 160) : '';\nreturn [{ json: { ...basis, photo_ok: false, photo_url: '', photo_data_uri: '', photo_credit: null,\n  photo_note: notiz || ('Pixabay-Fotopfad gescheitert' + (grund ? ' (' + grund + ')' : '') + ', weiter mit KI-Bild.') }, pairedItem: { item: 0 } }];\n"
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "c1044b95-8413-40a6-a6b5-064b2e30c4df",
+      "name": "Konto-ID lesen [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3632,
+        1184
+      ],
+      "parameters": {
+        "url": "https://SUPABASE_URL/rest/v1/k1_einstellungen?select=setting_value&setting_key=eq.cloudflare_account_id",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API | KI-AGT-2606"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true
+    },
+    {
+      "id": "f6b38650-b6e0-4d79-98a4-2f019f46f29e",
+      "name": "Einzelbild erzeugen [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3984,
+        1184
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.cloudflare.com/client/v4/accounts/{{ $json.setting_value }}/ai/run/@cf/black-forest-labs/flux-1-schnell",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ prompt: String($('Bild-Fallback vorbereiten [Code]').first().json.paket.image_prompt || '').slice(0, 600), steps: 4 }) }}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "CREDENTIAL_ID",
+          "name": "Cloudflare Workers AI | Content-Generator"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "d2fd73a9-e865-486e-ad2a-bffbedecdfa0",
+      "name": "Titelleiste",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "content": "# SUB P2 Bilder gestalten\nWerkzeug 4 des Redaktions-Agenten (Projekt 2): baut aus dem gespeicherten Text-Paket die Bilder im Kundenbranding.",
+        "height": 110,
+        "width": 6900,
+        "color": 5
+      }
+    },
+    {
+      "id": "d8669dd0-8443-4743-950f-13e3804a10fa",
+      "name": "Rahmen Kopf",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        16,
+        160
+      ],
+      "parameters": {
+        "content": "",
+        "height": 470,
+        "width": 2192
+      }
+    },
+    {
+      "id": "5ca9e434-aeb2-48d5-8916-1a3646be5631",
+      "name": "Workflow-Beschreibung",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        32,
+        176
+      ],
+      "parameters": {
+        "content": "# 📋 Workflow-Beschreibung\n🎯 **Zweck:** Der Agent bekommt zu seinem Text-Paket die Bilder: 5 bis 8 Folien und 1 Einzelbild im Branding des Kunden.\n👥 **Für wen:** den Redaktions-Agenten im Workflow AGT-2606 P2 Redaktions-Agent.\n🕹️ **So nutzt du ihn:** Der Agent ruft Bilder_gestalten mit der paket_id auf; die Kundenkennung setzt der Hauptworkflow fest.\n## Status: 🟡 Durchstich, Tests laufen",
+        "height": 200,
+        "width": 1100,
+        "color": 7
+      }
+    },
+    {
+      "id": "d4428d77-b7ec-41ec-8df9-b7bb6c7134c6",
+      "name": "Version",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        176
+      ],
+      "parameters": {
+        "content": "## 🧾 Version\nv01 vom 11.11.2026: erste Fassung ohne Layout 4. Paket und Kundenprofil lesen, Foto von Pixabay oder KI-Bild (FLUX), Rendern mit Gotenberg, Ablage in Supabase Storage, Vermerk im Paket.\nDie Workflow-Stände stehen in versionen.md.",
+        "height": 200,
+        "width": 1040,
+        "color": 7
+      }
+    },
+    {
+      "id": "e1814f05-52b7-4bcc-a14d-2637fcb6d54b",
+      "name": "Kopf",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        32,
+        384
+      ],
+      "parameters": {
+        "content": "# 🖼️ Bilder zum Text-Paket\n**Aufgabe:** Zu jeder Folie ein Bild im Branding des Kunden und 1 Einzelbild für LinkedIn bauen.\n**Die Idee:** Erst ein passendes Foto von Pixabay, sonst ein KI-Bild, sonst ein Farbverlauf. Gotenberg macht aus HTML das Bild, Supabase Storage hält es.\n**Warum so?** Guardrail Ebene 2: nur Pakete des eigenen Kunden und dieses Auftrags, kein Bild echter Personen, Text kommt aus dem Paket und nie vom Bildmodell. Nicht geprüft: ob das Foto zum Thema passt (nur Schlagwörter), Logo-Datei (Wortmarke).\n**Hinweis:** Stufe: Durchstich bis 13.11.2026",
+        "height": 230,
+        "width": 1100,
+        "color": 2
+      }
+    },
+    {
+      "id": "c4604344-9c8f-4e4b-9771-7231d15f7a34",
+      "name": "Ablauf",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        384
+      ],
+      "parameters": {
+        "content": "## Ablauf\n① Auftrag empfangen\n② Eingabe prüfen\n③ Paket und Branding lesen\n④ Foto suchen, sonst KI-Bild\n⑤ Folien rendern\n⑥ Hochladen und im Paket vermerken\n⑦ Antwort, ⑧ Fehler melden",
+        "height": 230,
+        "width": 508,
+        "color": 2
+      }
+    },
+    {
+      "id": "f5b50a45-b856-4c63-b679-6672f946604c",
+      "name": "Status",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        384
+      ],
+      "parameters": {
+        "content": "## Status\n🟢 Foto von Pixabay\n🟡 KI-Bild FLUX als Ersatz, Konto-ID aus den Einstellungen\n🟡 Gotenberg im eigenen Netz, Layout 4 nicht gebaut\n🔴 Wortmarke statt Logo-Datei",
+        "height": 230,
+        "width": 512,
+        "color": 2
+      }
+    },
+    {
+      "id": "18462510-1290-4397-b7c3-2efe1201cff0",
+      "name": "Rahmen Hilfe-Spalte",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2240,
+        160
+      ],
+      "parameters": {
+        "content": "",
+        "height": 472,
+        "width": 1308,
+        "color": 5
+      }
+    },
+    {
+      "id": "33194326-c413-4b5d-9b2f-8d29025ac613",
+      "name": "Setup-Checkliste",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2256,
+        176
+      ],
+      "parameters": {
+        "content": "# ✅ Setup-Checkliste\n1. Credential Supabase API | KI-AGT-2606 an allen Supabase-Zugriffen.\n2. Pixabay API, Cloudflare Workers AI und Gotenberg erreichbar.\n3. Tabelle k2_pakete mit Spalte bilder (Migrationen v01 und v02).\n4. Aufrufrecht: nur Workflows desselben Besitzers.\n5. Veröffentlichen, nach jeder Änderung erneut.\n6. Erster Test: im Hauptworkflow ein Thema schreiben lassen und Bilder verlangen.",
+        "height": 442,
+        "width": 412,
+        "color": 7
+      }
+    },
+    {
+      "id": "66d36728-f778-4a5f-b6d4-9ee33ddbe1d8",
+      "name": "Plattform-Hinweise",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2688,
+        176
+      ],
+      "parameters": {
+        "content": "# 🌐 Plattform-Hinweise\n**https://DEINE-N8N-INSTANZ (n8n):** Erlaubt: Aufruf als Werkzeug. 🟡 Sub muss veröffentlicht sein.\n**Pixabay:** Erlaubt: Suche, Foto mit Quellenangabe auf dem Einzelbild. 🟡 Limit der Schnittstelle.\n**Gotenberg:** eigener Dienst, bei Ausfall kommt FEHLER.\n**Cloudflare Workers AI:** KI-Bild nur als Ersatz, kennzeichnen.",
+        "height": 442,
+        "width": 412,
+        "color": 7
+      }
+    },
+    {
+      "id": "3d0b0caf-22f0-4bc5-84f9-59cd421c9840",
+      "name": "Fehlerbehebung",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3120,
+        176
+      ],
+      "parameters": {
+        "content": "# 🩺 Fehlerbehebung\n**FEHLER paket_id ungültig:** zuerst Text_schreiben aufrufen.\n**NICHT_GEFUNDEN:** Paket oder aktives Branding fehlt.\n**FEHLER Bilder nicht vollständig:** Gotenberg oder Speicher prüfen, Ausführung ansehen.\n**Ohne Foto:** Schlagwörter zu abstrakt, es kommt ein KI-Bild oder ein Farbverlauf.",
+        "height": 444,
+        "width": 412,
+        "color": 7
+      }
+    },
+    {
+      "id": "a42d567f-aa4c-443c-89f1-11b7557368e5",
+      "name": "Karte 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        64,
+        672
+      ],
+      "parameters": {
+        "content": "## ① Auftrag empfangen\nkuerzel (fest), paket_id, trace_id; test_fehler nur für Tests.\n\n### 🟢 Eingang steht",
+        "height": 196,
+        "width": 300
+      }
+    },
+    {
+      "id": "c0aa7080-25ea-4db9-8f35-78d7160f305c",
+      "name": "Karte 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        416,
+        672
+      ],
+      "parameters": {
+        "content": "## ② Eingabe prüfen\nKundenkennung, paket_id und trace_id müssen zusammenpassen. Ungültig geht ohne Aufruf nach ⑧.\n\n### 🟢 Prüfung steht",
+        "height": 196,
+        "width": 650
+      }
+    },
+    {
+      "id": "dc920521-11d4-4d15-baf7-0f395d32f8a4",
+      "name": "Karte 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        672
+      ],
+      "parameters": {
+        "content": "## ③ Paket und Branding lesen\nPaket aus k2_pakete (nur eigener Kunde), Farben und Schriften aus dem Kundenprofil, Standardwerte wenn leer.\n\n### 🟢 Lesen steht",
+        "height": 196,
+        "width": 700
+      }
+    },
+    {
+      "id": "221641d5-ba62-4dae-ac5d-e9c11348717e",
+      "name": "Karte 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1824,
+        672
+      ],
+      "parameters": {
+        "content": "## ④ Bereit?\nPaket mit 5 bis 8 Folien und aktives Branding, sonst NICHT_GEFUNDEN oder FEHLER.\n\n### 🟢 Prüfung steht",
+        "height": 196,
+        "width": 650
+      }
+    },
+    {
+      "id": "1b4c0f65-dcae-4c2a-bcd7-219952bc6899",
+      "name": "Karte 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2528,
+        672
+      ],
+      "parameters": {
+        "content": "## ⑤ Foto suchen\nPixabay-Suche mit dem Bildmotiv, nur ganze Schlagwörter, mindestens 2 passende. Sonst weiter mit dem KI-Bild.\n\n### 🟡 Passung nur über Schlagwörter",
+        "height": 196,
+        "width": 1050
+      }
+    },
+    {
+      "id": "aaece5bb-2e72-4015-9645-b00f791224ad",
+      "name": "Karte 6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3584,
+        672
+      ],
+      "parameters": {
+        "content": "## ⑥ Foto laden\nFoto laden und einbetten (JPEG oder PNG, höchstens 12 MiB). Scheitert etwas, übernimmt das KI-Bild.\n\n### 🟢 Fallback steht",
+        "height": 196,
+        "width": 800
+      }
+    },
+    {
+      "id": "4876dba8-8467-4816-8dce-272252f497b2",
+      "name": "Karte 7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4288,
+        672
+      ],
+      "parameters": {
+        "content": "## ⑦ Rendern und ablegen\nJede Folie und das Einzelbild als HTML in Gotenberg zu PNG, in Supabase Storage hochladen, Pfade im Paket vermerken. Soll gegen Ist: jedes Bild muss ankommen.\n\n### 🟡 Layout 4 nicht gebaut",
+        "height": 196,
+        "width": 1400
+      }
+    },
+    {
+      "id": "55b459b1-78b1-4793-8622-a2d9cd7f048f",
+      "name": "Karte 8",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        5696,
+        672
+      ],
+      "parameters": {
+        "content": "## ⑧ Antwort\nKurzer Text mit Anzahl, Bildquelle und KI-Kennzeichen. Die Pfade stehen im Paket.\n\n### 🟢 Rückgabe steht",
+        "height": 196,
+        "width": 800
+      }
+    },
+    {
+      "id": "751e82c8-18f2-49e6-9684-f991bbf8f02a",
+      "name": "Rahmen Fehlerweg",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        1140
+      ],
+      "parameters": {
+        "content": "",
+        "height": 260,
+        "width": 700,
+        "color": 5
+      }
+    },
+    {
+      "id": "7d4ad20e-de53-4d00-b585-58ac12b04317",
+      "name": "Karte 9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        1160
+      ],
+      "parameters": {
+        "content": "## ⑨ Fehlerweg\nUngültige Eingabe, kein Paket, kein Branding, Renderfehler: immer ein Text mit FEHLER oder NICHT_GEFUNDEN, nie leer.\n\n### 🔴 Melden statt raten",
+        "height": 180,
+        "width": 640,
+        "color": 3
+      }
+    },
+    {
+      "id": "2367d902-a1c4-44d6-9bac-988920b42632",
+      "name": "Rahmen KI-Bild",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3200,
+        1140
+      ],
+      "parameters": {
+        "content": "",
+        "height": 260,
+        "width": 1200,
+        "color": 5
+      }
+    },
+    {
+      "id": "729415d8-6284-4af1-82df-3bf8287f1f90",
+      "name": "Karte 10",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3220,
+        1160
+      ],
+      "parameters": {
+        "content": "## ⑩ KI-Bild als Ersatz\nKonto-ID aus den Einstellungen lesen, FLUX-Bild erzeugen. Fehlt es, kommt ein Farbverlauf. Ein KI-Bild wird in der Antwort gekennzeichnet.\n\n### 🟡 KI-Bild nur Ersatz",
+        "height": 200,
+        "width": 1160,
+        "color": 3
+      }
+    }
+  ],
+  "connections": {
+    "Auftrag empfangen [Execute Workflow Trigger]": {
+      "main": [
+        [
+          {
+            "node": "Eingabe prüfen [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eingabe prüfen [Code]": {
+      "main": [
+        [
+          {
+            "node": "Eingabe gültig? [If]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eingabe gültig? [If]": {
+      "main": [
+        [
+          {
+            "node": "Paket lesen [Supabase]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fehler zurückgeben [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Paket lesen [Supabase]": {
+      "main": [
+        [
+          {
+            "node": "Branding laden [Supabase]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fehler zurückgeben [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Branding laden [Supabase]": {
+      "main": [
+        [
+          {
+            "node": "Branding wählen [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fehler zurückgeben [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Branding wählen [Code]": {
+      "main": [
+        [
+          {
+            "node": "Bereit? [If]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fehler zurückgeben [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bereit? [If]": {
+      "main": [
+        [
+          {
+            "node": "Foto suchen [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fehler zurückgeben [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Foto suchen [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Foto auswerten [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Foto auswerten [Code]": {
+      "main": [
+        [
+          {
+            "node": "Foto gefunden? [If]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Bild-Fallback vorbereiten [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Foto gefunden? [If]": {
+      "main": [
+        [
+          {
+            "node": "Foto laden [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Bild-Fallback vorbereiten [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Foto laden [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Foto einbetten [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Bild-Fallback vorbereiten [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Foto einbetten [Code]": {
+      "main": [
+        [
+          {
+            "node": "Render-Liste bauen [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Bild-Fallback vorbereiten [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bild-Fallback vorbereiten [Code]": {
+      "main": [
+        [
+          {
+            "node": "Konto-ID lesen [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Konto-ID lesen [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Konto-ID lesen [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Einzelbild erzeugen [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Einzelbild erzeugen [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Render-Liste bauen [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Render-Liste bauen [Code]": {
+      "main": [
+        [
+          {
+            "node": "Bild rendern [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fehler zurückgeben [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bild rendern [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Bild hochladen [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bild hochladen [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Bild-Adressen sammeln [Aggregate]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bild-Adressen sammeln [Aggregate]": {
+      "main": [
+        [
+          {
+            "node": "Bilder prüfen [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bilder prüfen [Code]": {
+      "main": [
+        [
+          {
+            "node": "Bilder vermerken [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fehler zurückgeben [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bilder vermerken [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Ergebnis bauen [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fehler zurückgeben [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ergebnis bauen [Code]": {
+      "main": [
+        null,
+        [
+          {
+            "node": "Fehler zurückgeben [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "ERROR_WORKFLOW_ID",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "meta": {
+    "builderVariant": "mcp"
+  },
+  "pinData": {},
+  "tags": [
+    {
+      "updatedAt": "2026-10-11T18:48:41.447Z",
+      "createdAt": "2026-10-11T18:48:41.447Z",
+      "id": "TAG_ID_SCHULUNG",
+      "name": "schulung"
+    },
+    {
+      "updatedAt": "2026-11-09T15:22:56.779Z",
+      "createdAt": "2026-11-09T15:22:56.779Z",
+      "id": "TAG_ID_PROJEKT_2",
+      "name": "projekt-2"
+    },
+    {
+      "updatedAt": "2026-09-29T22:49:28.793Z",
+      "createdAt": "2026-09-29T22:49:28.793Z",
+      "id": "TAG_ID_SUB_WORKFLOW",
+      "name": "sub-workflow"
+    },
+    {
+      "updatedAt": "2026-11-09T15:22:56.776Z",
+      "createdAt": "2026-11-09T15:22:56.776Z",
+      "id": "TAG_ID_WOCHE_8",
+      "name": "woche-8"
+    },
+    {
+      "updatedAt": "2026-09-29T22:51:24.974Z",
+      "createdAt": "2026-09-29T22:51:24.974Z",
+      "id": "TAG_ID_KURS",
+      "name": "KI-AGT-2606"
+    }
+  ],
+  "id": "WORKFLOW_ID_SUB_BILDER",
+  "versionId": "4be24a5b-c5e5-4a73-8249-cc1925cda81b",
+  "active": true,
+  "activeVersionId": "4be24a5b-c5e5-4a73-8249-cc1925cda81b",
+  "description": "Projekt 2 AGT-2606: Werkzeug 4 des Redaktions-Agenten, baut aus dem gespeicherten Text-Paket die Bilder im Kundenbranding (Foto von Pixabay oder KI-Bild, Rendern mit Gotenberg, Ablage in Supabase Storage).",
+  "nodeGroups": [],
+  "staticData": null,
+  "sourceWorkflowId": null,
+  "isArchived": false,
+  "parentFolder": {
+    "id": "FOLDER_ID_PROJEKTORDNER",
+    "name": "Projektordner"
+  }
+}
