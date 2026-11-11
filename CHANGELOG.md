@@ -11,21 +11,24 @@
 | Version | `V<Nummer>` | `V1`, `V2` |
 | Beschreibung | 1 bis 3 Sätze: Was, Ergebnis, nächste Idee | siehe unten |
 
-Dateiname: `YYYYMMDD_System-Prompt-Redaktions-Agent_V<Nummer>.md`. Je Eintrag gehören die Prompt-Datei und die exportierte Agent-Konfiguration (JSON) dazu. Archivierte Fassungen liegen in [archiv/](archiv/).
+Dateiname: `YYYYMMDD_System-Prompt-Redaktions-Agent_V<Nummer>.md`. Je Eintrag gehören die Prompt-Datei und die exportierte Agent-Konfiguration (JSON) dazu. Archivierte und verworfene Fassungen liegen in [archiv/](archiv/), die Workflow-Versionen mit demselben Status stehen in [versionen.md](versionen.md).
 
 ### Status-Legende
 
-| Symbol | Bedeutung |
-|---|---|
-| ✅ | Live / aktiv |
-| 🧪 | In Test |
-| 🗄️ | Archiviert |
+Dieselben 4 Statuswörter stehen in der Spalte Status von [versionen.md](versionen.md).
+
+| Symbol | Status | Bedeutung |
+|---|---|---|
+| ✅ | Live | der geltende Stand |
+| 🧪 | In Test | Testkopie oder Kandidat in Erprobung (Testkopien werden nicht Live) |
+| 🗄️ | Archiviert | abgelöst durch eine spätere Version, Datei unter `archiv/` |
+| 🚫 | Verworfen | getestet, nicht übernommen; dazu steht, welcher Stand live bleibt |
 
 ---
 
 ## Versionen
 
-Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V2 steht oben, weil es nach dem Rückbau von V3 wieder gilt; V3 und V1 sind archiviert.
+Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V2 steht oben, weil es nach dem Rückbau von V3 wieder gilt; V3 ist verworfen (getestet, nicht übernommen), V1 ist archiviert.
 
 ### `20261110_System-Prompt-Redaktions-Agent_V2.md`
 
@@ -61,11 +64,11 @@ Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V2 steht 
 | **Datum** | 10.11.2026 |
 | **Agent** | Redaktions-Agent |
 | **Version** | V3 |
-| **Status** | 🗄️ Archiviert |
+| **Status** | 🚫 Verworfen (live bleibt V2) |
 | **Prompt-Datei** | [archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md](archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md) |
-| **Agent-Konfiguration** | [konfiguration/20261110_Redaktions-Agent_V3_Agent-Konfiguration.json](konfiguration/20261110_Redaktions-Agent_V3_Agent-Konfiguration.json) |
+| **Agent-Konfiguration** | [archiv/konfiguration/20261110_Redaktions-Agent_V3_Agent-Konfiguration.json](archiv/konfiguration/20261110_Redaktions-Agent_V3_Agent-Konfiguration.json) |
 
-**Beschreibung:** V3 ergänzte Schritt 8 um einen Satz (fehlen Schreiben, Bilder oder Einreichen in der Werkzeugliste, sofort `status` fehler). Wirkung: keine, F2 und F4 endeten weiter im Fehlerweg.
+**Beschreibung:** V3 ergänzte Schritt 8 um einen Satz (fehlen Schreiben, Bilder oder Einreichen in der Werkzeugliste, sofort `status` fehler). Wirkung: keine, F2 und F4 endeten weiter im Fehlerweg. Verworfen: getestet, nicht übernommen, live bleibt V2.
 
 **Änderungen:**
 
@@ -116,6 +119,7 @@ Die Prompt-Versionen stehen oben, hier die Arbeitsschritte des Tages (Zeit lokal
 | 12:43 | Telegram-Bestätigung mit Link zum Kundenordner nach der Ablage (v15) | Lauf 2782 |
 | 12:56 | Notiztext der Karte „Entscheidung und Ablage“ (v16) | nur Text |
 | 13:00 | Ablehnen mit Grund getestet | Lauf 2735, Grund-Abfrage per Webformular |
+| 18:05 | Archiv, Status, Versionsmatrix, `.env.example`, Verbindung zu Projekt 1 | 54 ältere Workflow-Versionen bereinigt unter [archiv/workflows/](archiv/workflows/), Testkopien in [workflows/test/](workflows/test/), Spalten Status und Archivdatei in [versionen.md](versionen.md) (6 Live, 4 In Test, 2 Verworfen, 50 Archiviert), [docs/versionsmatrix.md](docs/versionsmatrix.md), [.env.example](.env.example), Tabelle der Workflow-Dateien und Abschnitt „Grundlage aus Projekt 1“ im [README](README.md); Prompt und Konfiguration V3 als Verworfen geführt, Funktion der Workflows unverändert |
 
 Bildschirmfoto der großen Änderung (Werkzeug 4 oben, Werkzeug 5 unten, rot markiert die Fehlerwege beziehungsweise den Speicherknoten):
 

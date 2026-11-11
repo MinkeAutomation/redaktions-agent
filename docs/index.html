@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#FAFAF8" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#121416" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<title>Redaktions-Agent K2</title>
+<meta content="Wochen-Doku und Projektdokumentation des Redaktions-Agenten K2 (Projekt 2): Use Case, Architektur, Stand je Werkzeug, Prompt-Versionen, Tests, Freigabe, Compliance und offene Punkte." name="description"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&amp;display=swap" rel="stylesheet"/>
+<link href="assets/doku.css" rel="stylesheet"/>
+</head>
+<body>
+<a class="sprung" href="#inhalt">Zum Inhalt springen</a>
+<div class="huelle">
+<header class="leiste">
+<span>Redaktions-Agent K2 · Woche 8</span>
+<nav aria-label="Seiten">
+<a aria-current="page" href="index.html">Wochen-Doku</a>
+<a href="w08t01.html">Tag 1</a>
+<a href="w08t02.html">Tag 2</a>
+<a href="w08t03.html">Tag 3</a>
+<span class="aus">Tag 4</span>
+<span class="aus">Tag 5</span>
+<a href="https://github.com/MinkeAutomation/redaktions-agent">Repository</a>
+</nav>
+</header>
+<div class="titelkopf">
+<div>
+<p class="oberzeile"><span aria-hidden="true" class="marke"></span>Wochen-Doku und Projektdokumentation · Woche 8 · 09.11. bis 11.11.2026</p>
+<h1>Redaktions-Agent K2</h1>
+<p class="untertitel">Projekt 2: Ein Agent in n8n plant Social-Media-Posts für Instagram und LinkedIn, prüft das Thema gegen Markenrichtlinien und frühere Posts, holt bei Bedarf belegte Fakten, schreibt das Text-Paket, baut die Bilder im Branding des Kunden und reicht alles zur Freigabe ein. Ein Mensch gibt in Telegram frei, danach wird der Beitrag in Nextcloud abgelegt. Stand: Hauptworkflow v16 vom 11.11.2026.</p>
+</div>
+</div>
+<dl aria-label="Stand" class="messleiste">
+<div><dt>Hauptworkflow</dt><dd>v16<small>11.11.2026, Git-Tag v16</small></dd></div><div><dt>Agenten</dt><dd>1<small>mit 5 Werkzeugen</small></dd></div><div><dt>Systemprompt</dt><dd>V2 live<small>V1 und V3 archiviert</small></dd></div><div><dt>Vergleich 10 Anfragen</dt><dd>2 / 5<small>V2 gegen V1 vollständig bestanden</small></dd></div><div><dt>Freigabe</dt><dd>3 + 1<small>freigegeben, abgelehnt</small></dd></div>
+</dl>
+<div class="knoepfe">
+<a class="knopf" href="w08t03.html">Tag 3 <span aria-hidden="true" class="pfeil">→</span></a>
+<a class="knopf zweit" href="w08t02.html">Tag 2 <span aria-hidden="true" class="pfeil">→</span></a>
+<a class="knopf zweit" href="w08t01.html">Tag 1 <span aria-hidden="true" class="pfeil">→</span></a>
+<a class="knopf" href="https://github.com/MinkeAutomation/redaktions-agent">Repository <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf" href="https://github.com/MinkeAutomation/redaktions-agent/releases/tag/v16">Release W08 Abgabe (v16) <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/test-tabelle.md">Test-Tabelle <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/projekt-charter.md">Projekt-Charter <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/CHANGELOG.md">CHANGELOG <span aria-hidden="true" class="pfeil">↗</span></a>
+</div>
+
+<main id="inhalt">
+<section aria-labelledby="usecase-t" class="kapitel" id="usecase">
+<h2 id="usecase-t">Use Case</h2>
+<p><strong>Problem:</strong> Markengerechte Posts kosten kleine Firmen viel Zeit, und ein starrer Ablauf erkennt nicht, wann ein Thema gegen die Marke verstößt, schon gepostet wurde oder neue Fakten braucht.</p>
+<p><strong>Lösung:</strong> Ein Agent bekommt ein Thema, prüft es gegen Marke und frühere Posts, holt bei Bedarf belegte Fakten, lässt Text und Bilder bauen und legt das Paket einem Menschen zur Freigabe vor. Der Agent veröffentlicht nie selbst.</p>
+<p><strong>Rahmen:</strong> 1 Kunde je Auftrag, Testkunde mit erfundenen Daten, Eingang über den n8n-Chat. Nicht enthalten: automatisches Posten, echte Kundendaten, Kundenportal, mehrere Agenten.</p>
+</section>
+
+<section aria-labelledby="grundlage-t" class="kapitel" id="grundlage">
+<h2 id="grundlage-t">Grundlage aus Projekt 1</h2>
+<p>Projekt 2 baut auf der <a href="https://github.com/MinkeAutomation/content-maschine-k1">Content-Maschine K1</a> auf, meinem Projekt 1. Von dort kommen die Datenbank mit den Tabellen <code>k1_*</code> (vor allem <code>k1_kunden</code> mit den Markenregeln und <code>k1_posts</code> mit den Beiträgen, die jetzt die Spalte <code>erzeugt_von</code> tragen) und der Ablage-Workflow, der freigegebene Beiträge in Nextcloud ablegt und hier nur aufgerufen wird. K1 läuft als feste Kette getrennt weiter; der Redaktions-Agent trifft die Entscheidungen, die dort feste Regeln waren.</p>
+<p>Bedarf, Use Case und Grenzen der Content-Maschine stehen in Projekt 1:</p>
+<ul>
+<li><a href="https://github.com/MinkeAutomation/content-maschine-k1/blob/main/abgaben/2026-10-05_W04T01/AGT-2606_W04T01_Projekt1-Planung.pdf">Planung Projekt 1</a> (Bedarf und Use Case)</li>
+<li><a href="https://github.com/MinkeAutomation/content-maschine-k1/blob/main/docs/architektur.md">Architektur der Content-Maschine</a></li>
+<li><a href="https://github.com/MinkeAutomation/content-maschine-k1/blob/main/docs/lessons-learned.md">Lessons Learned aus Projekt 1</a> (Grenzen)</li>
+</ul>
+<p>Verwandt, aber nicht Grundlage: der <a href="https://github.com/MinkeAutomation/k1-support-agent">K1 Support-Agent</a> aus den Wochen 6 und 7.</p>
+</section>
+
+<section aria-labelledby="architektur-t" class="kapitel" id="architektur">
+<h2 id="architektur-t">Architekturentscheidung</h2>
+<p><strong>1 Agent mit 5 Werkzeugen, kein Multi-Agent.</strong> Die genutzten Schritte folgen einer festen Reihenfolge und teilen sich ein Ergebnis, das Paket. Nur an 1 Stelle wird gewählt: Recherche, Ablehnung, Rückfrage oder Einreichen. Ein weiterer Agent brächte zusätzliche Übergaben, die geprüft werden müssten, ohne dass ein Schritt eine eigene Rolle braucht. Der Agent trifft die Entscheidungen, die in Projekt 1 feste Regeln waren.</p>
+<p><strong>Warum ein Agent und keine feste Kette:</strong> Der Agent wählt je Anfrage, welche Werkzeuge nötig sind. Belegt: Mit Prompt V1 ließ er bei einem Auftrag ohne Bilder das Bild-Werkzeug weg (Lauf 2735) und rief bei einem Auftrag mit belegten Fakten die Recherche (Lauf 2747); mit V2 blieb eine Frage zur Marke beim Markenwissen (Lauf 2706), und ein Festpreisversprechen wurde abgelehnt, ohne dass Text oder Bilder entstanden (Lauf 2709). Die Wahl ist nicht immer richtig (Abschnitt Ergebnis). Kein Werkzeug enthält einen eigenen Agenten; das Text-Werkzeug nutzt bei Ausfall des Hauptmodells eine einfache Sprachmodell-Kette.</p>
+<p><strong>Verworfen:</strong> Projekt 1 umbauen (es läuft getrennt weiter), Freigabe in einem Werkzeug (Warten auf einen Menschen gehört in den Hauptworkflow), Multi-Agent. Neu bewertet wird nach der nächsten Prompt-Runde mit derselben Testreihe.</p>
+<figure><a href="bilder/architektur-redaktions-agent.svg"><img alt="Architektur: Chat-Eingang, Redaktions-Agent mit 5 Werkzeugen (Markenwissen, Recherche, Text, Bilder, Einreichen), Ausgabe-Prüfung, Weiche Beitrag zur Freigabe da, bei Nein Antwort an den Chat, bei Ja Telegram-Vorschau, Freigeben führt zu Nextcloud und Bestätigung, Ablehnen zu Grund per Formular" height="660" src="bilder/architektur-redaktions-agent.svg" width="1080"/></a><figcaption><strong>Architektur und Datenfluss, Stand v16.</strong> Pakete und Beiträge liegen in Supabase, der Agent reicht nur die <code>paket_id</code> weiter. Klick vergrößert.</figcaption></figure>
+<p>Ziele, Scope, Architekturentscheidung und Risiken ausführlich in der <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/projekt-charter.md">Projekt-Charter</a>.</p>
+</section>
+
+<section aria-labelledby="plan-t" class="kapitel" id="plan">
+<h2 id="plan-t">Aktueller Plan</h2>
+<p>Je Kurstag gibt es einen Plan auf dem Endstand des Tages. Der neueste steht hier, die älteren auf den Tagesseiten.</p>
+<figure><a href="plan/plan-w08t03-v16.png"><img alt="Plan v16: Chat-Eingang, Konfiguration, Redaktions-Agent mit Nemotron 3.5 Super free und Systemprompt V2, Ausgabe-Prüfung und Weiche Beitrag zur Freigabe da. Bei Nein Antwort an den Chat, bei Ja Vorschau in Telegram, Freigabe abwarten höchstens 24 Stunden und Entscheidung: Ablehnen mit Grund per Formular, Freigeben mit Ablage in Nextcloud und Bestätigung mit Link zum Kundenordner. Darunter alle 5 Werkzeuge mit ihren Datenquellen. Oben rot Fehlerweg und Sperre der Prüfung." height="1155" src="bilder/w08t03-plan-v16.png" width="2600"/></a><figcaption><strong>Plan v16, Endstand 11.11.2026.</strong> „neu“ markiert, was am 11.11.2026 neu oder geändert ist. <a href="plan/plan-w08t03-v16.png">Volle Auflösung</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/plan/plan-w08t03-v16.excalidraw">Excalidraw-Datei</a>. Frühere Pläne: <a href="w08t01.html#plan">v01 (Tag 1)</a>, <a href="w08t02.html#plan">v07 (Tag 2)</a>.</figcaption></figure>
+</section>
+
+<section aria-labelledby="werkzeuge-t" class="kapitel" id="werkzeuge">
+<h2 id="werkzeuge-t">Stand je Werkzeug</h2>
+<div aria-labelledby="t-wz" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-wz">Workflows und Versionen am 11.11.2026</caption>
+<thead><tr><th scope="col">Workflow</th><th scope="col">Stand</th><th scope="col">Aufgabe</th><th scope="col">Export</th><th scope="col">Tag</th></tr></thead>
+<tbody>
+<tr><th data-label="Workflow" scope="row">Hauptworkflow Redaktions-Agent</th><td data-label="Stand">v16, nicht veröffentlicht</td><td data-label="Aufgabe">Chat, Agent, Ausgabe-Prüfung, Freigabe in Telegram, Ablage, Bestätigung</td><td data-label="Export"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/redaktions-agent.json">redaktions-agent.json</a></td><td data-label="Tag"><a href="w08t01.html">1</a>, <a href="w08t02.html">2</a>, <a href="w08t03.html">3</a></td></tr>
+<tr><th data-label="Workflow" scope="row">Werkzeug 1 Markenwissen abfragen</th><td data-label="Stand">v03.1</td><td data-label="Aufgabe">liest Markenregeln und frühere Posts über 2 Views, nur lesend</td><td data-label="Export"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/sub-markenwissen-abfragen.json">sub-markenwissen-abfragen.json</a></td><td data-label="Tag"><a href="w08t01.html">1</a>, <a href="w08t02.html">2</a></td></tr>
+<tr><th data-label="Workflow" scope="row">Werkzeug 2 Thema recherchieren</th><td data-label="Stand">v03.1</td><td data-label="Aufgabe">belegte Fakten mit Quelle, höchstens 1 Aufruf plus 1 Wiederholung</td><td data-label="Export"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/sub-thema-recherchieren.json">sub-thema-recherchieren.json</a></td><td data-label="Tag"><a href="w08t01.html">1</a>, <a href="w08t02.html">2</a></td></tr>
+<tr><th data-label="Workflow" scope="row">Werkzeug 3 Text schreiben</th><td data-label="Stand">v07</td><td data-label="Aufgabe">schreibt und prüft das Paket, speichert es unter einer <code>paket_id</code></td><td data-label="Export"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/sub-text-schreiben.json">sub-text-schreiben.json</a></td><td data-label="Tag"><a href="w08t02.html">2</a>, <a href="w08t03.html">3</a></td></tr>
+<tr><th data-label="Workflow" scope="row">Werkzeug 4 Bilder gestalten</th><td data-label="Stand">v01</td><td data-label="Aufgabe">Foto oder KI-Bild, Folien gerendert, abgelegt in Storage</td><td data-label="Export"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/sub-bilder-gestalten.json">sub-bilder-gestalten.json</a></td><td data-label="Tag"><a href="w08t03.html">3</a></td></tr>
+<tr><th data-label="Workflow" scope="row">Werkzeug 5 Zur Freigabe einreichen</th><td data-label="Stand">v01</td><td data-label="Aufgabe">legt als einziges Werkzeug einen Beitrag an, Status <code>wartet_auf_freigabe</code></td><td data-label="Export"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/sub-zur-freigabe-einreichen.json">sub-zur-freigabe-einreichen.json</a></td><td data-label="Tag"><a href="w08t03.html">3</a></td></tr>
+</tbody>
+</table>
+</div>
+<p>Der Git-Tag trägt die Version des Hauptworkflows; die Versionen der Werkzeuge zählen eigen und stehen mit Uhrzeit in <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/versionen.md">versionen.md</a>. Agent-Modell seit 11.11.2026: Nemotron 3.5 Super free über OpenRouter.</p>
+</section>
+
+<section aria-labelledby="prompts-t" class="kapitel" id="prompts">
+<h2 id="prompts-t">Prompt-Versionen</h2>
+<div aria-labelledby="t-pr" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-pr">Systemprompt des Redaktions-Agenten</caption>
+<thead><tr><th scope="col">Version</th><th scope="col">Datum</th><th scope="col">Status</th><th scope="col">Änderung und Ergebnis</th><th scope="col">Datei</th></tr></thead>
+<tbody>
+<tr><th data-label="Version" scope="row">V2</th><td data-label="Datum">10.11.2026</td><td data-label="Status">live</td><td data-label="Änderung">Schritt für fehlende Werkzeuge, genauere Beschreibung des Text-Werkzeugs, Zahlen nur mit Quelle; im Vergleich 2 von 10 vollständig bestanden</td><td data-label="Datei"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/prompts/20261110_System-Prompt-Redaktions-Agent_V2.md">Prompt</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/konfiguration/20261111_Redaktions-Agent_V2_Agent-Konfiguration.json">Konfiguration</a></td></tr>
+<tr><th data-label="Version" scope="row">V3</th><td data-label="Datum">10.11.2026</td><td data-label="Status">archiviert</td><td data-label="Änderung">1 Satz mehr zu fehlenden Werkzeugen; in 4 von 4 Läufen ohne Wirkung, zurückgebaut</td><td data-label="Datei"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md">Prompt</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/archiv/konfiguration/20261110_Redaktions-Agent_V3_Agent-Konfiguration.json">Konfiguration</a></td></tr>
+<tr><th data-label="Version" scope="row">V1</th><td data-label="Datum">09.11.2026</td><td data-label="Status">archiviert, Baseline</td><td data-label="Änderung">erste Fassung in 6 Bausteinen; im Vergleich 5 von 10 vollständig bestanden</td><td data-label="Datei"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/archiv/prompts/20261109_System-Prompt-Redaktions-Agent_V1.md">Prompt</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/konfiguration/20261109_Redaktions-Agent_V1_Agent-Konfiguration.json">Konfiguration</a></td></tr>
+</tbody>
+</table>
+</div>
+<p>Je Version Datum, Beschreibung, Ergebnis und nächste Idee im <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/CHANGELOG.md">CHANGELOG</a>.</p>
+</section>
+
+<section aria-labelledby="ergebnis-t" class="kapitel" id="ergebnis">
+<h2 id="ergebnis-t">Ergebnis V1 gegen V2</h2>
+<p>Dieselben 10 Anfragen, 1 Lauf je Anfrage, Gratismodell. Das zeigt eine Richtung, keinen belastbaren Unterschied.</p>
+<div aria-labelledby="t-erg" class="tabelle" role="region" tabindex="0">
+<table class="mittel">
+<caption id="t-erg">Zusammenfassung</caption>
+<thead><tr><th scope="col">Prompt</th><th scope="col">bestanden</th><th scope="col">teilweise</th><th scope="col">nicht bestanden</th></tr></thead>
+<tbody>
+<tr><th data-label="Prompt" scope="row">V2</th><td data-label="bestanden">2 (Anfrage 1, 5)</td><td data-label="teilweise">5 (3, 4, 6, 8, 9)</td><td data-label="nicht bestanden">3 (2, 7, 10)</td></tr>
+<tr><th data-label="Prompt" scope="row">V1</th><td data-label="bestanden">5 (1, 2, 3, 6, 8)</td><td data-label="teilweise">3 (4, 5, 10)</td><td data-label="nicht bestanden">2 (7, 9)</td></tr>
+</tbody>
+</table>
+</div>
+<p>V1 war bei Anfrage 2, 3, 6, 8 und 10 besser, V2 bei Anfrage 5 und 9. Schwächen von V2: Bilder trotz „keine Bilder“, Off-Topic-Aufträge werden bearbeitet, für reine Auskünfte fehlt ein Statuswert. Beide gaben weder den Systemprompt noch Daten eines anderen Kunden preis. Einzelheiten je Anfrage in der <a href="w08t03.html#k4">Tages-Doku Tag 3</a> und in der <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/test-tabelle.md">Test-Tabelle</a>.</p>
+</section>
+
+<section aria-labelledby="freigabe-t" class="kapitel" id="freigabe">
+<h2 id="freigabe-t">Freigabe und Ablage</h2>
+<p>Der Agent reicht ein, ein Mensch entscheidet. Die Vorschau kommt in Telegram mit 2 Knöpfen. Freigeben setzt den Status <code>fertig</code>, legt den Beitrag mit Bildern in Nextcloud ab und schickt seit v15 eine Bestätigung mit Link zum Kundenordner. Ablehnen fragt den Grund über ein Formular ab und speichert ihn beim Beitrag, abgelegt wird nichts. Ohne Antwort verfällt die Anfrage nach 24 Stunden. Belegt sind 3 Freigaben (Läufe 2768, 2782, 2748) und 1 Ablehnung (Lauf 2735).</p>
+<p><strong>Guardrails auf 3 Ebenen:</strong> Systemprompt (Rolle und wichtigstes Verbot vorn, keine erfundenen Fakten, kein Rollenwechsel, höchstens 8 Werkzeugaufrufe), Werkzeug (Eingaben geprüft, feste Kundenkennung, nur Werkzeug 5 legt einen Beitrag an), Ausgabe (Pflichtfelder, erlaubte Status, Prompt-Reste, Schlüssel, fremde Kundennamen; ohne Beitrags-ID kein Erfolg).</p>
+</section>
+
+<section aria-labelledby="compliance-t" class="kapitel" id="compliance">
+<h2 id="compliance-t">Compliance kurz</h2>
+<ul>
+<li><strong>Risikoklasse nach EU AI Act:</strong> begrenztes Risiko (Transparenz), weder verboten noch Hochrisiko. Bei einer Zweckänderung wie automatischem Posten wird neu bewertet.</li>
+<li><strong>Rolle:</strong> beim Einsatz für Kunden Betreiber und voraussichtlich Anbieter; rechtlich offen, ob schon der Prototyp unter die Pflichten nach Art. 50 fällt.</li>
+<li><strong>Maßnahmen:</strong> Freigabe durch einen Menschen vor jeder Ablage, Guardrails auf 3 Ebenen, Testdaten ohne Personenbezug; KI-Kennzeichnung der Posts geplant.</li>
+<li><strong>Datenschutz:</strong> Testbetrieb mit erfundenen Daten, 2 benannte Ausnahmen (Telegram-Kennung der freigebenden Person, mögliche Namen realer Personen in öffentlichen Webtexten), deren Prüfung offen ist.</li>
+</ul>
+<p>Ersteinschätzung, keine Rechtsberatung. Ausführlich in der <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/projekt-charter.md">Projekt-Charter</a>, Abschnitt 6.</p>
+</section>
+
+<section aria-labelledby="offen-t" class="kapitel" id="offen">
+<h2 id="offen-t">Offene Punkte</h2>
+<ul>
+<li>Prompt V4 aus den Funden bauen und mit denselben 10 Anfragen messen.</li>
+<li>Die große Testreihe mit normalen und adversarialen Fällen, je Fall mit erwarteten und verbotenen Werkzeugen, steht aus (geplant für den 12.11.2026, siehe Projekt-Charter, Zeitplan).</li>
+<li>KI-Kennzeichnung der Posts (rechtlich die dringendste Lücke).</li>
+<li>Vorverarbeitung des freien Chat-Textes vor dem Agenten (Namen entfernen), nicht gebaut.</li>
+<li>Verwaiste Beiträge, wenn die Ausgabe-Prüfung nach dem Einreichen sperrt; Fehlalarm beim Wort „Systemprompt“.</li>
+<li>Zweig „Ablage-Problem senden“ nie ausgelöst; nur der n8n-Chat als Eingang getestet; Kosten je Lauf, Tag und Monat noch nicht ausgewertet.</li></ul>
+</section>
+
+<section aria-labelledby="links-t" class="kapitel" id="links">
+<h2 id="links-t">Repository und Release</h2>
+<p>Quelltext, Exporte, Prompts und Tests: <a href="https://github.com/MinkeAutomation/redaktions-agent">github.com/MinkeAutomation/redaktions-agent</a>. Stand der Wochenabgabe: <a href="https://github.com/MinkeAutomation/redaktions-agent/releases/tag/v16">Release W08 Abgabe, Tag v16</a>. Ein Release bleibt unverändert; Ergänzungen danach stehen als neuer Eintrag im CHANGELOG.</p>
+<p>Importhinweise und Platzhalter stehen im <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/README.md">README</a>.</p>
+</section>
+</main>
+<footer class="fuss">
+<span>Patrick Minkler · Redaktions-Agent K2 · Projekt 2</span>
+<span>Stand 11.11.2026 · Hauptworkflow v16</span>
+</footer>
+</div>
+</body>
+</html>

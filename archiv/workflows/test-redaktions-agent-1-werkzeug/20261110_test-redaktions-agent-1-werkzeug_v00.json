@@ -1,0 +1,53 @@
+{
+    "name":  "TEST P2 Redaktions-Agent mit 1 Werkzeug",
+    "nodes":  [
+                  {
+                      "id":  "1cbae413-d1f5-45f2-a825-7192744f0fa1",
+                      "name":  "Chat-Eingang [Chat Trigger]",
+                      "type":  "@n8n/n8n-nodes-langchain.chatTrigger",
+                      "typeVersion":  1.5,
+                      "position":  [
+                                       96,
+                                       1056
+                                   ],
+                      "parameters":  {
+                                         "options":  {
+                                                         "responseMode":  "lastNode"
+                                                     }
+                                     },
+                      "webhookId":  "WEBHOOK_ID"
+                  }
+              ],
+    "connections":  {
+
+                    },
+    "settings":  {
+                     "executionOrder":  "v1",
+                     "availableInMCP":  true
+                 },
+    "meta":  {
+                 "aiBuilderAssisted":  true,
+                 "builderVariant":  "mcp"
+             },
+    "pinData":  {
+
+                },
+    "tags":  [
+
+             ],
+    "id":  "WORKFLOW_ID_TEST_1_WERKZEUG",
+    "versionId":  "08ebf0aa-2f91-414d-a81f-75fa32899d07",
+    "active":  false,
+    "activeVersionId":  null,
+    "description":  "Testkopie des Redaktions-Agenten (WORKFLOW_ID_REDAKTIONS_AGENT) mit genau 1 Werkzeug (Markenwissen_abfragen) für die Testreihe. Werkzeug 2 und 3 getrennt und deaktiviert. Nicht veröffentlichen, bleibt stehen.",
+    "nodeGroups":  [
+
+                   ],
+    "staticData":  null,
+    "sourceWorkflowId":  null,
+    "isArchived":  false,
+    "parentFolder":  {
+                         "id":  "FOLDER_ID_PROJEKTORDNER",
+                         "name":  "Projektordner"
+                     }
+}

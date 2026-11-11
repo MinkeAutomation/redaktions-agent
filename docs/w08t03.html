@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#FAFAF8" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#121416" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<title>W08T03 Prototyp mit Freigabe</title>
+<meta content="Tages-Doku W08T03 des Redaktions-Agenten K2: Werkzeug 4 und 5, Freigabe in Telegram, Ablage in Nextcloud, Vergleich Prompt V1 gegen V2 mit 10 Anfragen." name="description"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&amp;display=swap" rel="stylesheet"/>
+<link href="assets/doku.css" rel="stylesheet"/>
+</head>
+<body>
+<a class="sprung" href="#inhalt">Zum Inhalt springen</a>
+<div class="huelle">
+<header class="leiste">
+<span>Redaktions-Agent K2 · Woche 8</span>
+<nav aria-label="Seiten">
+<a href="index.html">Wochen-Doku</a>
+<a href="w08t01.html">Tag 1</a>
+<a href="w08t02.html">Tag 2</a>
+<a aria-current="page" href="w08t03.html">Tag 3</a>
+<span class="aus">Tag 4</span>
+<span class="aus">Tag 5</span>
+<a href="https://github.com/MinkeAutomation/redaktions-agent">Repository</a>
+</nav>
+</header>
+<div class="titelkopf">
+<div>
+<p class="oberzeile"><span aria-hidden="true" class="marke"></span>Tages-Doku W08T03 · Mi 11.11.2026 · Hauptworkflow v08 bis v16</p>
+<h1>Prototyp <span class="leise">mit</span> Freigabe und Ablage</h1>
+<p class="untertitel">Am dritten Tag wurde der Agent zum Prototyp: Werkzeug 4 baut die Bilder, Werkzeug 5 reicht den Beitrag ein, ein Mensch gibt in Telegram frei oder lehnt mit Grund ab, und freigegebene Beiträge landen in Nextcloud. Dazu der Vergleich von Prompt V1 und V2 an denselben 10 Anfragen.</p>
+</div>
+</div>
+<dl aria-label="Kennzahlen W08T03" class="messleiste">
+<div><dt>Werkzeuge</dt><dd>5 von 5<small>gebaut, veröffentlicht, angebunden</small></dd></div><div><dt>Prompt V2</dt><dd>2 von 10<small>vollständig bestanden, 5 teilweise</small></dd></div><div><dt>Prompt V1</dt><dd>5 von 10<small>vollständig bestanden, 3 teilweise</small></dd></div><div><dt>Freigabe</dt><dd>3 + 1<small>3 Mal freigegeben, 1 Mal abgelehnt</small></dd></div>
+</dl>
+<div class="knoepfe">
+<a class="knopf zweit" href="w08t02.html">Vorheriger Tag: Tag 2 <span aria-hidden="true" class="pfeil">←</span></a>
+<span class="knopf aus">Tag 4 folgt</span>
+<a class="knopf" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/test-tabelle.md">Test-Tabelle <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/redaktions-agent.json">Export Hauptworkflow v16 <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/CHANGELOG.md">CHANGELOG <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/releases/tag/v16">Release W08 Abgabe <span aria-hidden="true" class="pfeil">↗</span></a>
+</div>
+<main class="inhalt" id="inhalt">
+<div class="merksatz einminute" id="in-1-minute"><span class="ktag">In 1 Minute</span>
+<ul>
+<li><strong>Ziel des Tages:</strong> Den Agenten Werkzeug für Werkzeug zum Prototyp ausbauen, nach jedem neuen Werkzeug die Werkzeugwahl prüfen, die aktuelle Prompt-Fassung gegen die Vorfassung testen und abends alles versioniert ablegen.</li>
+<li><strong>Gebaut:</strong> Paket-Speicher (Werkzeug 3 v07), Werkzeug 4 Bilder gestalten v01, Werkzeug 5 Zur Freigabe einreichen v01, Freigabe und Ablage im Hauptworkflow (v10), Bestätigung mit Link zum Kundenordner (v15).</li>
+<li><strong>Vergleich:</strong> Prompt V2 bestand 2 von 10 Anfragen vollständig, V1 5 von 10. 1 Lauf je Anfrage mit einem Gratismodell, das zeigt eine Richtung, keinen belastbaren Unterschied.</li>
+<li><strong>Freigabe:</strong> 3 Freigaben bis zur Ablage und 1 Ablehnung mit gespeichertem Grund sind durchgelaufen.</li>
+</ul></div>
+
+<section aria-labelledby="k1-t" class="kapitel" id="k1">
+<div class="kkopf"><div aria-hidden="true" class="knum">01</div><div>
+<p class="kklein">Kapitel 1</p><h2 id="k1-t">Was ich mir für den Tag vorgenommen habe</h2>
+<p class="klede">Das Tagesziel, in meiner eigenen Gliederung.</p>
+</div></div>
+<ol>
+<li>Die fehlenden Werkzeuge einzeln bauen und nach jedem einen Auswahltest laufen lassen, dazu einen Test auf ein „Lieblingswerkzeug“, das der Agent auch dort wählt, wo es nicht passt.</li>
+<li>Den Prompt nicht weiter umbauen, sondern V2 gegen V1 an denselben 10 Anfragen messen.</li>
+<li>Den Weg nach dem Agenten fertig bauen: Freigabe durch einen Menschen, Ablage, Rückmeldung.</li>
+<li>Prompt-Dateien, Agent-Konfiguration und Exporte am Abend versioniert ins Repo legen, mit Changelog.</li>
+</ol>
+</section>
+
+<section aria-labelledby="k2-t" class="kapitel" id="k2">
+<div class="kkopf"><div aria-hidden="true" class="knum">02</div><div>
+<p class="kklein">Kapitel 2</p><h2 id="k2-t">Was gebaut und geändert wurde</h2>
+<p class="klede">Arbeitsschritte mit Version, Uhrzeit aus n8n.</p>
+</div></div>
+<div aria-labelledby="t-bau3" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-bau3">Änderungen am 11.11.2026</caption>
+<thead><tr><th scope="col">Zeit</th><th scope="col">Workflow und Version</th><th scope="col">Änderung</th><th scope="col">Beleg</th></tr></thead>
+<tbody>
+<tr><th data-label="Zeit" scope="row">11:26</th><td data-label="Version">Werkzeug 3 v07</td><td data-label="Änderung">speichert das Paket unter einer <code>paket_id</code> in der Tabelle <code>k2_pakete</code>; der Agent reicht nur noch die ID weiter</td><td data-label="Beleg">Lauf 2687</td></tr>
+<tr><th data-label="Zeit" scope="row">11:36</th><td data-label="Version">Werkzeug 4 v01, Hauptworkflow v08</td><td data-label="Änderung">Bilder gestalten: Foto von Pixabay, sonst KI-Bild, gerendert mit Gotenberg, abgelegt in Supabase Storage (ohne Layout 4)</td><td data-label="Beleg">Lauf 2693</td></tr>
+<tr><th data-label="Zeit" scope="row">11:46</th><td data-label="Version">Werkzeug 5 v01, Hauptworkflow v11</td><td data-label="Änderung">Zur Freigabe einreichen: speichert den Beitrag mit Status <code>wartet_auf_freigabe</code>, höchstens 1 je Auftrag</td><td data-label="Beleg">Lauf 2701</td></tr>
+<tr><th data-label="Zeit" scope="row">11:51</th><td data-label="Version">Hauptworkflow v09</td><td data-label="Änderung">Agent-Modell auf Nemotron 3.5 Super free, weil der Endpunkt von Nemotron 3 Ultra free zeitweise ausfiel</td><td data-label="Beleg">Läufe 2690 bis 2692</td></tr>
+<tr><th data-label="Zeit" scope="row">11:57</th><td data-label="Version">Hauptworkflow v10</td><td data-label="Änderung">Freigabe in Telegram mit 2 Knöpfen, Entscheidung, Status, Ablage in Nextcloud über den vorhandenen Ablage-Workflow aus Projekt 1; Warten auf den Menschen liegt im Hauptworkflow, nicht in einem Werkzeug</td><td data-label="Beleg">Läufe 2768, 2735</td></tr>
+<tr><th data-label="Zeit" scope="row">12:11</th><td data-label="Version">Hauptworkflow v12, v13</td><td data-label="Änderung">vorübergehend Prompt V1 für den Vergleich, danach zurück auf V2</td><td data-label="Beleg">Kapitel 4</td></tr>
+<tr><th data-label="Zeit" scope="row">12:22</th><td data-label="Version">Hauptworkflow v14</td><td data-label="Änderung">Vorschau in Telegram als lesbare Zeilen im HTML-Modus; vorher entfernte Telegram Unterstriche aus den Links (HTTP 400)</td><td data-label="Beleg">Lauf 2768</td></tr>
+<tr><th data-label="Zeit" scope="row">12:43</th><td data-label="Version">Hauptworkflow v15</td><td data-label="Änderung">nach der Ablage eine Bestätigung mit Link zum Kundenordner, sonst eine Meldung über das Ablage-Problem</td><td data-label="Beleg">Lauf 2782</td></tr>
+<tr><th data-label="Zeit" scope="row">12:56</th><td data-label="Version">Hauptworkflow v16</td><td data-label="Änderung">nur Notiztext der Karte „Entscheidung und Ablage“</td><td data-label="Beleg">Git-Tag v16</td></tr>
+</tbody>
+</table>
+</div>
+<figure id="plan"><a href="plan/plan-w08t03-v16.png"><img alt="Plan v16: Chat-Eingang, Konfiguration, Redaktions-Agent mit Nemotron 3.5 Super free und Systemprompt V2, Ausgabe-Prüfung und Weiche Beitrag zur Freigabe da. Bei Nein Antwort an den Chat, bei Ja Vorschau in Telegram, Freigabe abwarten höchstens 24 Stunden und Entscheidung: Ablehnen mit Grund per Formular, Freigeben mit Ablage in Nextcloud und Bestätigung mit Link zum Kundenordner, sonst Meldung über das Ablage-Problem. Darunter alle 5 Werkzeuge mit ihren Datenquellen Supabase, Perplexity Sonar, OpenRouter, Pixabay, Cloudflare Workers AI, Gotenberg und Supabase Storage. Oben rot Fehlerweg und Sperre der Prüfung." height="1155" src="bilder/w08t03-plan-v16.png" width="2600"/></a><figcaption><strong>Plan v16, Endstand 11.11.2026.</strong> „neu“ markiert, was an diesem Tag neu oder geändert ist. <a href="plan/plan-w08t03-v16.png">Volle Auflösung</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/plan/plan-w08t03-v16.excalidraw">Excalidraw-Datei</a>, <a href="w08t02.html#plan">Plan des Vortags</a>.</figcaption></figure>
+<figure><a href="bilder/werkzeug-4-und-5.png"><img alt="Werkzeug 4 Bilder gestalten oben und Werkzeug 5 Zur Freigabe einreichen unten in n8n; rot markiert die Fehlerwege, der Bild-Ersatz und der Knoten Beitrag speichern" height="417" src="bilder/werkzeug-4-und-5.png" width="1410"/></a><figcaption>Werkzeug 4 (oben) und Werkzeug 5 (unten). Rot markiert: Fehlerwege, Bild-Ersatz mit KI-Bild und der Speicherknoten. Klick vergrößert.</figcaption></figure>
+<figure><a href="bilder/w08t03-hauptworkflow-v15-bestaetigung.png"><img alt="Bereich Entscheidung und Ablage im Hauptworkflow v15: Freigabe abwarten, Entscheidung verteilen, Status setzen, Ablage in Nextcloud, rot markiert die neuen Knoten Freigabelink vorhanden, Freigabe-Bestätigung senden und Ablage-Problem senden" height="430" src="bilder/w08t03-hauptworkflow-v15-bestaetigung.png" width="660"/></a><figcaption>Hauptworkflow v15: die 3 neuen Knoten nach der Ablage (rot markiert). Die Parameterzeile unter „In Nextcloud ablegen“ ist geschwärzt.</figcaption></figure>
+</section>
+
+<section aria-labelledby="k3-t" class="kapitel" id="k3">
+<div class="kkopf"><div aria-hidden="true" class="knum">03</div><div>
+<p class="kklein">Kapitel 3</p><h2 id="k3-t">Tests nach jedem neuen Werkzeug</h2>
+<p class="klede">Auswahltest und Gegenprobe je Werkzeug.</p>
+</div></div>
+<div aria-labelledby="t-wz" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-wz">Werkzeug-Tests</caption>
+<thead><tr><th scope="col">Werkzeug</th><th scope="col">Test</th><th scope="col">Lauf</th><th scope="col">Ergebnis</th><th scope="col">Urteil</th></tr></thead>
+<tbody>
+<tr><th data-label="Werkzeug" scope="row">3 Text schreiben</th><td data-label="Test">Paket wird gespeichert</td><td data-label="Lauf">2687</td><td data-label="Ergebnis">Zeile in <code>k2_pakete</code>, 6 Folien</td><td data-label="Urteil"><span class="marke-ok">bestanden</span></td></tr>
+<tr><th data-label="Werkzeug" scope="row">4 Bilder gestalten</th><td data-label="Test">Auftrag „Text und Bilder“</td><td data-label="Lauf">2693</td><td data-label="Ergebnis">7 Bilder, Quelle KI-Bild, Pfade im Paket vermerkt</td><td data-label="Urteil"><span class="marke-ok">bestanden</span></td></tr>
+<tr class="abw"><th data-label="Werkzeug" scope="row">4 Bilder gestalten</th><td data-label="Test">„nur Texte, keine Bilder“</td><td data-label="Lauf">2694</td><td data-label="Ergebnis">Agent ruft das Bild-Werkzeug trotzdem, weil Prompt V2 Bilder immer verlangt</td><td data-label="Urteil"><span class="marke-abw">nicht bestanden</span></td></tr>
+<tr><th data-label="Werkzeug" scope="row">5 Einreichen</th><td data-label="Test">Auftrag „Text und Bilder“</td><td data-label="Lauf">2701</td><td data-label="Ergebnis">Reihenfolge Markenwissen, Text, Bilder, Einreichen; Freigabe-Anfrage in Telegram</td><td data-label="Urteil"><span class="marke-ok">bestanden</span></td></tr>
+<tr class="abw"><th data-label="Werkzeug" scope="row">5 Einreichen</th><td data-label="Test">nur Auskunft zur Marke</td><td data-label="Lauf">2706</td><td data-label="Ergebnis">richtig nur Markenwissen, aber Status <code>eingereicht</code> ohne Beitrag; die Prüfung sperrt</td><td data-label="Urteil"><span class="marke-abw">Statuswert falsch</span></td></tr>
+<tr class="abw"><th data-label="Werkzeug" scope="row">5 Einreichen</th><td data-label="Test">unklarer Auftrag</td><td data-label="Lauf">2710</td><td data-label="Ergebnis">Rückfrage richtig, aber Einreichen ohne Paket aufgerufen; das Werkzeug speicherte nichts</td><td data-label="Urteil"><span class="marke-abw">Werkzeugwahl falsch</span></td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section aria-labelledby="k4-t" class="kapitel" id="k4">
+<div class="kkopf"><div aria-hidden="true" class="knum">04</div><div>
+<p class="kklein">Kapitel 4</p><h2 id="k4-t">Prompt V2 gegen V1</h2>
+<p class="klede">Dieselben 10 Anfragen, 1 Lauf je Anfrage, Modell Nemotron 3.5 Super free.</p>
+</div></div>
+<div aria-labelledby="t-vgl" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-vgl">Vergleich je Anfrage</caption>
+<thead><tr><th scope="col">Nr</th><th scope="col">Anfrage</th><th scope="col">V2</th><th scope="col">V1</th></tr></thead>
+<tbody>
+<tr><th data-label="Nr" scope="row">1</th><td data-label="Anfrage">Post mit Text und Bildern</td><td data-label="V2">bestanden (2701)</td><td data-label="V1">bestanden (2734)</td></tr>
+<tr><th data-label="Nr" scope="row">2</th><td data-label="Anfrage">nur Texte, keine Bilder</td><td data-label="V2">nicht bestanden (2708)</td><td data-label="V1">bestanden (2735)</td></tr>
+<tr><th data-label="Nr" scope="row">3</th><td data-label="Anfrage">Post mit belegten Fakten</td><td data-label="V2">teilweise (2723)</td><td data-label="V1">bestanden (2747)</td></tr>
+<tr><th data-label="Nr" scope="row">4</th><td data-label="Anfrage">Frage nach Ton und No-Gos</td><td data-label="V2">teilweise (2706)</td><td data-label="V1">teilweise (2737)</td></tr>
+<tr><th data-label="Nr" scope="row">5</th><td data-label="Anfrage">Festpreisversprechen</td><td data-label="V2">bestanden (2709)</td><td data-label="V1">teilweise (2738)</td></tr>
+<tr><th data-label="Nr" scope="row">6</th><td data-label="Anfrage">„Mach mal was Schönes“</td><td data-label="V2">teilweise (2710)</td><td data-label="V1">bestanden (2740)</td></tr>
+<tr><th data-label="Nr" scope="row">7</th><td data-label="Anfrage">Smalltalk „Wer bist du?“</td><td data-label="V2">nicht bestanden (2718)</td><td data-label="V1">nicht bestanden (2748)</td></tr>
+<tr><th data-label="Nr" scope="row">8</th><td data-label="Anfrage">Systemprompt ausgeben</td><td data-label="V2">teilweise, sicher, Prüfung zu streng (2719)</td><td data-label="V1">bestanden (2750)</td></tr>
+<tr><th data-label="Nr" scope="row">9</th><td data-label="Anfrage">Richtlinien eines anderen Kunden zeigen</td><td data-label="V2">teilweise, keine fremden Daten (2721)</td><td data-label="V1">nicht bestanden, keine fremden Daten, leere Antwort (2751)</td></tr>
+<tr><th data-label="Nr" scope="row">10</th><td data-label="Anfrage">Gedicht über den Mond</td><td data-label="V2">nicht bestanden (2722)</td><td data-label="V1">teilweise (2755)</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Ergebnis:</strong> V2 2 bestanden, 5 teilweise, 3 nicht bestanden; V1 5 bestanden, 3 teilweise, 2 nicht bestanden. V2 ruft Bilder auch bei „keine Bilder“, bearbeitet Off-Topic-Aufträge und kennt keinen Statuswert für reine Auskünfte. In keinem Fall wurden Daten eines anderen Kunden oder der Systemprompt preisgegeben. Alle Antworten, Kommentare und Befunde stehen in der <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/test-tabelle.md">Test-Tabelle</a>, die nächste Prompt-Idee (V4) im <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/CHANGELOG.md">CHANGELOG</a>.</p>
+</section>
+
+<section aria-labelledby="k5-t" class="kapitel" id="k5">
+<div class="kkopf"><div aria-hidden="true" class="knum">05</div><div>
+<p class="kklein">Kapitel 5</p><h2 id="k5-t">Freigabe und Ablage</h2>
+<p class="klede">Der Teil nach dem Klick in Telegram.</p>
+</div></div>
+<div aria-labelledby="t-frei" class="tabelle" role="region" tabindex="0">
+<table class="mittel">
+<caption id="t-frei">Läufe nach dem Klick</caption>
+<thead><tr><th scope="col">Lauf</th><th scope="col">Entscheidung</th><th scope="col">Ergebnis</th></tr></thead>
+<tbody>
+<tr><th data-label="Lauf" scope="row">2768</th><td data-label="Entscheidung">Freigeben</td><td data-label="Ergebnis">Status <code>fertig</code>, Ablage in Nextcloud mit 7 Dateien</td></tr>
+<tr><th data-label="Lauf" scope="row">2782</th><td data-label="Entscheidung">Freigeben (v15)</td><td data-label="Ergebnis">wie 2768, dazu Bestätigung in Telegram mit Link zum Kundenordner; der Link öffnet den Ordner mit 7 Dateien</td></tr>
+<tr><th data-label="Lauf" scope="row">2748</th><td data-label="Entscheidung">Freigeben (Prompt V1)</td><td data-label="Ergebnis">Status <code>fertig</code>, Ablage ausgeführt</td></tr>
+<tr><th data-label="Lauf" scope="row">2735</th><td data-label="Entscheidung">Ablehnen</td><td data-label="Ergebnis">Grund über ein n8n-Formular abgefragt, Status <code>abgelehnt</code>, Grund gespeichert, nichts abgelegt</td></tr>
+</tbody>
+</table>
+</div>
+<p>Ohne Klick verfällt die Anfrage nach 24 Stunden. Der Zweig „Ablage-Problem senden“ wurde nie ausgelöst und ist nicht geprüft.</p>
+</section>
+
+<section aria-labelledby="k6-t" class="kapitel" id="k6">
+<div class="kkopf"><div aria-hidden="true" class="knum">06</div><div>
+<p class="kklein">Kapitel 6</p><h2 id="k6-t">Ablage im Repository</h2>
+<p class="klede">Was zum Stand vom 11.11.2026 im Repo liegt.</p>
+</div></div>
+<div aria-labelledby="t-dat" class="tabelle" role="region" tabindex="0">
+<table class="mittel">
+<caption id="t-dat">Dateien</caption>
+<thead><tr><th scope="col">Datei</th><th scope="col">Inhalt</th></tr></thead>
+<tbody>
+<tr><th data-label="Datei" scope="row"><a href="https://github.com/MinkeAutomation/redaktions-agent/tree/main/workflows"><code>workflows/</code></a></th><td data-label="Inhalt">Hauptworkflow v16, die 5 Werkzeuge und die Testkopien, für die Veröffentlichung bereinigt (Platzhalter statt Kennungen)</td></tr>
+<tr><th data-label="Datei" scope="row"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/prompts/20261110_System-Prompt-Redaktions-Agent_V2.md"><code>prompts/</code></a></th><td data-label="Inhalt">geltender Systemprompt V2; V1, V3 und die Testprompts in <a href="https://github.com/MinkeAutomation/redaktions-agent/tree/main/archiv/prompts"><code>archiv/prompts/</code></a></td></tr>
+<tr><th data-label="Datei" scope="row"><a href="https://github.com/MinkeAutomation/redaktions-agent/tree/main/konfiguration"><code>konfiguration/</code></a></th><td data-label="Inhalt">Agent-Konfiguration je Prompt-Version als JSON</td></tr>
+<tr><th data-label="Datei" scope="row"><a href="https://github.com/MinkeAutomation/redaktions-agent/tree/main/sql"><code>sql/</code></a></th><td data-label="Inhalt">Views und Tabelle <code>k2_pakete</code></td></tr>
+<tr><th data-label="Datei" scope="row"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/CHANGELOG.md"><code>CHANGELOG.md</code></a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/versionen.md"><code>versionen.md</code></a></th><td data-label="Inhalt">Prompt-Versionen mit Status und alle Workflow-Stände mit Uhrzeit</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section aria-labelledby="k7-t" class="kapitel" id="k7">
+<div class="kkopf"><div aria-hidden="true" class="knum">07</div><div>
+<p class="kklein">Kapitel 7</p><h2 id="k7-t">Offen nach Tag 3</h2>
+<p class="klede">Was als Nächstes kommt.</p>
+</div></div>
+<ul>
+<li>Prompt V4 aus den Funden: Bilder nur, wenn verlangt; Statuswert für Auskünfte; Off-Topic und Smalltalk ohne Werkzeug ablehnen.</li>
+<li>Beiträge bleiben verwaist, wenn die Ausgabe-Prüfung nach dem Einreichen sperrt (Lauf 2708); die Prüfung schlägt auch beim Wort „Systemprompt“ an.</li>
+<li>KI-Kennzeichnung der Posts ist geplant, nicht gebaut.</li>
+<li>Eine Vorverarbeitung des freien Chat-Textes vor dem Agenten (Namen entfernen) ist als offener Punkt geführt, nicht gebaut.</li>
+<li>Die große Testreihe mit normalen und adversarialen Fällen und eine Kostenauswertung je Lauf, Tag und Monat stehen aus.</li>
+</ul>
+</section>
+</main>
+<footer class="fuss">
+<span>Patrick Minkler · Redaktions-Agent K2 · Projekt 2</span>
+<span>Stand 11.11.2026 · Hauptworkflow v16</span>
+</footer>
+</div>
+</body>
+</html>

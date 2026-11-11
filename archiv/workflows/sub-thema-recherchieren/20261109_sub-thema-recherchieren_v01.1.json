@@ -1,0 +1,476 @@
+{
+    "name":  "SUB P2 Thema recherchieren",
+    "nodes":  [
+                  {
+                      "parameters":  {
+                                         "workflowInputs":  {
+                                                                "values":  [
+                                                                               {
+                                                                                   "name":  "thema"
+                                                                               },
+                                                                               {
+                                                                                   "name":  "fragen"
+                                                                               }
+                                                                           ]
+                                                            }
+                                     },
+                      "id":  "d69f91b3-a2b8-4d6a-b072-73ad82952450",
+                      "name":  "Auftrag empfangen [Execute Workflow Trigger]",
+                      "type":  "n8n-nodes-base.executeWorkflowTrigger",
+                      "typeVersion":  1.3,
+                      "position":  [
+                                       64,
+                                       768
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "// Guardrail Ebene 2: Thema und Fragen kurz halten, leere Eingabe abweisen\nconst j = $input.first().json;\nconst thema = String(j.thema ?? \u0027\u0027).trim().slice(0, 300);\nconst fragen = String(j.fragen ?? \u0027\u0027).trim().slice(0, 600);\nreturn [{ json: { thema: thema, fragen: fragen, eingabe_ok: thema.length \u003e= 3 } }];"
+                                     },
+                      "id":  "dcd30750-693a-4f55-b7f2-8d072e05cd05",
+                      "name":  "Eingabe prüfen [Code]",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       352,
+                                       768
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "caseSensitive":  true,
+                                                                            "leftValue":  "",
+                                                                            "typeValidation":  "strict",
+                                                                            "version":  1
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "leftValue":  "={{ $json.eingabe_ok }}",
+                                                                                   "operator":  {
+                                                                                                    "type":  "boolean",
+                                                                                                    "operation":  "true",
+                                                                                                    "singleValue":  true
+                                                                                                }
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "9d4bd188-2c0e-4fdd-be7b-20dea0a9863f",
+                      "name":  "Eingabe gültig? [If]",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2.2,
+                      "position":  [
+                                       608,
+                                       768
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "POST",
+                                         "url":  "https://openrouter.ai/api/v1/chat/completions",
+                                         "authentication":  "predefinedCredentialType",
+                                         "nodeCredentialType":  "openAiApi",
+                                         "sendBody":  true,
+                                         "specifyBody":  "json",
+                                         "jsonBody":  "={{ JSON.stringify({ model: \u0027perplexity/sonar\u0027, temperature: 0, max_tokens: 900, usage: { include: true }, messages: [ { role: \u0027system\u0027, content: \u0027You are a careful research assistant for social media posts. Only state facts that are explicitly written in a source you cite. Never invent numbers, studies, quotes or sources. Answer in German.\u0027 }, { role: \u0027user\u0027, content: \u0027Research this topic: \"\u0027 + $json.thema + \u0027\".\u0027 + ($json.fragen ? \u0027 Answer these questions: \u0027 + $json.fragen + \u0027.\u0027 : \u0027\u0027) + \u0027 Return 3 to 5 key facts, each on its own line in the form \"- \u003cfact\u003e (Quelle: \u003cfull URL\u003e, \u003cpublication date if known\u003e)\". Prefer sources from the last 12 months and primary sources. Leave out any fact without a reliable source. If there is no reliable source at all, answer only with the line KEINE_BELEGE.\u0027 } ] }) }}",
+                                         "options":  {
+                                                         "timeout":  60000
+                                                     }
+                                     },
+                      "id":  "77289077-6f7b-4093-bc9c-c78774824ffe",
+                      "name":  "Recherche Sonar [HTTP Request]",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       912,
+                                       768
+                                   ],
+                      "retryOnFail":  true,
+                      "maxTries":  2,
+                      "waitBetweenTries":  3000,
+                      "credentials":  {
+                                          "openAiApi":  {
+                                                            "id":  "CREDENTIAL_ID",
+                                                            "name":  "OpenRouter API | KI-AGT-2606"
+                                                        }
+                                      },
+                      "onError":  "continueRegularOutput"
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "// Rückgabe an den Agenten: Fakten mit Quelle, Kosten aus usage.cost, feste Nicht-Treffer-Werte\nconst r = $input.first().json || {};\nif (r.error) {\n  const m = (r.error \u0026\u0026 (r.error.message || r.error)) || \u0027unbekannt\u0027;\n  return [{ json: { antwort: \u0027FEHLER: Recherche nicht erreichbar (\u0027 + String(m).slice(0, 160) + \u0027).\u0027, kosten_usd: null } }];\n}\nconst text = String((((r.choices || [])[0] || {}).message || {}).content || \u0027\u0027).trim();\nconst kosten = (r.usage \u0026\u0026 typeof r.usage.cost === \u0027number\u0027) ? r.usage.cost : null;\nconst tokens = r.usage ? (r.usage.total_tokens || null) : null;\nconst fakten = text.split(\u0027\\n\u0027).map(z =\u003e z.trim()).filter(z =\u003e z.startsWith(\u0027-\u0027) \u0026\u0026 /https?:\\/\\//.test(z));\nif (!text || /KEINE_BELEGE/.test(text) || fakten.length === 0) {\n  return [{ json: { antwort: \u0027NICHT_GEFUNDEN: Keine belegten Fakten zu diesem Thema gefunden.\u0027, kosten_usd: kosten, tokens: tokens } }];\n}\nconst zeilen = [\u0027STATUS: OK\u0027, \u0027Fakten mit Quelle (nur diese verwenden):\u0027].concat(fakten.slice(0, 5));\nreturn [{ json: { antwort: zeilen.join(\u0027\\n\u0027), kosten_usd: kosten, tokens: tokens } }];"
+                                     },
+                      "id":  "fcc2b92f-1d87-41bf-88de-55ded8632756",
+                      "name":  "Antwort bauen [Code]",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1200,
+                                       768
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "assignments":  {
+                                                             "assignments":  [
+                                                                                 {
+                                                                                     "id":  "antwort",
+                                                                                     "name":  "antwort",
+                                                                                     "value":  "FEHLER: Thema fehlt oder ist zu kurz, Recherche nicht ausgeführt.",
+                                                                                     "type":  "string"
+                                                                                 }
+                                                                             ]
+                                                         },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "e82ecd28-fd0e-4fb4-b859-3e4c0e88dea3",
+                      "name":  "Fehler zurückgeben [Edit Fields]",
+                      "type":  "n8n-nodes-base.set",
+                      "typeVersion":  3.4,
+                      "position":  [
+                                       912,
+                                       1008
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "# SUB P2 Thema recherchieren\nWerkzeug 2 des Redaktions-Agenten (Projekt 2): holt 3 bis 5 belegte Fakten mit Quelle über Perplexity Sonar.",
+                                         "height":  100,
+                                         "width":  2000,
+                                         "color":  5
+                                     },
+                      "id":  "f236170c-526e-4720-bb7e-ca89cafb18ab",
+                      "name":  "Sticky Note 0dd68797",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "typeVersion":  1,
+                      "position":  [
+                                       0,
+                                       0
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "",
+                                         "height":  420,
+                                         "width":  1460,
+                                         "color":  0
+                                     },
+                      "id":  "01309390-9a1a-400a-b3f1-ba61028b1e5d",
+                      "name":  "Sticky Note 67a6e1cc",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "typeVersion":  1,
+                      "position":  [
+                                       0,
+                                       128
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "# 📋 Workflow-Beschreibung\n🎯 **Zweck:** Der Agent bekommt aktuelle, belegte Fakten, wenn Quelltext und Markenwissen nicht reichen.\n👥 **Für wen:** den Redaktions-Agenten im Workflow AGT-2606 P2 Redaktions-Agent.\n🕹️ **So nutzt du ihn:** Der Agent ruft Thema_recherchieren mit Thema und 1 bis 3 Fragen auf, höchstens 1 Mal je Auftrag.\n## Status: 🟡 Durchstich, im n8n-Chat zu testen",
+                                         "height":  190,
+                                         "width":  720,
+                                         "color":  7
+                                     },
+                      "id":  "ced31a65-9143-40e9-8847-f1d2bc7a891b",
+                      "name":  "Sticky Note 8d31a880",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "typeVersion":  1,
+                      "position":  [
+                                       16,
+                                       144
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "## 🧾 Version\nv01 vom 09.11.2026, erste Fassung.\nDie Workflow-Stände stehen in versionen.md.",
+                                         "height":  190,
+                                         "width":  694,
+                                         "color":  7
+                                     },
+                      "id":  "b4caebde-cc09-46b0-9b91-5cad66cbcb34",
+                      "name":  "Sticky Note 4258ae92",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "typeVersion":  1,
+                      "position":  [
+                                       752,
+                                       144
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "# 🧪 Belegte Recherche\n**Aufgabe:** Fakten nur mit Quelle zurückgeben.\n**Die Idee:** Sonar sucht im Web, der Code behält nur Zeilen mit Link.\n**Warum so?** Der Agent darf keine Fakten erfinden (Systemprompt v1).\n**Hinweis:** Stufe: Durchstich bis 13.11.2026",
+                                         "height":  184,
+                                         "width":  720,
+                                         "color":  7
+                                     },
+                      "id":  "43eeb803-3e31-4f68-9421-c2736262b9df",
+                      "name":  "Sticky Note 9d4bd1a3",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "typeVersion":  1,
+                      "position":  [
+                                       16,
+                                       352
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "## Ablauf\n① Thema und Fragen empfangen\n② Eingabe prüfen\n③ Sonar fragen\n④ Fakten mit Quelle zurückgeben\n⑤ Ungültige Eingabe melden",
+                                         "height":  184,
+                                         "width":  334,
+                                         "color":  7
+                                     },
+                      "id":  "b2f849aa-8948-4ce0-af0b-f89afc97765b",
+                      "name":  "Sticky Note 5babb521",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "typeVersion":  1,
+                      "position":  [
+                                       752,
+                                       352
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "## Status\n🟢 Sonar läuft in Projekt 1\n🟡 Im Agenten noch nicht gelaufen\n🔴 Kostet Geld, Schlüssel",
+                                         "height":  184,
+                                         "width":  334,
+                                         "color":  7
+                                     },
+                      "id":  "f4126efa-6cc1-4f91-83cd-64adae624865",
+                      "name":  "Sticky Note 93b94a48",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "typeVersion":  1,
+                      "position":  [
+                                       1104,
+                                       352
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "## ① Auftrag\nThema und Fragen vom Agenten.\n\n### 🟢 Eingang steht",
+                                         "width":  260
+                                     },
+                      "id":  "6cbaa86e-1d37-497c-83d0-e3c135331fd2",
+                      "name":  "Sticky Note a04116e0",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "typeVersion":  1,
+                      "position":  [
+                                       0,
+                                       576
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "## ② Eingabe prüfen\nThema mindestens 3 Zeichen, beides gekürzt.\n\n### 🟢 Prüfung steht",
+                                         "width":  400
+                                     },
+                      "id":  "8bb8afaf-82bd-40c2-966c-4155e3519746",
+                      "name":  "Sticky Note b222208a",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "typeVersion":  1,
+                      "position":  [
+                                       320,
+                                       576
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "## ③ Sonar\nperplexity/sonar über OpenRouter, Temperatur 0, 1 Wiederholung.\n\n### 🔴 Kostenpflichtig",
+                                         "width":  260
+                                     },
+                      "id":  "dd0cc5f7-ee73-4952-bc08-157e0f28d4b4",
+                      "name":  "Sticky Note d874236c",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "typeVersion":  1,
+                      "position":  [
+                                       848,
+                                       576
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "## ④ Antwort\nNur Zeilen mit Link, Kosten aus usage.cost.\n\n### 🟢 Rückgabe steht",
+                                         "width":  260
+                                     },
+                      "id":  "b7c36f43-2e33-41fc-a567-7861ab8cefe2",
+                      "name":  "Sticky Note 7d3aa28c",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "typeVersion":  1,
+                      "position":  [
+                                       1152,
+                                       576
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "## ⑤ Ungültige Eingabe\nGibt FEHLER zurück, ohne Sonar zu fragen.\n\n### 🟢 Melden statt raten",
+                                         "width":  300
+                                     },
+                      "id":  "593aeaf8-36f5-4174-a873-1a0bad773f27",
+                      "name":  "Sticky Note cbaeb2a6",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "typeVersion":  1,
+                      "position":  [
+                                       1120,
+                                       976
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "",
+                                         "height":  436,
+                                         "width":  500,
+                                         "color":  5
+                                     },
+                      "id":  "188fc2b7-bd0f-4b06-87f2-1b51580a3e70",
+                      "name":  "Sticky Note 341eae66",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "typeVersion":  1,
+                      "position":  [
+                                       1504,
+                                       128
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "# ✅ Setup-Checkliste\n1. Credential OpenRouter API | KI-AGT-2606 (Schlüssel, Typ OpenAI) am Sonar-Knoten.\n2. Aufrufrecht: nur Workflows desselben Besitzers.\n3. Veröffentlichen, sonst kann der Agent das Werkzeug nicht aufrufen.\n4. Erster Test: im Hauptworkflow ein Thema mit aktuellen Zahlen schreiben.",
+                                         "height":  214,
+                                         "width":  464,
+                                         "color":  7
+                                     },
+                      "id":  "225320eb-e377-407d-b3c4-694584ca90e2",
+                      "name":  "Sticky Note af5df1b5",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "typeVersion":  1,
+                      "position":  [
+                                       1520,
+                                       144
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "# 🌐 Plattform-Hinweise\n**https://DEINE-N8N-INSTANZ (n8n):** Erlaubt: Aufruf als Werkzeug. 🟡 Besonderheit: Sub muss veröffentlicht sein.\n**OpenRouter, Perplexity Sonar:** Erlaubt: Websuche mit Quellen. 🟡 Besonderheit: kostet je Aufruf, Kosten stehen in usage.cost.",
+                                         "height":  166,
+                                         "width":  464,
+                                         "color":  7
+                                     },
+                      "id":  "9c8c5b4d-c4a4-4ea6-92b3-e03849aea705",
+                      "name":  "Sticky Note 1b70ba6e",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "typeVersion":  1,
+                      "position":  [
+                                       1520,
+                                       384
+                                   ]
+                  }
+              ],
+    "connections":  {
+                        "Auftrag empfangen [Execute Workflow Trigger]":  {
+                                                                             "main":  [
+                                                                                          [
+                                                                                              {
+                                                                                                  "node":  "Eingabe prüfen [Code]",
+                                                                                                  "type":  "main",
+                                                                                                  "index":  0
+                                                                                              }
+                                                                                          ]
+                                                                                      ]
+                                                                         },
+                        "Eingabe prüfen [Code]":  {
+                                                      "main":  [
+                                                                   [
+                                                                       {
+                                                                           "node":  "Eingabe gültig? [If]",
+                                                                           "type":  "main",
+                                                                           "index":  0
+                                                                       }
+                                                                   ]
+                                                               ]
+                                                  },
+                        "Eingabe gültig? [If]":  {
+                                                     "main":  [
+                                                                  [
+                                                                      {
+                                                                          "node":  "Recherche Sonar [HTTP Request]",
+                                                                          "type":  "main",
+                                                                          "index":  0
+                                                                      }
+                                                                  ],
+                                                                  [
+                                                                      {
+                                                                          "node":  "Fehler zurückgeben [Edit Fields]",
+                                                                          "type":  "main",
+                                                                          "index":  0
+                                                                      }
+                                                                  ]
+                                                              ]
+                                                 },
+                        "Recherche Sonar [HTTP Request]":  {
+                                                               "main":  [
+                                                                            [
+                                                                                {
+                                                                                    "node":  "Antwort bauen [Code]",
+                                                                                    "type":  "main",
+                                                                                    "index":  0
+                                                                                }
+                                                                            ]
+                                                                        ]
+                                                           }
+                    },
+    "settings":  {
+                     "executionOrder":  "v1",
+                     "availableInMCP":  true,
+                     "errorWorkflow":  "ERROR_WORKFLOW_ID",
+                     "callerPolicy":  "workflowsFromSameOwner",
+                     "binaryMode":  "separate"
+                 },
+    "meta":  {
+                 "aiBuilderAssisted":  true,
+                 "builderVariant":  "mcp"
+             },
+    "pinData":  {
+
+                },
+    "tags":  [
+                 {
+                     "updatedAt":  "2026-10-11T18:48:41.447Z",
+                     "createdAt":  "2026-10-11T18:48:41.447Z",
+                     "id":  "TAG_ID_SCHULUNG",
+                     "name":  "schulung"
+                 },
+                 {
+                     "updatedAt":  "2026-11-09T15:22:56.779Z",
+                     "createdAt":  "2026-11-09T15:22:56.779Z",
+                     "id":  "TAG_ID_PROJEKT_2",
+                     "name":  "projekt-2"
+                 },
+                 {
+                     "updatedAt":  "2026-09-29T22:49:28.793Z",
+                     "createdAt":  "2026-09-29T22:49:28.793Z",
+                     "id":  "TAG_ID_SUB_WORKFLOW",
+                     "name":  "sub-workflow"
+                 },
+                 {
+                     "updatedAt":  "2026-11-09T15:22:56.776Z",
+                     "createdAt":  "2026-11-09T15:22:56.776Z",
+                     "id":  "TAG_ID_WOCHE_8",
+                     "name":  "woche-8"
+                 },
+                 {
+                     "updatedAt":  "2026-09-29T22:51:24.974Z",
+                     "createdAt":  "2026-09-29T22:51:24.974Z",
+                     "id":  "TAG_ID_KURS",
+                     "name":  "KI-AGT-2606"
+                 }
+             ],
+    "id":  "WORKFLOW_ID_SUB_RECHERCHE",
+    "versionId":  "92f18b46-599b-47a0-986e-787d34222bb7",
+    "active":  true
+}

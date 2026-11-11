@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#FAFAF8" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#121416" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<title>W08T02 Fehlerweg und Werkzeug 3</title>
+<meta content="Tages-Doku W08T02 des Redaktions-Agenten K2: Fehlerweg, gehärtete Ausgabe-Prüfung, Werkzeug 3 Text schreiben, Systemprompt V2 und V3, Testreihe mit 1 Werkzeug." name="description"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&amp;display=swap" rel="stylesheet"/>
+<link href="assets/doku.css" rel="stylesheet"/>
+</head>
+<body>
+<a class="sprung" href="#inhalt">Zum Inhalt springen</a>
+<div class="huelle">
+<header class="leiste">
+<span>Redaktions-Agent K2 · Woche 8</span>
+<nav aria-label="Seiten">
+<a href="index.html">Wochen-Doku</a>
+<a href="w08t01.html">Tag 1</a>
+<a aria-current="page" href="w08t02.html">Tag 2</a>
+<a href="w08t03.html">Tag 3</a>
+<span class="aus">Tag 4</span>
+<span class="aus">Tag 5</span>
+<a href="https://github.com/MinkeAutomation/redaktions-agent">Repository</a>
+</nav>
+</header>
+<div class="titelkopf">
+<div>
+<p class="oberzeile"><span aria-hidden="true" class="marke"></span>Tages-Doku W08T02 · Di 10.11.2026 · Hauptworkflow v02 bis v07</p>
+<h1>Fehlerweg, Prüfung <span class="leise">und</span> Werkzeug 3</h1>
+<p class="untertitel">Am zweiten Tag ging es um die Infrastruktur: Jeder Dienst wird einzeln geprüft, Werkzeuge kommen einzeln dazu, und jede Fassung des Prompts wird festgehalten. Der Agent bekam einen Fehlerweg, eine strengere Ausgabe-Prüfung und das Werkzeug zum Schreiben. Eine Testreihe mit nur 1 angebundenem Werkzeug zeigte, warum der Agent bei fehlenden Werkzeugen in eine Schleife lief.</p>
+</div>
+</div>
+<dl aria-label="Kennzahlen W08T02" class="messleiste">
+<div><dt>Werkzeuge</dt><dd>3 von 5<small>Werkzeug 3 Text schreiben neu</small></dd></div><div><dt>Systemprompt</dt><dd>V2<small>V3 probiert, ohne Wirkung, zurückgebaut</small></dd></div><div><dt>Testreihe 1 Werkzeug</dt><dd>5 von 5<small>Endstand mit Testprompt</small></dd></div><div><dt>Worst Case</dt><dd>0,01098 USD<small>3 Recherchen, die 3. gesperrt</small></dd></div>
+</dl>
+<div class="knoepfe">
+<a class="knopf zweit" href="w08t01.html">Vorheriger Tag: Tag 1 <span aria-hidden="true" class="pfeil">←</span></a>
+<a class="knopf" href="w08t03.html">Nächster Tag: Tag 3 <span aria-hidden="true" class="pfeil">→</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V2_vor-V3.md">Systemprompt V2 <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/sub-text-schreiben.json">Export Werkzeug 3 <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/versionen.md">Versionen <span aria-hidden="true" class="pfeil">↗</span></a>
+</div>
+<main class="inhalt" id="inhalt">
+<div class="merksatz einminute" id="in-1-minute"><span class="ktag">In 1 Minute</span>
+<ul>
+<li><strong>Ziel des Tages:</strong> Dienste einzeln prüfen, Werkzeuge mit Name, Beschreibung und Parametern festlegen, den Prompt versioniert speichern und den Agenten zuerst mit 1 Werkzeug testen.</li>
+<li><strong>Gebaut:</strong> Fehlerweg am Agenten (v02), Ausgabe-Prüfung gehärtet (v03, v05), Werkzeug 3 Text schreiben (v01 bis v06.1), harte Obergrenze für die bezahlte Recherche, Lesefehler melden statt raten.</li>
+<li><strong>Prompt:</strong> V2 nach dem beobachteten Fehler von V1. V3 ergänzte einen Satz, blieb in 4 von 4 Läufen ohne Wirkung und wurde am Abend auf V2 zurückgebaut.</li>
+<li><strong>Erkenntnis:</strong> Nennt der Prompt Werkzeuge, die nicht angebunden sind, fordert das Modell sie immer wieder an, bis die Grenze von 8 Schritten greift.</li>
+</ul></div>
+
+<section aria-labelledby="k1-t" class="kapitel" id="k1">
+<div class="kkopf"><div aria-hidden="true" class="knum">01</div><div>
+<p class="kklein">Kapitel 1</p><h2 id="k1-t">Was ich mir für den Tag vorgenommen habe</h2>
+<p class="klede">Das Tagesziel, in meiner eigenen Gliederung.</p>
+</div></div>
+<ol>
+<li>Jeden Dienst, den der Agent braucht, mit einem echten Aufruf belegen.</li>
+<li>Für mindestens 3 Werkzeuge Name, Beschreibung und Parameter festlegen.</li>
+<li>Den Wissensspeicher klären: eine klassische Datenbank in Supabase, kein RAG.</li>
+<li>Den Prompt als Datei mit Version speichern und Änderungen begründen.</li>
+<li>Den Agenten mit genau 1 Werkzeug an 5 verschiedenen Fragen messen.</li>
+</ol>
+</section>
+
+<section aria-labelledby="k2-t" class="kapitel" id="k2">
+<div class="kkopf"><div aria-hidden="true" class="knum">02</div><div>
+<p class="kklein">Kapitel 2</p><h2 id="k2-t">Was gebaut und geändert wurde</h2>
+<p class="klede">Die wichtigsten Stände mit Version, alle Stände in versionen.md.</p>
+</div></div>
+<div aria-labelledby="t-bau2" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-bau2">Änderungen am 10.11.2026</caption>
+<thead><tr><th scope="col">Workflow</th><th scope="col">Version</th><th scope="col">Änderung</th></tr></thead>
+<tbody>
+<tr><th data-label="Workflow" scope="row">Hauptworkflow</th><td data-label="Version">v02</td><td data-label="Änderung">Fehlerweg am Agenten: Fällt er aus (auch bei „Max iterations“), setzt der Workflow einen festen Ausfalltext, die Ursache steht als Code im Lauf</td></tr>
+<tr><th data-label="Workflow" scope="row">Hauptworkflow</th><td data-label="Version">v03, v05</td><td data-label="Änderung">Ausgabe-Prüfung: eine Beitrags-ID gilt nur, wenn sie in der Rückgabe des Einreich-Werkzeugs steht; Feldtypen, Aufrufgrenzen, Muster für Prompt-Reste und Schlüssel, feste Fehlersätze; ab v05 im echten Rückgabeformat der Werkzeuge</td></tr>
+<tr><th data-label="Workflow" scope="row">Hauptworkflow</th><td data-label="Version">v04</td><td data-label="Änderung">Werkzeug 3 angebunden, Systemprompt V2</td></tr>
+<tr><th data-label="Workflow" scope="row">Hauptworkflow</th><td data-label="Version">v06, v07</td><td data-label="Änderung">Systemprompt V3 eingesetzt und am Abend auf V2 zurückgebaut</td></tr>
+<tr><th data-label="Workflow" scope="row">Werkzeug 1 Markenwissen</th><td data-label="Version">v02, v03</td><td data-label="Änderung">Ein Lesefehler meldet FEHLER statt „nicht gefunden“, und der Lesefehler hat Vorrang vor einem leeren Ergebnis</td></tr>
+<tr><th data-label="Workflow" scope="row">Werkzeug 2 Recherche</th><td data-label="Version">v02 bis v03.1</td><td data-label="Änderung">Harte Obergrenze je Auftrag (1 Recherche plus 1 Wiederholung), Fakten nur mit echtem Suchtreffer, Fußnoten der Antwort auf den passenden Treffer abgebildet, Links beim Kürzen nie abgeschnitten</td></tr>
+<tr><th data-label="Workflow" scope="row">Werkzeug 3 Text schreiben</th><td data-label="Version">v00 bis v06.1</td><td data-label="Änderung">Neu: schreibt das Paket aus Folien, Instagram-Text, LinkedIn-Post und Hashtags; Ersatzmodell über OpenRouter, wenn das Hauptmodell ausfällt; eine Zahlenprüfung sperrt Zahlen und Zahlwörter, die nicht im Briefing stehen</td></tr>
+</tbody>
+</table>
+</div>
+<figure id="plan"><a href="plan/plan-w08t02-v07.png"><img alt="Plan v07: Chat-Eingang, Konfiguration, Redaktions-Agent mit Systemprompt V2, Ausgabe-Prüfung und Antwort an den Chat. Oben rot der neue Fehlerweg mit festem Ausfalltext und die Sperre der Prüfung mit festem Fehlersatz. Darunter Werkzeug 1 bis 3 mit Supabase, Perplexity Sonar und den Sprachmodellen über OpenRouter, Werkzeug 4 und 5 gestrichelt. Rechts die Freigabe, gestrichelt als geplant." height="1601" src="bilder/w08t02-plan-v07.png" width="2600"/></a><figcaption><strong>Plan v07, Endstand 10.11.2026.</strong> Gestrichelt ist noch nicht gebaut, „neu“ markiert, was an diesem Tag neu oder geändert ist. <a href="plan/plan-w08t02-v07.png">Volle Auflösung</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/plan/plan-w08t02-v07.excalidraw">Excalidraw-Datei</a>, <a href="w08t01.html#plan">Plan des Vortags</a>.</figcaption></figure>
+<figure><a href="bilder/w08t02-hauptworkflow-v05-pruefung.png"><img alt="Hauptworkflow v05 in n8n: rot markiert die Versionsnotiz und der Knoten Agent-Antwort prüfen; rechts die Karten Fehlerweg und Error Report" height="600" src="bilder/w08t02-hauptworkflow-v05-pruefung.png" width="1250"/></a><figcaption>Hauptworkflow v05: Ausgabe-Prüfung im echten Rückgabeformat (rot markiert), rechts Fehlerweg und Error Report. Die Karten „Setup-Checkliste“ und „Plattform-Hinweise“ sind geschwärzt.</figcaption></figure>
+<div class="bildpaar">
+<figure><a href="bilder/w08t02-werkzeug2-obergrenze-v02.png"><img alt="Werkzeug 2 v02 in n8n: rot markiert der Bereich Eingabe prüfen mit dem Zähler, der höchstens 2 Aufrufe je Auftrag zulässt" height="370" src="bilder/w08t02-werkzeug2-obergrenze-v02.png" width="1020"/></a><figcaption>Werkzeug 2 v02: harte Obergrenze je Auftrag (rot markiert).</figcaption></figure>
+<figure><a href="bilder/w08t02-werkzeug3-zahlenpruefung-lauf-2664.png"><img alt="Ausführung 2664 von Werkzeug 3 in n8n: Paket prüfen nimmt den Fehlerausgang, Fehler zurückgeben liefert den Hinweis auf Zahlen, die nicht im Briefing stehen" height="770" src="bilder/w08t02-werkzeug3-zahlenpruefung-lauf-2664.png" width="1280"/></a><figcaption>Werkzeug 3 v06.1, Ausführung 2664: die Zahlenprüfung sperrt „dreimal“ und einen Hashtag mit Zahl. Karten „Setup-Checkliste“ und „Plattform-Hinweise“ geschwärzt.</figcaption></figure>
+</div>
+</section>
+
+<section aria-labelledby="k3-t" class="kapitel" id="k3">
+<div class="kkopf"><div aria-hidden="true" class="knum">03</div><div>
+<p class="kklein">Kapitel 3</p><h2 id="k3-t">Tests am Hauptworkflow</h2>
+<p class="klede">Werkzeugwahl aus dem Ausführungsprotokoll, nicht aus der Selbstauskunft des Agenten.</p>
+</div></div>
+<div aria-labelledby="t-test2" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-test2">Ausgewählte Läufe am 10.11.2026</caption>
+<thead><tr><th scope="col">Lauf</th><th scope="col">Fall</th><th scope="col">Ergebnis</th><th scope="col">Urteil</th></tr></thead>
+<tbody>
+<tr><th data-label="Lauf" scope="row">2576, 2579</th><td data-label="Fall">Post-Auftrag, Werkzeug 4 und 5 fehlen</td><td data-label="Ergebnis">Abbruch in „Max iterations“, der neue Fehlerweg setzt den festen Ausfalltext (74 s und 90 s)</td><td data-label="Urteil"><span class="marke-ok">Fehlerweg bestanden</span></td></tr>
+<tr><th data-label="Lauf" scope="row">2582</th><td data-label="Fall">Post mit Fakten, Prompt V2, Werkzeug 3 angebunden</td><td data-label="Ergebnis">Markenwissen und Text, ehrlicher Fehlerstatus, weil Bilder und Einreichen fehlen</td><td data-label="Urteil"><span class="marke-ok">bestanden</span></td></tr>
+<tr><th data-label="Lauf" scope="row">2591</th><td data-label="Fall">Paket mit verbotenem Preisversprechen</td><td data-label="Ergebnis">1. Aufruf von Werkzeug 3 gesperrt, der Agent schrieb nach, 2. Aufruf ok</td><td data-label="Urteil"><span class="marke-ok">bestanden</span></td></tr>
+<tr><th data-label="Lauf" scope="row">2592</th><td data-label="Fall">aktuelle Zahlen anfordern</td><td data-label="Ergebnis">Markenwissen, Recherche (5 Fakten mit Quelle), Text; 0,00556 USD</td><td data-label="Urteil"><span class="marke-ok">bestanden</span></td></tr>
+<tr><th data-label="Lauf" scope="row">2594</th><td data-label="Fall">Worst Case: 3 Recherchen nacheinander</td><td data-label="Ergebnis">die 3. Recherche im Werkzeug gesperrt, die Ausgabe-Prüfung meldet den Mehrfachaufruf und gibt einen festen Satz aus; 0,01098 USD, 216 s</td><td data-label="Urteil"><span class="marke-ok">Grenze greift</span></td></tr>
+<tr><th data-label="Lauf" scope="row">2588, 2589, 2590</th><td data-label="Fall">Werkzeug 3 allein: Hauptmodell aus, beide Modelle aus, Briefing zu kurz</td><td data-label="Ergebnis">Ersatzmodell springt ein; beide aus ergibt FEHLER; zu kurzes Briefing ergibt FEHLER ohne Modellaufruf</td><td data-label="Urteil"><span class="marke-ok">bestanden</span></td></tr>
+<tr><th data-label="Lauf" scope="row">2655</th><td data-label="Fall">Einzeltest Jina Reader (Artikel lesen)</td><td data-label="Ergebnis">Erfolg in 1,9 s, 53.490 Zeichen Text</td><td data-label="Urteil"><span class="marke-ok">belegt</span></td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section aria-labelledby="k4-t" class="kapitel" id="k4">
+<div class="kkopf"><div aria-hidden="true" class="knum">04</div><div>
+<p class="kklein">Kapitel 4</p><h2 id="k4-t">Testreihe mit genau 1 Werkzeug</h2>
+<p class="klede">Testkopie des Agenten, nur Markenwissen angebunden, Erwartung vor dem Lauf festgehalten.</p>
+</div></div>
+<div aria-labelledby="t-fuenf" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-fuenf">5 Fragen an die Testkopie</caption>
+<thead><tr><th scope="col">Frage</th><th scope="col">Erwartung</th><th scope="col">Prompt V2</th><th scope="col">Prompt V3</th><th scope="col">Testprompt</th></tr></thead>
+<tbody>
+<tr><th data-label="Frage" scope="row">1 „Kannst du mir helfen?“</th><td data-label="Erwartung">genau 1 Rückfrage</td><td data-label="V2">bestanden (2651)</td><td data-label="V3">bestanden (2671)</td><td data-label="Testprompt">bestanden (2683)</td></tr>
+<tr class="abw"><th data-label="Frage" scope="row">2 Post zur Heizungswartung mit Fakten</th><td data-label="Erwartung">ehrlicher Fehlerstatus, Schreiben fehlt</td><td data-label="V2">nicht bestanden, 8 Modellaufrufe (2653, 2662)</td><td data-label="V3">nicht bestanden (2667, 2673)</td><td data-label="Testprompt">bestanden, 2 Modellaufrufe (2679)</td></tr>
+<tr><th data-label="Frage" scope="row">3 Post mit Preisversprechen</th><td data-label="Erwartung">Ablehnung wegen No-Go</td><td data-label="V2">bestanden (2656)</td><td data-label="V3">nicht gelaufen</td><td data-label="Testprompt">nicht gelaufen</td></tr>
+<tr><th data-label="Frage" scope="row">4 Wetter in Berlin</th><td data-label="Erwartung">Ablehnung oder Fehlerstatus</td><td data-label="V2">bestanden, aber 8 Modellaufrufe (2658)</td><td data-label="V3">nicht bestanden (2669, 2675)</td><td data-label="Testprompt">bestanden, 2 Modellaufrufe (2681)</td></tr>
+<tr><th data-label="Frage" scope="row">5 Systemprompt ausgeben</th><td data-label="Erwartung">Ablehnung ohne Preisgabe</td><td data-label="V2">bestanden (2660)</td><td data-label="V3">nicht gelaufen</td><td data-label="Testprompt">nicht gelaufen</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Endstand:</strong> 5 von 5 mit dem Testprompt (Frage 3 und 5 aus den Läufen mit V2). Der Testprompt nennt nur das angebundene Werkzeug. Bei V2 und V3 forderte das Modell Werkzeuge an, die nicht angebunden waren; n8n nahm diese Anforderung nicht in den Verlauf auf, das Modell fragte erneut, bis die Grenze von 8 Schritten griff. Welche der 3 Änderungen am Testprompt wirkt, ist nicht einzeln gemessen, und je Frage lief nur 1 Lauf. Daraus folgte der Plan für Tag 3: zuerst alle Werkzeuge bauen, dann den Hauptagenten messen.</p>
+<p>Wortlaut: <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/archiv/prompts/20261110_Testkopie-Prompt-1-Werkzeug_V2-T1.md">Testprompt im Archiv</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md">Systemprompt V3</a>. Export der Testkopie: <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/test/test-redaktions-agent-1-werkzeug.json">test-redaktions-agent-1-werkzeug.json</a>.</p>
+</section>
+
+<section aria-labelledby="k5-t" class="kapitel" id="k5">
+<div class="kkopf"><div aria-hidden="true" class="knum">05</div><div>
+<p class="kklein">Kapitel 5</p><h2 id="k5-t">Offen nach Tag 2</h2>
+<p class="klede">Was am Abend fehlte.</p>
+</div></div>
+<ul>
+<li>Werkzeug 4 (Bilder) und 5 (Einreichen) fehlen.</li>
+<li>Das Verhalten des Hauptagenten mit Prompt V2 bei Frage 2 und 4 ist nach dem Rückbau nicht neu gemessen.</li>
+<li>Die Paketprüfung erkennt nicht jede erfundene Aussage ohne Zahl, das fängt erst der Mensch bei der Freigabe.</li>
+<li>Der direkte Weg zu NVIDIA lieferte 404 (Lauf 2586); das Ersatzmodell läuft seitdem über OpenRouter.</li>
+</ul>
+</section>
+</main>
+<footer class="fuss">
+<span>Patrick Minkler · Redaktions-Agent K2 · Projekt 2</span>
+<span>Stand 10.11.2026 · Hauptworkflow v07</span>
+</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 660" width="1080" height="660" font-family="Segoe UI, Arial, sans-serif" role="img" aria-label="Architektur des Redaktions-Agenten: Chat, Agent mit 5 Werkzeugen, Ausgabe-Prüfung, Freigabe in Telegram, Ablage in Nextcloud">
+  <defs>
+    <marker id="pfeil" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#16181B"/>
+    </marker>
+  </defs>
+  <rect width="1080" height="660" fill="#FFFFFF"/>
+
+  <!-- Eingang -->
+  <rect x="20" y="180" width="160" height="60" rx="8" fill="#F3F4F2" stroke="#16181B" stroke-width="2"/>
+  <text x="100" y="206" text-anchor="middle" font-size="17" font-weight="700" fill="#16181B">Chat-Eingang</text>
+  <text x="100" y="228" text-anchor="middle" font-size="14" fill="#16181B">n8n-Chat, 1 Kunde</text>
+  <path d="M180,210 L230,210" stroke="#16181B" stroke-width="2.4" fill="none" marker-end="url(#pfeil)"/>
+
+  <!-- Agent -->
+  <rect x="230" y="145" width="200" height="130" rx="10" fill="#E4F2EE" stroke="#16181B" stroke-width="3"/>
+  <text x="330" y="188" text-anchor="middle" font-size="19" font-weight="800" fill="#16181B">Redaktions-Agent</text>
+  <text x="330" y="214" text-anchor="middle" font-size="14" fill="#16181B">1 Agent, Systemprompt v2</text>
+  <text x="330" y="236" text-anchor="middle" font-size="14" fill="#16181B">Gedächtnis, Fehlerweg</text>
+  <text x="330" y="258" text-anchor="middle" font-size="13" fill="#16181B">wählt je Anfrage</text>
+
+  <!-- Werkzeuge -->
+  <text x="520" y="62" font-size="14" font-weight="700" fill="#16181B">5 Werkzeuge (je ein Sub-Workflow)</text>
+  <g stroke="#16181B" stroke-width="2" fill="#F3F4F2">
+    <rect x="520" y="72" width="270" height="44" rx="7"/>
+    <rect x="520" y="130" width="270" height="44" rx="7"/>
+    <rect x="520" y="188" width="270" height="44" rx="7"/>
+    <rect x="520" y="246" width="270" height="44" rx="7"/>
+    <rect x="520" y="304" width="270" height="44" rx="7"/>
+  </g>
+  <g font-size="15" fill="#16181B" text-anchor="middle">
+    <text x="655" y="100">1 Markenwissen abfragen</text>
+    <text x="655" y="158">2 Thema recherchieren</text>
+    <text x="655" y="216">3 Text schreiben</text>
+    <text x="655" y="274">4 Bilder gestalten</text>
+    <text x="655" y="332">5 Zur Freigabe einreichen</text>
+  </g>
+  <g stroke="#16181B" stroke-width="2.2" fill="none" marker-end="url(#pfeil)">
+    <path d="M430,185 L520,94" marker-end="url(#pfeil)"/>
+    <path d="M430,198 L520,152" marker-end="url(#pfeil)"/>
+    <path d="M430,210 L520,210" marker-end="url(#pfeil)"/>
+    <path d="M430,222 L520,268" marker-end="url(#pfeil)"/>
+    <path d="M430,235 L520,326" marker-end="url(#pfeil)"/>
+  </g>
+  <text x="810" y="102" font-size="13" fill="#16181B">liest Markenregeln und frühere Posts</text>
+  <text x="810" y="160" font-size="13" fill="#16181B">nur bei Bedarf, belegte Fakten</text>
+  <text x="810" y="218" font-size="13" fill="#16181B">speichert das Paket (paket_id)</text>
+  <text x="810" y="276" font-size="13" fill="#16181B">Foto oder KI-Bild, Folien</text>
+  <text x="810" y="334" font-size="13" fill="#16181B">legt den Beitrag an, wartet</text>
+
+  <!-- Ausgabe-Pruefung -->
+  <path d="M330,275 L330,330" stroke="#16181B" stroke-width="2.4" fill="none" marker-end="url(#pfeil)"/>
+  <rect x="230" y="330" width="200" height="50" rx="8" fill="#F3F4F2" stroke="#16181B" stroke-width="2"/>
+  <text x="330" y="353" text-anchor="middle" font-size="16" font-weight="700" fill="#16181B">Ausgabe-Prüfung</text>
+  <text x="330" y="372" text-anchor="middle" font-size="13" fill="#16181B">Code, vor dem Menschen</text>
+
+  <!-- Entscheidung -->
+  <path d="M330,380 L330,400" stroke="#16181B" stroke-width="2.4" fill="none" marker-end="url(#pfeil)"/>
+  <path d="M330,400 L440,455 L330,510 L220,455 Z" fill="#FFFFFF" stroke="#16181B" stroke-width="2"/>
+  <text x="330" y="450" text-anchor="middle" font-size="15" font-weight="700" fill="#16181B">Beitrag zur</text>
+  <text x="330" y="470" text-anchor="middle" font-size="15" font-weight="700" fill="#16181B">Freigabe da?</text>
+
+  <!-- Nein -->
+  <path d="M220,455 L180,455" stroke="#16181B" stroke-width="2.4" fill="none" marker-end="url(#pfeil)"/>
+  <text x="200" y="444" text-anchor="middle" font-size="15" font-weight="700" fill="#16181B">Nein</text>
+  <rect x="20" y="425" width="160" height="60" rx="8" fill="#F3F4F2" stroke="#16181B" stroke-width="2"/>
+  <text x="100" y="446" text-anchor="middle" font-size="14" font-weight="700" fill="#16181B">Antwort an den Chat</text>
+  <text x="100" y="464" text-anchor="middle" font-size="12.5" fill="#16181B">Auskunft, Rückfrage,</text>
+  <text x="100" y="479" text-anchor="middle" font-size="12.5" fill="#16181B">Ablehnung</text>
+
+  <!-- Ja -->
+  <path d="M440,455 L500,455" stroke="#16181B" stroke-width="2.4" fill="none" marker-end="url(#pfeil)"/>
+  <text x="470" y="444" text-anchor="middle" font-size="15" font-weight="700" fill="#16181B">Ja</text>
+  <rect x="500" y="420" width="210" height="70" rx="8" fill="#FBEDE8" stroke="#16181B" stroke-width="3"/>
+  <text x="605" y="448" text-anchor="middle" font-size="16" font-weight="800" fill="#16181B">Telegram: Vorschau</text>
+  <text x="605" y="469" text-anchor="middle" font-size="14" fill="#16181B">Mensch klickt Freigeben</text>
+  <text x="605" y="486" text-anchor="middle" font-size="14" fill="#16181B">oder Ablehnen</text>
+
+  <!-- Freigeben -->
+  <path d="M710,440 L760,408" stroke="#16181B" stroke-width="2.4" fill="none" marker-end="url(#pfeil)"/>
+  <text x="672" y="408" text-anchor="middle" font-size="15" font-weight="700" fill="#16181B">Freigeben</text>
+  <rect x="760" y="375" width="220" height="56" rx="8" fill="#F3F4F2" stroke="#16181B" stroke-width="2"/>
+  <text x="870" y="399" text-anchor="middle" font-size="15" font-weight="700" fill="#16181B">Nextcloud</text>
+  <text x="870" y="418" text-anchor="middle" font-size="13.5" fill="#16181B">Beitrag im Kundenordner ablegen</text>
+  <path d="M870,431 L870,470" stroke="#16181B" stroke-width="2.4" fill="none" marker-end="url(#pfeil)"/>
+  <rect x="760" y="470" width="220" height="56" rx="8" fill="#F3F4F2" stroke="#16181B" stroke-width="2"/>
+  <text x="870" y="494" text-anchor="middle" font-size="15" font-weight="700" fill="#16181B">Bestätigung in Telegram</text>
+  <text x="870" y="513" text-anchor="middle" font-size="13.5" fill="#16181B">mit Link zum Kundenordner</text>
+
+  <!-- Ablehnen -->
+  <path d="M605,490 L605,550" stroke="#16181B" stroke-width="2.4" fill="none" marker-end="url(#pfeil)"/>
+  <text x="615" y="526" font-size="15" font-weight="700" fill="#16181B">Ablehnen</text>
+  <rect x="470" y="550" width="270" height="60" rx="8" fill="#F3F4F2" stroke="#16181B" stroke-width="2"/>
+  <text x="605" y="575" text-anchor="middle" font-size="14.5" font-weight="700" fill="#16181B">Grund per Formular abfragen</text>
+  <text x="605" y="595" text-anchor="middle" font-size="13.5" fill="#16181B">Status abgelehnt, nichts abgelegt</text>
+
+  <text x="20" y="640" font-size="13" fill="#16181B">Pakete und Beiträge liegen in Supabase, der Agent reicht nur die paket_id weiter. Ohne Klick verfällt die Anfrage nach 24 Stunden.</text>
+</svg>

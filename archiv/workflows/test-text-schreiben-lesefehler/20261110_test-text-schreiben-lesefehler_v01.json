@@ -1,0 +1,373 @@
+{
+    "name":  "TEST P2 Text schreiben Lesefehler",
+    "nodes":  [
+                  {
+                      "id":  "8c2d631c-2f02-426e-97f6-e0ed33ee424b",
+                      "name":  "Start [Manual Trigger]",
+                      "type":  "n8n-nodes-base.manualTrigger",
+                      "typeVersion":  1,
+                      "position":  [
+                                       0,
+                                       0
+                                   ],
+                      "parameters":  {
+
+                                     }
+                  },
+                  {
+                      "id":  "71eb6145-a846-4849-9ca4-f83e2a185c66",
+                      "name":  "Eingabe simulieren [Edit Fields]",
+                      "type":  "n8n-nodes-base.set",
+                      "typeVersion":  3.4,
+                      "position":  [
+                                       300,
+                                       0
+                                   ],
+                      "parameters":  {
+                                         "assignments":  {
+                                                             "assignments":  [
+                                                                                 {
+                                                                                     "id":  "a",
+                                                                                     "name":  "kuerzel",
+                                                                                     "value":  "test-p2",
+                                                                                     "type":  "string"
+                                                                                 },
+                                                                                 {
+                                                                                     "id":  "b",
+                                                                                     "name":  "briefing",
+                                                                                     "value":  "Testbriefing für den Lesefehler-Pfad: Thema ist die Wartung einer Wärmepumpe, Kernaussage und belegte Fakten stehen hier nur als Platzhalter.",
+                                                                                     "type":  "string"
+                                                                                 },
+                                                                                 {
+                                                                                     "id":  "c",
+                                                                                     "name":  "nachbesserung",
+                                                                                     "value":  "",
+                                                                                     "type":  "string"
+                                                                                 },
+                                                                                 {
+                                                                                     "id":  "d",
+                                                                                     "name":  "trace_id",
+                                                                                     "value":  "test-m5",
+                                                                                     "type":  "string"
+                                                                                 },
+                                                                                 {
+                                                                                     "id":  "e",
+                                                                                     "name":  "test_fehler",
+                                                                                     "value":  "",
+                                                                                     "type":  "string"
+                                                                                 }
+                                                                             ]
+                                                         },
+                                         "options":  {
+
+                                                     }
+                                     }
+                  },
+                  {
+                      "id":  "98cdd4bf-64a5-4596-8d2e-fff563743923",
+                      "name":  "Eingabe prüfen [Code]",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       600,
+                                       0
+                                   ],
+                      "parameters":  {
+                                         "jsCode":  "// Testkopie von Werkzeug 3: Eingabe prüfen (Kopf wie im Original)\nconst j = $input.first().json;\nconst kuerzel = String(j.kuerzel ?? \u0027\u0027).trim().toLowerCase();\nconst briefing = String(j.briefing ?? \u0027\u0027).trim().slice(0, 4000);\nconst nachbesserung = String(j.nachbesserung ?? \u0027\u0027).trim().slice(0, 1000);\nconst trace = String(j.trace_id ?? \u0027\u0027).trim().slice(0, 60) || \u0027ohne_trace_id\u0027;\nconst t = String(j.test_fehler ?? \u0027\u0027).trim();\nconst test = (t === \u0027haupt\u0027 || t === \u0027beide\u0027) ? t : \u0027\u0027;\nlet fehler = \u0027\u0027;\nif (!/^[a-z0-9-]{2,40}$/.test(kuerzel)) fehler = \u0027FEHLER: ungültige Kundenkennung, Paket nicht erstellt.\u0027;\nelse if (briefing.length \u003c 40) fehler = \u0027FEHLER: Briefing fehlt oder ist zu kurz (mindestens 40 Zeichen mit Thema, Kernaussage und belegten Fakten), Paket nicht erstellt.\u0027;\nreturn [{ json: { kuerzel: kuerzel, briefing: briefing, nachbesserung: nachbesserung, trace_id: trace, test_fehler: test, eingabe_ok: fehler === \u0027\u0027, fehler_text: fehler } }];\n"
+                                     }
+                  },
+                  {
+                      "id":  "ea1b632d-a903-4035-b34c-497df15a0218",
+                      "name":  "Eingabe gültig? [If]",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2.2,
+                      "position":  [
+                                       900,
+                                       0
+                                   ],
+                      "parameters":  {
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "caseSensitive":  true,
+                                                                            "leftValue":  "",
+                                                                            "typeValidation":  "strict",
+                                                                            "version":  1
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "leftValue":  "={{ $json.eingabe_ok }}",
+                                                                                   "operator":  {
+                                                                                                    "type":  "boolean",
+                                                                                                    "operation":  "true",
+                                                                                                    "singleValue":  true
+                                                                                                }
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        },
+                                         "options":  {
+
+                                                     }
+                                     }
+                  },
+                  {
+                      "id":  "64009e27-bcd6-4f43-b05b-9352ab39118f",
+                      "name":  "Markenprofil lesen [Supabase]",
+                      "type":  "n8n-nodes-base.supabase",
+                      "typeVersion":  1,
+                      "position":  [
+                                       1200,
+                                       0
+                                   ],
+                      "parameters":  {
+                                         "operation":  "getAll",
+                                         "tableId":  "k2_v_markenwissen_FALSCH",
+                                         "limit":  1,
+                                         "matchType":  "allFilters",
+                                         "filters":  {
+                                                         "conditions":  [
+                                                                            {
+                                                                                "keyName":  "kuerzel",
+                                                                                "condition":  "eq",
+                                                                                "keyValue":  "={{ $json.kuerzel }}"
+                                                                            }
+                                                                        ]
+                                                     }
+                                     },
+                      "credentials":  {
+                                          "supabaseApi":  {
+                                                              "id":  "CREDENTIAL_ID",
+                                                              "name":  "Supabase API | KI-AGT-2606"
+                                                          }
+                                      },
+                      "onError":  "continueErrorOutput",
+                      "alwaysOutputData":  true
+                  },
+                  {
+                      "id":  "6863142f-a916-4355-9751-0a0926db8d3a",
+                      "name":  "Prompt bauen [Code]",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1500,
+                                       0
+                                   ],
+                      "parameters":  {
+                                         "jsCode":  "// Testkopie von Prompt bauen (Werkzeug 3): Kopf wie im Original, Rumpf gekürzt (nur der Prompt-Text fehlt)\nconst e = $(\u0027Eingabe prüfen [Code]\u0027).first().json;\nconst m = $input.all().map(i =\u003e i.json).find(r =\u003e r \u0026\u0026 r.kuerzel);\nif (!m) {\n  return [{ json: { marke_ok: false, fehler_text: \u0027NICHT_GEFUNDEN: Für diese Kundenkennung gibt es keine aktive Marke, Paket nicht erstellt.\u0027 } }];\n}\nreturn [{ json: { marke_ok: true, system: \u0027S\u0027, user: e.briefing, marke_name: m.name || \u0027\u0027 } }];\n"
+                                     }
+                  },
+                  {
+                      "id":  "27c5805b-e0d3-4fac-929e-2a4aa2b25876",
+                      "name":  "Marke gefunden? [If]",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2.2,
+                      "position":  [
+                                       1800,
+                                       0
+                                   ],
+                      "parameters":  {
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "caseSensitive":  true,
+                                                                            "leftValue":  "",
+                                                                            "typeValidation":  "strict",
+                                                                            "version":  1
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "leftValue":  "={{ $json.marke_ok }}",
+                                                                                   "operator":  {
+                                                                                                    "type":  "boolean",
+                                                                                                    "operation":  "true",
+                                                                                                    "singleValue":  true
+                                                                                                }
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        },
+                                         "options":  {
+
+                                                     }
+                                     }
+                  },
+                  {
+                      "id":  "7f855134-1c1c-4471-abe1-c6820645db3a",
+                      "name":  "Text schreiben (Mock) [Edit Fields]",
+                      "type":  "n8n-nodes-base.set",
+                      "typeVersion":  3.4,
+                      "position":  [
+                                       2100,
+                                       -150
+                                   ],
+                      "parameters":  {
+                                         "assignments":  {
+                                                             "assignments":  [
+                                                                                 {
+                                                                                     "id":  "antwort",
+                                                                                     "name":  "antwort",
+                                                                                     "value":  "MOCK: Hier würde das Modell aufgerufen, Paket wäre erstellt.",
+                                                                                     "type":  "string"
+                                                                                 }
+                                                                             ]
+                                                         },
+                                         "options":  {
+
+                                                     }
+                                     }
+                  },
+                  {
+                      "id":  "cb3d9f92-168b-499f-98f5-dc7c6fc6a873",
+                      "name":  "Fehler zurückgeben [Edit Fields]",
+                      "type":  "n8n-nodes-base.set",
+                      "typeVersion":  3.4,
+                      "position":  [
+                                       2100,
+                                       300
+                                   ],
+                      "parameters":  {
+                                         "assignments":  {
+                                                             "assignments":  [
+                                                                                 {
+                                                                                     "id":  "antwort",
+                                                                                     "name":  "antwort",
+                                                                                     "value":  "={{ $json.fehler_text || (String(($json.error \u0026\u0026 ($json.error.message || $json.error)) || \u0027\u0027).startsWith(\u0027PAKET: \u0027) ? \u0027FEHLER: \u0027 + String($json.error.message || $json.error).slice(7).replace(/\\s*\\[line \\d+\\]\\s*$/, \u0027\u0027) : \u0027FEHLER: Paket nicht erstellt.\u0027) }}",
+                                                                                     "type":  "string"
+                                                                                 }
+                                                                             ]
+                                                         },
+                                         "options":  {
+
+                                                     }
+                                     }
+                  }
+              ],
+    "connections":  {
+                        "Start [Manual Trigger]":  {
+                                                       "main":  [
+                                                                    [
+                                                                        {
+                                                                            "node":  "Eingabe simulieren [Edit Fields]",
+                                                                            "type":  "main",
+                                                                            "index":  0
+                                                                        }
+                                                                    ]
+                                                                ]
+                                                   },
+                        "Eingabe simulieren [Edit Fields]":  {
+                                                                 "main":  [
+                                                                              [
+                                                                                  {
+                                                                                      "node":  "Eingabe prüfen [Code]",
+                                                                                      "type":  "main",
+                                                                                      "index":  0
+                                                                                  }
+                                                                              ]
+                                                                          ]
+                                                             },
+                        "Eingabe prüfen [Code]":  {
+                                                      "main":  [
+                                                                   [
+                                                                       {
+                                                                           "node":  "Eingabe gültig? [If]",
+                                                                           "type":  "main",
+                                                                           "index":  0
+                                                                       }
+                                                                   ]
+                                                               ]
+                                                  },
+                        "Eingabe gültig? [If]":  {
+                                                     "main":  [
+                                                                  [
+                                                                      {
+                                                                          "node":  "Markenprofil lesen [Supabase]",
+                                                                          "type":  "main",
+                                                                          "index":  0
+                                                                      }
+                                                                  ],
+                                                                  [
+                                                                      {
+                                                                          "node":  "Fehler zurückgeben [Edit Fields]",
+                                                                          "type":  "main",
+                                                                          "index":  0
+                                                                      }
+                                                                  ]
+                                                              ]
+                                                 },
+                        "Markenprofil lesen [Supabase]":  {
+                                                              "main":  [
+                                                                           [
+                                                                               {
+                                                                                   "node":  "Prompt bauen [Code]",
+                                                                                   "type":  "main",
+                                                                                   "index":  0
+                                                                               }
+                                                                           ],
+                                                                           [
+                                                                               {
+                                                                                   "node":  "Fehler zurückgeben [Edit Fields]",
+                                                                                   "type":  "main",
+                                                                                   "index":  0
+                                                                               }
+                                                                           ]
+                                                                       ]
+                                                          },
+                        "Prompt bauen [Code]":  {
+                                                    "main":  [
+                                                                 [
+                                                                     {
+                                                                         "node":  "Marke gefunden? [If]",
+                                                                         "type":  "main",
+                                                                         "index":  0
+                                                                     }
+                                                                 ]
+                                                             ]
+                                                },
+                        "Marke gefunden? [If]":  {
+                                                     "main":  [
+                                                                  [
+                                                                      {
+                                                                          "node":  "Text schreiben (Mock) [Edit Fields]",
+                                                                          "type":  "main",
+                                                                          "index":  0
+                                                                      }
+                                                                  ],
+                                                                  [
+                                                                      {
+                                                                          "node":  "Fehler zurückgeben [Edit Fields]",
+                                                                          "type":  "main",
+                                                                          "index":  0
+                                                                      }
+                                                                  ]
+                                                              ]
+                                                 }
+                    },
+    "settings":  {
+                     "executionOrder":  "v1",
+                     "availableInMCP":  true
+                 },
+    "meta":  {
+                 "aiBuilderAssisted":  true,
+                 "builderVariant":  "mcp"
+             },
+    "pinData":  {
+
+                },
+    "tags":  [
+
+             ],
+    "id":  "WORKFLOW_ID_TEST_TEXT_LESEFEHLER",
+    "versionId":  "4864cb6f-744c-4673-8ae5-34cb6c6e04a8",
+    "active":  false,
+    "activeVersionId":  null,
+    "description":  "Testkopie von Werkzeug 3 (WORKFLOW_ID_SUB_TEXT) mit absichtlich falschem Tabellennamen, misst den Lesefehler-Pfad. Bleibt stehen, nicht veröffentlicht.",
+    "nodeGroups":  [
+
+                   ],
+    "staticData":  null,
+    "sourceWorkflowId":  null,
+    "isArchived":  false,
+    "parentFolder":  {
+                         "id":  "FOLDER_ID_PROJEKTORDNER",
+                         "name":  "Projektordner"
+                     }
+}

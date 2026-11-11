@@ -1,3 +1,5 @@
+> Status: Verworfen, am 10.11.2026 getestet und nicht übernommen, live bleibt V2 (prompts/20261110_System-Prompt-Redaktions-Agent_V2.md).
+
 # Systemprompt Redaktions-Agent, Version v3 (10.11.2026)
 
 Agenten-Knoten `Redaktions-Agent [AI Agent]`, Parameter `options.systemMessage`, in `WORKFLOW_ID_REDAKTIONS_AGENT` (Hauptagent) und `WORKFLOW_ID_TEST_1_WERKZEUG` (Testkopie). Der Text beginnt mit `=` (n8n-Ausdruck), die Platzhalter `{{ ... }}` werden von n8n gefüllt. Das Versionsfeld im Text und in der Konfiguration heißt weiter `redaktions-agent v2` (Prüf-Code vergleicht beide, siehe versionen.md).

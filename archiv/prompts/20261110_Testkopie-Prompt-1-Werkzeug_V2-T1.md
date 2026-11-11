@@ -1,3 +1,5 @@
+> Status: In Test, gehört zur Testkopie workflows/test/test-redaktions-agent-1-werkzeug.json und wird nicht Live.
+
 # Testkopie-Prompt 1 Werkzeug (Redaktions-Agent), Fassung v2-T1 (10.11.2026)
 
 Agenten-Knoten `Redaktions-Agent [AI Agent]`, Parameter `options.systemMessage`, nur in der Testkopie `WORKFLOW_ID_TEST_1_WERKZEUG` (TEST P2 Redaktions-Agent mit 1 Werkzeug, Testreihe). Basis ist Prompt v2 (`20261110_System-Prompt-Redaktions-Agent_V2_vor-V3.md`). Der Text beginnt mit `=` (n8n-Ausdruck), die Platzhalter `{{ ... }}` werden von n8n gefüllt. Das Versionsfeld heißt in dieser Fassung weiter `redaktions-agent v2` (seit Version v04 der Testkopie trägt sie die Kennung `redaktions-agent v2-T1`) (der Prüf-Code vergleicht es mit der Konfiguration). Der Hauptagent `WORKFLOW_ID_REDAKTIONS_AGENT` trägt diesen Prompt nicht, dort gilt Prompt v2.

@@ -1,0 +1,50 @@
+{
+    "name":  "TEST P2 Text schreiben Lesefehler",
+    "nodes":  [
+                  {
+                      "id":  "8c2d631c-2f02-426e-97f6-e0ed33ee424b",
+                      "name":  "Start [Manual Trigger]",
+                      "type":  "n8n-nodes-base.manualTrigger",
+                      "typeVersion":  1,
+                      "position":  [
+                                       0,
+                                       0
+                                   ],
+                      "parameters":  {
+
+                                     }
+                  }
+              ],
+    "connections":  {
+
+                    },
+    "settings":  {
+                     "executionOrder":  "v1",
+                     "availableInMCP":  true
+                 },
+    "meta":  {
+                 "aiBuilderAssisted":  true,
+                 "builderVariant":  "mcp"
+             },
+    "pinData":  {
+
+                },
+    "tags":  [
+
+             ],
+    "id":  "WORKFLOW_ID_TEST_TEXT_LESEFEHLER",
+    "versionId":  "3e423bb9-cf89-4f0f-a6b2-dc18fc088000",
+    "active":  false,
+    "activeVersionId":  null,
+    "description":  "Testkopie von Werkzeug 3 (WORKFLOW_ID_SUB_TEXT) mit absichtlich falschem Tabellennamen, misst den Lesefehler-Pfad. Bleibt stehen, nicht veröffentlicht.",
+    "nodeGroups":  [
+
+                   ],
+    "staticData":  null,
+    "sourceWorkflowId":  null,
+    "isArchived":  false,
+    "parentFolder":  {
+                         "id":  "FOLDER_ID_PROJEKTORDNER",
+                         "name":  "Projektordner"
+                     }
+}

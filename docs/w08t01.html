@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#FAFAF8" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#121416" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<title>W08T01 Redaktions-Agent Start</title>
+<meta content="Tages-Doku W08T01 des Redaktions-Agenten K2: Use Case, Datenmodell, Systemprompt V1, Hauptworkflow v01 mit Werkzeug 1 und 2 und die ersten Läufe." name="description"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&amp;display=swap" rel="stylesheet"/>
+<link href="assets/doku.css" rel="stylesheet"/>
+</head>
+<body>
+<a class="sprung" href="#inhalt">Zum Inhalt springen</a>
+<div class="huelle">
+<header class="leiste">
+<span>Redaktions-Agent K2 · Woche 8</span>
+<nav aria-label="Seiten">
+<a href="index.html">Wochen-Doku</a>
+<a aria-current="page" href="w08t01.html">Tag 1</a>
+<a href="w08t02.html">Tag 2</a>
+<a href="w08t03.html">Tag 3</a>
+<span class="aus">Tag 4</span>
+<span class="aus">Tag 5</span>
+<a href="https://github.com/MinkeAutomation/redaktions-agent">Repository</a>
+</nav>
+</header>
+<div class="titelkopf">
+<div>
+<p class="oberzeile"><span aria-hidden="true" class="marke"></span>Tages-Doku W08T01 · Mo 09.11.2026 · Hauptworkflow v01</p>
+<h1>Use Case, Datenmodell <span class="leise">und</span> die ersten 2 Werkzeuge</h1>
+<p class="untertitel">Start von Projekt 2. Ich baue den Content-Generator aus Projekt 1 zu einem Agenten aus, der selbst entscheidet, welche Schritte ein Post braucht. Am ersten Tag standen der Use Case, die Datenbank-Views, der Systemprompt V1 und ein Hauptworkflow mit 2 von 5 Werkzeugen.</p>
+</div>
+</div>
+<dl aria-label="Kennzahlen W08T01" class="messleiste">
+<div><dt>Werkzeuge</dt><dd>2 von 5<small>Markenwissen, Recherche</small></dd></div><div><dt>Systemprompt</dt><dd>V1<small>6 Bausteine, eigene Datei</small></dd></div><div><dt>Recherche-Lauf</dt><dd>5 Fakten<small>mit Quelle, 4,7 s, 0,00558 USD</small></dd></div><div><dt>Grenze</dt><dd>Max iterations<small>ohne Werkzeug 3 bis 5</small></dd></div>
+</dl>
+<div class="knoepfe">
+<a class="knopf zweit" href="index.html">Wochen-Doku <span aria-hidden="true" class="pfeil">←</span></a>
+<a class="knopf" href="w08t02.html">Nächster Tag: Tag 2 <span aria-hidden="true" class="pfeil">→</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/archiv/prompts/20261109_System-Prompt-Redaktions-Agent_V1.md">Systemprompt V1 <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/sql/p2_k2_views_v01.sql">SQL Views <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/versionen.md">Versionen <span aria-hidden="true" class="pfeil">↗</span></a>
+</div>
+<main class="inhalt" id="inhalt">
+<div class="merksatz einminute" id="in-1-minute"><span class="ktag">In 1 Minute</span>
+<ul>
+<li><strong>Ziel des Tages:</strong> Klären, welches Problem der Agent löst, welche Architektur passt, welche Dienste er braucht, und einen ersten lauffähigen Kern bauen.</li>
+<li><strong>Use Case:</strong> Markengerechte Posts für Instagram und LinkedIn, bei denen ein Agent selbst prüft, ob ein Thema zur Marke passt, schon gepostet wurde oder neue Fakten braucht. Ein Mensch gibt vor jeder Ablage frei.</li>
+<li><strong>Gebaut:</strong> Hauptworkflow v01 mit Chat, Konfiguration, Agent, Gedächtnis, Werkzeug 1 (Markenwissen) und Werkzeug 2 (Recherche) sowie eine Ausgabe-Prüfung.</li>
+<li><strong>Grenze:</strong> Ohne die Werkzeuge 3 bis 5 lief der Agent bei einem echten Post-Auftrag in „Max iterations (8)“.</li>
+</ul></div>
+
+<section aria-labelledby="k1-t" class="kapitel" id="k1">
+<div class="kkopf"><div aria-hidden="true" class="knum">01</div><div>
+<p class="kklein">Kapitel 1</p><h2 id="k1-t">Was ich mir für den Tag vorgenommen habe</h2>
+<p class="klede">Das Tagesziel, in meiner eigenen Gliederung.</p>
+</div></div>
+<ol>
+<li>Das Problem in einem Satz fassen und den Use Case festlegen.</li>
+<li>Single-Agent oder mehrere Agenten entscheiden und die Entscheidung begründen.</li>
+<li>Datenquellen und Dienste benennen und jeden Zugang einmal echt aufrufen.</li>
+<li>Den Systemprompt als erste Fassung in eine eigene Datei schreiben.</li>
+<li>Einen ersten Teil in n8n bauen, damit der Agent schon etwas Echtes tut.</li>
+</ol>
+<p>Die Architekturentscheidung (1 Agent mit 5 Werkzeugen) und ihre Begründung stehen ausführlich in der <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/projekt-charter.md">Projekt-Charter</a> und in der <a href="index.html#architektur">Wochen-Doku</a>.</p>
+</section>
+
+<section aria-labelledby="k2-t" class="kapitel" id="k2">
+<div class="kkopf"><div aria-hidden="true" class="knum">02</div><div>
+<p class="kklein">Kapitel 2</p><h2 id="k2-t">Was gebaut wurde</h2>
+<p class="klede">Datenmodell, Prompt und die ersten Workflows mit Version.</p>
+</div></div>
+<div aria-labelledby="t-bau1" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-bau1">Bausteine am 09.11.2026</caption>
+<thead><tr><th scope="col">Baustein</th><th scope="col">Version</th><th scope="col">Inhalt</th></tr></thead>
+<tbody>
+<tr><th data-label="Baustein" scope="row">Datenbank</th><td data-label="Version">v01</td><td data-label="Inhalt">2 Views <code>k2_v_markenwissen</code> und <code>k2_v_fruehere_posts</code> (nur Lesen, nur die nötigen Spalten), Spalte <code>erzeugt_von</code> an den Beiträgen aus Projekt 1, Testkunde <code>test-p2</code> mit erfundenen Daten (<a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/sql/p2_k2_views_v01.sql">p2_k2_views_v01.sql</a>)</td></tr>
+<tr><th data-label="Baustein" scope="row">Systemprompt</th><td data-label="Version">V1</td><td data-label="Inhalt">6 Bausteine: Rolle, Kontext, Vorgehen, Werkzeuge, Regeln, Fallback (<a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/archiv/prompts/20261109_System-Prompt-Redaktions-Agent_V1.md">Datei V1</a>, heute archiviert)</td></tr>
+<tr><th data-label="Baustein" scope="row">Werkzeug 1 Markenwissen abfragen</th><td data-label="Version">v01</td><td data-label="Inhalt">liest über die 2 Views Markenregeln und die letzten 20 Posts genau eines Kunden; die Kundenkennung setzt der Workflow fest, nicht der Agent</td></tr>
+<tr><th data-label="Baustein" scope="row">Werkzeug 2 Thema recherchieren</th><td data-label="Version">v01</td><td data-label="Inhalt">holt 3 bis 5 belegte Fakten über Perplexity Sonar (OpenRouter), behält nur Zeilen mit Link, Kosten aus der Antwort</td></tr>
+<tr><th data-label="Baustein" scope="row">Hauptworkflow Redaktions-Agent</th><td data-label="Version">v01, v01.1, v01.2</td><td data-label="Inhalt">Chat-Eingang, Konfiguration, Agent (Nemotron 3 Ultra free), Gedächtnis, Werkzeug 1 und 2, Ausgabe-Prüfung; danach nur Anordnung und Notiztexte</td></tr>
+</tbody>
+</table>
+</div>
+<p>Alle Stände mit Uhrzeit stehen in <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/versionen.md">versionen.md</a>. Die Exporte im Repo zeigen den Stand vom 11.11.2026; die Fassungen dieses Tages sind dort beschrieben, nicht als eigene Datei abgelegt.</p>
+<figure id="plan"><a href="plan/plan-w08t01-v01.png"><img alt="Plan v01: Chat-Eingang, Konfiguration, Redaktions-Agent mit Nemotron 3 Ultra free, Systemprompt V1 und Gedächtnis, Ausgabe-Prüfung und Antwort an den Chat. Darunter Werkzeug 1 Markenwissen mit 2 Views in Supabase und Werkzeug 2 Recherche mit Perplexity Sonar, Werkzeug 3 bis 5 gestrichelt als noch nicht gebaut. Rechts die Freigabe durch einen Menschen, gestrichelt als geplant. Oben rot: noch kein Fehlerweg am Agenten." height="1575" src="bilder/w08t01-plan-v01.png" width="2600"/></a><figcaption><strong>Plan v01, Endstand 09.11.2026.</strong> Gestrichelt ist noch nicht gebaut, „neu“ markiert, was an diesem Tag entstand. <a href="plan/plan-w08t01-v01.png">Volle Auflösung</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/plan/plan-w08t01-v01.excalidraw">Excalidraw-Datei</a>.</figcaption></figure>
+<figure><a href="bilder/w08t01-hauptworkflow-v01.png"><img alt="Hauptworkflow Redaktions-Agent v01 in n8n, dunkel: Kopfnotizen, Bereiche Eingang, KI und Verarbeitung, am Agenten das Modell, das Gedächtnis und die Werkzeuge Markenwissen und Recherche" height="665" src="bilder/w08t01-hauptworkflow-v01.png" width="1410"/></a><figcaption>Hauptworkflow v01 mit Werkzeug 1 und 2. Die Karten „Setup-Checkliste“ und „Plattform-Hinweise“ sind ausgeschnitten. Klick vergrößert.</figcaption></figure>
+<div class="bildpaar">
+<figure><a href="bilder/w08t01-werkzeug1-markenwissen-v01.png"><img alt="Sub-Workflow Markenwissen abfragen in n8n: Auftrag empfangen, Eingabe prüfen, 2 Supabase-Lesungen, Antwort bauen und Fehlerweg bei ungültiger Eingabe" height="675" src="bilder/w08t01-werkzeug1-markenwissen-v01.png" width="1410"/></a><figcaption>Werkzeug 1 v01. Rechte Hilfe-Spalte ausgeschnitten.</figcaption></figure>
+<figure><a href="bilder/w08t01-werkzeug2-recherche-v01.png"><img alt="Sub-Workflow Thema recherchieren in n8n: Auftrag, Eingabe prüfen, Sonar-Abfrage per HTTP, Antwort bauen und Fehlerweg bei ungültiger Eingabe" height="820" src="bilder/w08t01-werkzeug2-recherche-v01.png" width="1410"/></a><figcaption>Werkzeug 2 v01. Rechte Hilfe-Spalte ausgeschnitten.</figcaption></figure>
+</div>
+</section>
+
+<section aria-labelledby="k3-t" class="kapitel" id="k3">
+<div class="kkopf"><div aria-hidden="true" class="knum">03</div><div>
+<p class="kklein">Kapitel 3</p><h2 id="k3-t">Tests und Ergebnis</h2>
+<p class="klede">Die Läufe des ersten Tages, Ausführungsnummern aus n8n.</p>
+</div></div>
+<div aria-labelledby="t-test1" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-test1">Läufe am 09.11.2026</caption>
+<thead><tr><th scope="col">Lauf</th><th scope="col">Test</th><th scope="col">Ergebnis</th><th scope="col">Urteil</th></tr></thead>
+<tbody>
+<tr class="abw"><th data-label="Lauf" scope="row">2564</th><td data-label="Test">Post-Auftrag mit Werkzeug 1</td><td data-label="Ergebnis">Werkzeug meldete „Workflow is not active“, weil der Sub noch nicht veröffentlicht war; der Agent rief es 4 Mal statt 1 Mal auf und meldete ehrlich einen Fehler</td><td data-label="Urteil"><span class="marke-abw">nicht bestanden</span></td></tr>
+<tr><th data-label="Lauf" scope="row">2565</th><td data-label="Test">derselbe Auftrag nach der Veröffentlichung</td><td data-label="Ergebnis">Werkzeug 1 lieferte in 1,3 s, der Agent stellte genau 1 Rückfrage, die Ausgabe-Prüfung ließ die Antwort durch</td><td data-label="Urteil"><span class="marke-ok">bestanden</span></td></tr>
+<tr class="abw"><th data-label="Lauf" scope="row">2567</th><td data-label="Test">Post-Auftrag, für den Schreiben, Bilder und Einreichen nötig sind</td><td data-label="Ergebnis">Agent brach mit „Max iterations (8)“ ab, weil die Werkzeuge 3 bis 5 noch fehlten</td><td data-label="Urteil"><span class="marke-abw">nicht bestanden</span></td></tr>
+<tr><th data-label="Lauf" scope="row">2569 (Sub 2571)</th><td data-label="Test">Recherche über Werkzeug 2</td><td data-label="Ergebnis">Werkzeug 2 lieferte 5 Fakten mit Quelle in 4,7 s für 0,00558 USD; der Hauptlauf endete wieder im Fehler, weil Werkzeug 3 bis 5 fehlten</td><td data-label="Urteil"><span class="marke-ok">Werkzeug bestanden</span></td></tr>
+</tbody>
+</table>
+</div>
+<p>Vor dem Bau lief Projekt 1 nach der Datenbank-Änderung 2 Mal fehlerfrei (Läufe 2559 und 2562). Dieselben Läufe sind der erste echte Aufruf der Dienste. Nicht getestet waren an diesem Tag Jina Reader und der direkte Weg zu NVIDIA.</p>
+</section>
+
+<section aria-labelledby="k4-t" class="kapitel" id="k4">
+<div class="kkopf"><div aria-hidden="true" class="knum">04</div><div>
+<p class="kklein">Kapitel 4</p><h2 id="k4-t">Offen nach Tag 1</h2>
+<p class="klede">Was am Abend fehlte und am nächsten Tag drankam.</p>
+</div></div>
+<ul>
+<li>Werkzeuge 3 bis 5 (Text, Bilder, Einreichen) fehlen; der Agent kann deshalb keinen Post fertigstellen.</li>
+<li>Ein Fehlerweg am Agenten fehlt: Ein Abbruch in „Max iterations“ endet als roter Lauf statt mit einem festen Satz.</li>
+<li>Die Ausgabe-Prüfung kann noch nicht unterscheiden, ob eine gemeldete Beitrags-ID wirklich aus einem Werkzeug stammt.</li>
+<li>Das bezahlte Werkzeug 2 hat nur eine Grenze im Prompt, keine harte Grenze im Workflow.</li>
+</ul>
+</section>
+</main>
+<footer class="fuss">
+<span>Patrick Minkler · Redaktions-Agent K2 · Projekt 2</span>
+<span>Stand 09.11.2026 · Hauptworkflow v01</span>
+</footer>
+</div>
+</body>
+</html>

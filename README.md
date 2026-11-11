@@ -1,15 +1,76 @@
-# Redaktions-Agent K2
+# Redaktions-Agent
 
 Projekt 2 im Kurs KI-Automatisierung (AGT-2606): Ein Agent in n8n plant Social-Media-Posts (Instagram und LinkedIn) für einen Kunden, prüft das Thema gegen Markenrichtlinien und frühere Posts, holt bei Bedarf belegte Fakten, schreibt das Text-Paket, baut die Bilder im Branding des Kunden und reicht alles zur Freigabe durch einen Menschen ein. Nach der Freigabe in Telegram wird der Beitrag in Nextcloud abgelegt.
+
+## Stand (11.11.2026)
+
+Status heißt hier Live (geltender Stand), In Test (Testkopie, wird nicht Live), Archiviert (abgelöst, Datei unter `archiv/`) oder Verworfen (getestet, nicht übernommen). Der Status je Version steht in [versionen.md](versionen.md), die Datei zu jeder Version in der Spalte Archivdatei.
+
+| Bestandteil | Version | Status | Datei |
+|---|---|---|---|
+| Hauptworkflow Redaktions-Agent | v16 | Live (in n8n nicht veröffentlicht) | [workflows/redaktions-agent.json](workflows/redaktions-agent.json) |
+| Werkzeug 1 Markenwissen abfragen | v03.1 | Live | [workflows/sub-markenwissen-abfragen.json](workflows/sub-markenwissen-abfragen.json) |
+| Werkzeug 2 Thema recherchieren | v03.1 | Live | [workflows/sub-thema-recherchieren.json](workflows/sub-thema-recherchieren.json) |
+| Werkzeug 3 Text schreiben | v07 | Live | [workflows/sub-text-schreiben.json](workflows/sub-text-schreiben.json) |
+| Werkzeug 4 Bilder gestalten | v01 | Live | [workflows/sub-bilder-gestalten.json](workflows/sub-bilder-gestalten.json) |
+| Werkzeug 5 Zur Freigabe einreichen | v01 | Live | [workflows/sub-zur-freigabe-einreichen.json](workflows/sub-zur-freigabe-einreichen.json) |
+| Systemprompt | V2 | Live | [prompts/20261110_System-Prompt-Redaktions-Agent_V2.md](prompts/20261110_System-Prompt-Redaktions-Agent_V2.md) |
+| Systemprompt | V1 | Archiviert | [archiv/prompts/20261109_System-Prompt-Redaktions-Agent_V1.md](archiv/prompts/20261109_System-Prompt-Redaktions-Agent_V1.md) |
+| Systemprompt | V3 | Verworfen (live bleibt V2) | [archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md](archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md) |
+| Agent-Konfiguration | V2 | Live | [konfiguration/20261111_Redaktions-Agent_V2_Agent-Konfiguration.json](konfiguration/20261111_Redaktions-Agent_V2_Agent-Konfiguration.json) |
+| Agent-Konfiguration | V1 | Archiviert (bleibt in `konfiguration/`, die Abgabe verweist dorthin) | [konfiguration/20261109_Redaktions-Agent_V1_Agent-Konfiguration.json](konfiguration/20261109_Redaktions-Agent_V1_Agent-Konfiguration.json) |
+| Agent-Konfiguration | V3 | Verworfen (live bleibt V2) | [archiv/konfiguration/20261110_Redaktions-Agent_V3_Agent-Konfiguration.json](archiv/konfiguration/20261110_Redaktions-Agent_V3_Agent-Konfiguration.json) |
+| Testkopie Redaktions-Agent mit 1 Werkzeug | v04 | In Test (Testkopie, wird nicht Live) | [workflows/test/test-redaktions-agent-1-werkzeug.json](workflows/test/test-redaktions-agent-1-werkzeug.json) |
+| Testkopie Text schreiben, Lesefehler | v03 | In Test (Testkopie, wird nicht Live) | [workflows/test/test-text-schreiben-lesefehler.json](workflows/test/test-text-schreiben-lesefehler.json) |
+| Testkopie Markenwissen, Lesefehler | 1 Stand | In Test (Testkopie, wird nicht Live) | [workflows/test/test-markenwissen-lesefehler.json](workflows/test/test-markenwissen-lesefehler.json) |
+| Testkopie Jina Reader | v01 | In Test (Testkopie, wird nicht Live) | [workflows/test/test-jina-reader.json](workflows/test/test-jina-reader.json) |
+| Tabelle Paket-Speicher `k2_pakete` | v01 | Live | [sql/p2_k2_pakete_v01.sql](sql/p2_k2_pakete_v01.sql) |
+| Lese-Views und Spalte `erzeugt_von` | v01 | Live | [sql/p2_k2_views_v01.sql](sql/p2_k2_views_v01.sql) |
+
+- Alle 5 Werkzeuge gebaut, veröffentlicht und angebunden. Getestet mit dem Testkunden `test-p2` im n8n-Chat, der Hauptworkflow bleibt unveröffentlicht.
+- Agent-Modell: Nemotron 3.5 Super free (Gratis). Der Endpunkt von Nemotron 3 Ultra free war am 11.11.2026 zeitweise ausgefallen.
+- Systemprompt: V2 live; V1 archiviert, V3 verworfen. Vergleich V1 gegen V2 mit 10 Anfragen in der [Test-Tabelle](docs/test-tabelle.md).
+- Grenzen: Zahlenprüfung im Text-Werkzeug erkennt nicht alle Zahlwörter (ein Viertel, halb, null, Ordnungszahlen); Bildwahl nur über Schlagwörter; Wortmarke statt Logo-Datei; die Freigabe braucht einen Klick in Telegram.
+- Die Exporte in [workflows/](workflows/) und die älteren Stände in [archiv/workflows/](archiv/workflows/) sind für die Veröffentlichung bereinigt: Credential-IDs, Workflow-IDs (auch die Verweise der Werkzeug-Knoten), Tag- und Ordner-Kennungen, Adresse der Datenbank, Adresse der n8n-Instanz, Fehler-Workflow, Webhook-IDs und Hosts des Bild-Dienstes sind durch Platzhalter ersetzt, interne Verweise in Code-Kommentaren entfernt. Die Funktion ist gleich, der Export weicht deshalb im Text von der laufenden Instanz ab.
 
 ## In 5 Minuten
 
 1. Den Ablauf und die Stände liest du in [CHANGELOG.md](CHANGELOG.md): je Version des Systemprompts was geändert wurde, Ergebnis, nächste Idee, Status und die zugehörige Agent-Konfiguration.
-2. Die 5 Werkzeuge und der Hauptworkflow liegen als Export in [workflows/](workflows/). Die Liste aller Versionen mit n8n-Versions-ID steht in [versionen.md](versionen.md). Dieses Repo beginnt mit dem Stand vom 11.11.2026 (Hauptworkflow v16) als erstem Commit; die Commit-Spalte in `versionen.md` verweist auf den Verlauf eines privaten Archiv-Repos, nicht auf dieses Repo.
-3. Der geltende Systemprompt liegt als Markdown-Datei in [prompts/](prompts/) (Muster `YYYYMMDD_System-Prompt-Redaktions-Agent_V<Nummer>.md`), die älteren Fassungen V1 und V3, die zeichengleiche Live-Fassung von V2 (`..._V2_vor-V3.md`) und die Testkopie-Prompts in [archiv/prompts/](archiv/prompts/).
+2. Die 5 Werkzeuge und der Hauptworkflow liegen als Export in [workflows/](workflows/), die Testkopien in [workflows/test/](workflows/test/), jede ältere Version in [archiv/](archiv/README.md). Die Liste aller Versionen mit Status, Archivdatei und n8n-Versions-ID steht in [versionen.md](versionen.md), was es je Version an Plan, Test und Doku gibt in [docs/versionsmatrix.md](docs/versionsmatrix.md). Dieses Repo beginnt mit dem Stand vom 11.11.2026 (Hauptworkflow v16) als erstem Commit; die Commit-Spalte in `versionen.md` verweist auf den Verlauf eines privaten Archiv-Repos, nicht auf dieses Repo.
+3. Der geltende Systemprompt liegt als Markdown-Datei in [prompts/](prompts/) (Muster `YYYYMMDD_System-Prompt-Redaktions-Agent_V<Nummer>.md`), die älteren Fassungen V1 und V3 (verworfen), die zeichengleiche Live-Fassung von V2 (`..._V2_vor-V3.md`) und die Testkopie-Prompts in [archiv/prompts/](archiv/prompts/).
 4. Die Tests, auch der Vergleich von Prompt v1 gegen v2, stehen in [docs/test-tabelle.md](docs/test-tabelle.md).
 5. Die Tabelle für den Paket-Speicher und die Lese-Views stehen in [sql/](sql/).
 6. Ziel, Scope und die Architekturentscheidung (Single-Agent) stehen in [docs/projekt-charter.md](docs/projekt-charter.md).
+7. Welche Zugänge und Adressen du zum Nachbauen brauchst, listet [.env.example](.env.example) (nur Namen, keine Werte).
+
+## Dokumentation
+
+Die Projektdokumentation liegt als Webseite im Ordner [docs/](docs/):
+
+- [Wochen-Doku und Projektdokumentation](docs/index.html): Use Case, Architektur, Stand je Werkzeug, Prompt-Versionen, Ergebnis V1 gegen V2, Freigabe, Compliance, offene Punkte
+- [Tag 1 (09.11.2026)](docs/w08t01.html): Use Case, Datenmodell, Systemprompt V1, Werkzeug 1 und 2
+- [Tag 2 (10.11.2026)](docs/w08t02.html): Fehlerweg, Ausgabe-Prüfung, Werkzeug 3, Testreihe mit 1 Werkzeug
+- [Tag 3 (11.11.2026)](docs/w08t03.html): Werkzeug 4 und 5, Freigabe und Ablage, Vergleich V1 gegen V2
+
+Dazu gehören:
+
+- [Projekt-Charter mit Architekturentscheidung](docs/projekt-charter.md) (Ziel, Scope, Single-Agent gegen Multi-Agent) und das [Architekturbild](docs/bilder/architektur-redaktions-agent.svg)
+- [Versionsmatrix](docs/versionsmatrix.md): je Version Plan, Testtabelle, Tages-Doku und Export, Lücken mit Grund
+- [Test-Tabelle](docs/test-tabelle.md): Werkzeug-Tests, Vergleich V1 gegen V2, Freigabe und Ablage
+- [Pläne](docs/plan/): je Tag ein Excalidraw-Plan auf dem Endstand des Tages
+
+## Grundlage aus Projekt 1
+
+Projekt 2 baut auf der Content-Maschine K1 aus Projekt 1 auf: Der Agent nutzt deren Tabellen `k1_kunden`, `k1_posts` und `k1_einstellungen` (Erweiterungen aus Projekt 2 stehen in [sql/](sql/)) und deren Ablage-Workflow. Die Grundlagen (Bedarf, Use Case, Grenzen) stehen dort und werden hier nicht wiederholt:
+
+- Repository: [content-maschine-k1](https://github.com/MinkeAutomation/content-maschine-k1)
+- [Anforderungen und Planung (PDF)](https://github.com/MinkeAutomation/content-maschine-k1/blob/main/abgaben/2026-10-05_W04T01/AGT-2606_W04T01_Projekt1-Planung.pdf)
+- [Architektur](https://github.com/MinkeAutomation/content-maschine-k1/blob/main/docs/architektur.md)
+- [Bekannte Einschränkungen](https://github.com/MinkeAutomation/content-maschine-k1/blob/main/docs/bekannte-einschraenkungen.md)
+- [Lessons Learned](https://github.com/MinkeAutomation/content-maschine-k1/blob/main/docs/lessons-learned.md)
+- [Ablage-Workflow `sub-nextcloud-ablage.json`](https://github.com/MinkeAutomation/content-maschine-k1/blob/main/workflows/sub-nextcloud-ablage.json) (von Projekt 2 aufgerufen, nicht in diesem Repo)
+
+Verwandtes Projekt: [k1-support-agent](https://github.com/MinkeAutomation/k1-support-agent) beantwortet Fragen zur Content-Maschine. Er ist nicht Grundlage von Projekt 2.
 
 ## Was der Agent tut
 
@@ -23,21 +84,31 @@ Projekt 2 im Kurs KI-Automatisierung (AGT-2606): Ein Agent in n8n plant Social-M
 
 Der Agent reicht nur die `paket_id` weiter, das Paket selbst liegt in der Tabelle `k2_pakete`. Freigabe (Telegram, 2 Knöpfe), Ablage (Nextcloud) und die Bestätigung mit Link zum Kundenordner (Telegram) laufen im Hauptworkflow `redaktions-agent.json`, weil Warten auf einen Menschen nicht in einen Sub gehört. Eine Prüfung der Antwort des Agenten (Guardrail Ebene 3) steht vor der Freigabe.
 
-## Stand (11.11.2026)
-
-- Alle 5 Werkzeuge gebaut, veröffentlicht und angebunden. Getestet mit dem Testkunden `test-p2` im n8n-Chat, der Hauptworkflow bleibt unveröffentlicht.
-- Agent-Modell: Nemotron 3.5 Super free (Gratis). Der Endpunkt von Nemotron 3 Ultra free war am 11.11.2026 zeitweise ausgefallen.
-- Systemprompt: v2 live; v1 und v3 archiviert. Vergleich v1 gegen v2 mit 10 Anfragen in der [Test-Tabelle](docs/test-tabelle.md).
-- Grenzen: Zahlenprüfung im Text-Werkzeug erkennt nicht alle Zahlwörter (ein Viertel, halb, null, Ordnungszahlen); Bildwahl nur über Schlagwörter; Wortmarke statt Logo-Datei; die Freigabe braucht einen Klick in Telegram.
-- Die Exporte in [workflows/](workflows/) sind für die Veröffentlichung bereinigt: Credential-IDs, Workflow-IDs (auch die Verweise der Werkzeug-Knoten), Tag- und Ordner-Kennungen, Adresse der Datenbank, Adresse der n8n-Instanz, Fehler-Workflow, Webhook-IDs und Hosts des Bild-Dienstes sind durch Platzhalter ersetzt, interne Verweise in Code-Kommentaren entfernt. Die Funktion ist gleich, der Export weicht deshalb im Text von der laufenden Instanz ab.
-
 ## Umgebung
 
-n8n (eigene Instanz), Supabase (Postgres und Storage), OpenRouter, Pixabay, Cloudflare Workers AI, Gotenberg, Telegram, Nextcloud. Zugangsdaten stehen nur in den n8n-Credentials.
+n8n (eigene Instanz), Supabase (Postgres und Storage), OpenRouter, Pixabay, Cloudflare Workers AI, Gotenberg, Telegram, Nextcloud. Zugangsdaten stehen nur in den n8n-Credentials, die Namen der nötigen Werte listet [.env.example](.env.example) (ohne Werte).
 
 ## Importhinweise
 
-Die Exporte lassen sich nicht ohne Anpassung einspielen. Vorgehen:
+Die Exporte lassen sich nicht ohne Anpassung einspielen. Welche Datei welche Rolle hat, in welcher Reihenfolge sie importiert wird und welche Zugänge sie braucht:
+
+| Datei | Rolle | Importreihenfolge | braucht Credential |
+|---|---|---|---|
+| `workflows/sub-markenwissen-abfragen.json` | Werkzeug 1 | 1 | Supabase API |
+| `workflows/sub-thema-recherchieren.json` | Werkzeug 2 | 2 | OpenRouter API |
+| `workflows/sub-text-schreiben.json` | Werkzeug 3 | 3 | Supabase API, OpenRouter API |
+| `workflows/sub-bilder-gestalten.json` | Werkzeug 4 | 4 | Supabase API, Pixabay API, Cloudflare Workers AI (dazu der Gotenberg-Host als Platzhalter, kein Credential) |
+| `workflows/sub-zur-freigabe-einreichen.json` | Werkzeug 5 | 5 | Supabase API |
+| `sub-nextcloud-ablage.json` aus Projekt 1 (Repo [content-maschine-k1](https://github.com/MinkeAutomation/content-maschine-k1/blob/main/workflows/sub-nextcloud-ablage.json), nicht in diesem Repo) | Ablage in Nextcloud | 6 | Nextcloud API |
+| `workflows/redaktions-agent.json` | Hauptworkflow | 7, zuletzt, weil er die Werkzeuge per ID aufruft | OpenRouter API, Supabase API, Telegram API |
+| `workflows/test/test-redaktions-agent-1-werkzeug.json` | Testkopie mit 1 Werkzeug | nicht nötig | OpenRouter API |
+| `workflows/test/test-text-schreiben-lesefehler.json` | Testkopie, Lesefehler Werkzeug 3 | nicht nötig | Supabase API |
+| `workflows/test/test-markenwissen-lesefehler.json` | Testkopie, Lesefehler Werkzeug 1 | nicht nötig | Supabase API |
+| `workflows/test/test-jina-reader.json` | Testkopie, Einzeltest des Jina-Aufrufs | nicht nötig | keines |
+
+Die Dateien in `archiv/` sind nicht zum Import gedacht (siehe [archiv/README.md](archiv/README.md)).
+
+Vorgehen:
 
 1. Datenbank vorbereiten (Supabase):
    - Tabellen `k1_kunden`, `k1_posts` und `k1_einstellungen` aus Projekt 1 (Beiträge, Kunden, Einstellungen).
@@ -46,11 +117,11 @@ Die Exporte lassen sich nicht ohne Anpassung einspielen. Vorgehen:
    - Einstellungsschlüssel in `k1_einstellungen`: `telegram_chat_id`, `telegram_freigabe_nutzer_id`, `cloudflare_account_id`.
    - Storage-Bucket `k1-medien` für die Bilder.
    - Testkunde `test-p2` in `k1_kunden` mit erfundenen Daten (Ton, Zielgruppe, No-Gos, Call to Action).
-2. Platzhalter ersetzen. Die Platzhalter für Workflow-IDs ersetzt du erst in Schritt 3, weil die neuen IDs erst nach dem Import der Werkzeuge bekannt sind. Der Import in eine fremde Instanz ist bisher nicht nachgespielt, die Hinweise beschreiben den erwarteten Weg.
+2. Platzhalter ersetzen. Die Platzhalter für Workflow-IDs ersetzt du erst in Schritt 3, weil die neuen IDs erst nach dem Import der Werkzeuge bekannt sind. Der Import in eine fremde Instanz ist bisher nicht nachgespielt, die Hinweise beschreiben den erwarteten Weg. Die Namen aller nötigen Werte stehen in [.env.example](.env.example).
    - `CREDENTIAL_ID`: steht für 6 verschiedene Zugänge. Nach dem Import wählst du je Knoten den eigenen Zugang aus, der angezeigte Name sagt, welcher gemeint ist (OpenRouter, Supabase, Telegram, Pixabay, Cloudflare Workers AI).
    - `https://SUPABASE_URL` (13 Stellen): Adresse der eigenen Supabase-Datenbank.
    - `https://DEINE-N8N-INSTANZ`: kommt nur in den Notizen (Sticky Notes) vor. Dort die Adresse der eigenen n8n-Instanz eintragen oder die Notiz so lassen, sie hat keine Funktion.
-   - Sperrliste der Ausgabe-Prüfung, eigener Schritt: Im Code-Knoten „Agent-Antwort prüfen“ in `redaktions-agent.json` steht der Platzhalter `DEINE-N8N-INSTANZ` ohne `https://` in einem regulären Ausdruck (`/DEINE-N8N-INSTANZ/i`). Ihn durch den eigenen Hostnamen ersetzen, ohne `https://`, mit Punkten als `\.` geschrieben. Am einfachsten nach dem Import im n8n-Editor, dort mit einfachem Backslash, zum Beispiel `/n8n\.example\.org/i`. Wer schon vorher im Dateitext der JSON-Datei ersetzt, muss den Backslash doppelt schreiben (`/n8n\\.example\\.org/i`), sonst ist die Datei kein gültiges JSON mehr. Der Austausch von `https://DEINE-N8N-INSTANZ` aus dem Punkt davor erreicht diese Stelle nicht. Bleibt der Platzhalter stehen, sperrt die Prüfung die echte Adresse nicht, wenn der Agent sie in einer Antwort an den Menschen nennt. In `test-redaktions-agent-1-werkzeug.json` steht dieselbe Zeile.
+   - Sperrliste der Ausgabe-Prüfung, eigener Schritt: Im Code-Knoten „Agent-Antwort prüfen“ in `redaktions-agent.json` steht der Platzhalter `DEINE-N8N-INSTANZ` ohne `https://` in einem regulären Ausdruck (`/DEINE-N8N-INSTANZ/i`). Ihn durch den eigenen Hostnamen ersetzen, ohne `https://`, mit Punkten als `\.` geschrieben. Am einfachsten nach dem Import im n8n-Editor, dort mit einfachem Backslash, zum Beispiel `/n8n\.example\.org/i`. Wer schon vorher im Dateitext der JSON-Datei ersetzt, muss den Backslash doppelt schreiben (`/n8n\\.example\\.org/i`), sonst ist die Datei kein gültiges JSON mehr. Der Austausch von `https://DEINE-N8N-INSTANZ` aus dem Punkt davor erreicht diese Stelle nicht. Bleibt der Platzhalter stehen, sperrt die Prüfung die echte Adresse nicht, wenn der Agent sie in einer Antwort an den Menschen nennt. In `workflows/test/test-redaktions-agent-1-werkzeug.json` steht dieselbe Zeile.
    - `ERROR_WORKFLOW_ID`: eigener Fehler-Workflow oder die Zeile entfernen.
    - `WEBHOOK_ID`: steht in 6 Knoten (Chat-Eingang und 5 Telegram-Knoten) im Feld `webhookId`, gemeint ist je Knoten eine eigene Kennung des Webhooks in der eigenen Instanz. n8n vergibt sie beim Anlegen des Knotens selbst. Vor dem Import das Feld `webhookId` in diesen Knoten entfernen oder je Knoten eine eigene, neue Kennung (UUID) eintragen, nicht überall denselben Wert stehen lassen.
    - `GOTENBERG_HOST`: Adresse des eigenen Gotenberg-Dienstes, Port 3000. Port 3999 ist ein Testschalter für einen absichtlichen Ausfall.
@@ -58,7 +129,7 @@ Die Exporte lassen sich nicht ohne Anpassung einspielen. Vorgehen:
    1. Die 5 Werkzeuge (`sub-markenwissen-abfragen`, `sub-thema-recherchieren`, `sub-text-schreiben`, `sub-bilder-gestalten`, `sub-zur-freigabe-einreichen`) importieren (n8n: Workflow, Aus Datei importieren) und veröffentlichen. n8n vergibt dabei eine neue ID (bei einem anderen Importweg das Feld `id` am Ende der Datei vorher entfernen).
    2. Die neue ID jedes Werkzeugs notieren (Adressleiste, `/workflow/<ID>`).
    3. In `redaktions-agent.json` im Texteditor mit Suchen und Ersetzen (alle Treffer) jeden Platzhalter der Werkzeuge durch die neue ID ersetzen. Das erfasst die 5 Werkzeug-Knoten (Feld `workflowId`) und, soweit dort genannt (Werkzeug 1 und 2), die Sperrliste im Code-Knoten „Agent-Antwort prüfen“, die IDs als Muster führt.
-   4. `WORKFLOW_ID_NEXTCLOUD_ABLAGE` durch die ID deines eigenen Ablage-Workflows ersetzen (Knoten „In Nextcloud ablegen“; der Ablage-Workflow stammt aus Projekt 1 und liegt nicht im Repo).
+   4. `WORKFLOW_ID_NEXTCLOUD_ABLAGE` durch die ID deines eigenen Ablage-Workflows ersetzen (Knoten „In Nextcloud ablegen“). Der Ablage-Workflow stammt aus Projekt 1: [workflows/sub-nextcloud-ablage.json im Repo content-maschine-k1](https://github.com/MinkeAutomation/content-maschine-k1/blob/main/workflows/sub-nextcloud-ablage.json), er wird dort importiert und hier nur aufgerufen.
    5. Dann `redaktions-agent.json` importieren. Die Platzhalter `WORKFLOW_ID_REDAKTIONS_AGENT` und `WORKFLOW_ID_PROJEKT_1` stehen in `redaktions-agent.json` nur im Feld `id` und in der Sperrliste der Ausgabe-Prüfung; sie müssen nicht ersetzt werden. Wer die Sperrliste scharf halten will, trägt nach dem Import die neue ID des Hauptworkflows dort ein.
 
    | Platzhalter | Ziel |
@@ -68,13 +139,13 @@ Die Exporte lassen sich nicht ohne Anpassung einspielen. Vorgehen:
    | `WORKFLOW_ID_SUB_TEXT` | Werkzeug 3, `sub-text-schreiben.json` |
    | `WORKFLOW_ID_SUB_BILDER` | Werkzeug 4, `sub-bilder-gestalten.json` |
    | `WORKFLOW_ID_SUB_EINREICHEN` | Werkzeug 5, `sub-zur-freigabe-einreichen.json` |
-   | `WORKFLOW_ID_NEXTCLOUD_ABLAGE` | Ablage-Workflow aus Projekt 1 (nicht im Repo) |
+   | `WORKFLOW_ID_NEXTCLOUD_ABLAGE` | Ablage-Workflow aus Projekt 1 (nicht in diesem Repo, Link oben) |
    | `WORKFLOW_ID_REDAKTIONS_AGENT` | der Hauptworkflow selbst (`redaktions-agent.json`) |
    | `WORKFLOW_ID_PROJEKT_1` | Hauptworkflow von Projekt 1, kommt nur in der Sperrliste vor |
    | `TAG_ID_…` und `FOLDER_ID_PROJEKTORDNER` | Kennungen von Tags und Ordner der Ursprungsinstanz; nicht nötig, Tags legst du nach Bedarf selbst an |
-   | `WORKFLOW_ID_TEST_…` | die Testkopien `test-*.json`; nicht nötig |
+   | `WORKFLOW_ID_TEST_…` | die Testkopien in `workflows/test/`; nicht nötig |
 
-   Die Dateien in `konfiguration/` sind Auszüge der Agent-Konfiguration zur Dokumentation und werden nicht importiert.
-4. Die Dateien `test-*.json` sind Testkopien und nicht nötig.
+   Die Dateien in `konfiguration/` und `archiv/konfiguration/` sind Auszüge der Agent-Konfiguration zur Dokumentation und werden nicht importiert.
+4. Die Dateien in `workflows/test/` sind Testkopien und nicht nötig.
 
 Die LICENSE erlaubt das Lesen der Inhalte zur Bewertung im Kurs und zum Lernen. Die Importhinweise dienen dem Nachvollziehen dieser Arbeit; darüber hinaus gilt die LICENSE unverändert.
