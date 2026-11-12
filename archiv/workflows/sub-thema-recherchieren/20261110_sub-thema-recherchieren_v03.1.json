@@ -1,0 +1,497 @@
+{
+  "name": "SUB P2 Thema recherchieren",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "thema"
+            },
+            {
+              "name": "fragen"
+            },
+            {
+              "name": "trace_id"
+            }
+          ]
+        }
+      },
+      "id": "d69f91b3-a2b8-4d6a-b072-73ad82952450",
+      "name": "Auftrag empfangen [Execute Workflow Trigger]",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        64,
+        896
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Guardrail Ebene 2: Thema und Fragen kurz halten, leere Eingabe abweisen, harte Obergrenze je Auftrag (10.11.2026).\n// Warum Zaehler im Sub: das Werkzeug kostet Geld (Sonar ueber den Schluessel). Der Prompt erlaubt 1 Aufruf, ein Modell haelt sich nicht sicher daran (Lauf 2564: 4 statt 1).\n// Der Zaehler steht in den Workflow-Daten (Static Data), Schluessel ist die trace_id des Hauptlaufs. Er zaehlt jeden gueltigen Aufruf, auch einen fehlgeschlagenen.\nconst j = $input.first().json;\nconst MAX_AUFRUFE = 2; // 1 Recherche plus 1 Wiederholung nach FEHLER; jeder weitere Aufruf bekommt FEHLER ohne Sonar\nconst thema = String(j.thema ?? '').trim().slice(0, 300);\nconst fragen = String(j.fragen ?? '').trim().slice(0, 600);\nconst trace = String(j.trace_id ?? '').trim().slice(0, 60) || 'ohne_trace_id';\nconst sd = $getWorkflowStaticData('global');\nif (!sd.recherche_zaehler || typeof sd.recherche_zaehler !== 'object') sd.recherche_zaehler = {};\nconst jetzt = Date.now();\n// alte Eintraege nach 6 Stunden entfernen, damit die Tabelle nicht waechst\nfor (const k of Object.keys(sd.recherche_zaehler)) { if (jetzt - (sd.recherche_zaehler[k].zeit || 0) > 6 * 3600 * 1000) delete sd.recherche_zaehler[k]; }\nlet fehler = '';\nlet nr = 0;\nif (thema.length < 3) {\n  fehler = 'FEHLER: Thema fehlt oder ist zu kurz, Recherche nicht ausgeführt.';\n} else {\n  const z = sd.recherche_zaehler[trace] || { n: 0, zeit: jetzt };\n  z.n += 1; z.zeit = jetzt;\n  sd.recherche_zaehler[trace] = z;\n  nr = z.n;\n  if (z.n > MAX_AUFRUFE) fehler = 'FEHLER: Grenze für Recherchen in diesem Auftrag erreicht (höchstens ' + MAX_AUFRUFE + '), keine weitere Recherche.';\n}\nreturn [{ json: { thema: thema, fragen: fragen, trace_id: trace, aufruf_nr: nr, eingabe_ok: fehler === '', fehler_text: fehler } }];\n"
+      },
+      "id": "dcd30750-693a-4f55-b7f2-8d072e05cd05",
+      "name": "Eingabe prüfen [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        352,
+        896
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.eingabe_ok }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "9d4bd188-2c0e-4fdd-be7b-20dea0a9863f",
+      "name": "Eingabe gültig? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        896
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'perplexity/sonar', temperature: 0, max_tokens: 900, usage: { include: true }, messages: [ { role: 'system', content: 'You are a careful research assistant for social media posts. Only state facts that are explicitly written in a source you cite. Never invent numbers, studies, quotes or sources. Answer in German.' }, { role: 'user', content: 'Research this topic: \"' + $json.thema + '\".' + ($json.fragen ? ' Answer these questions: ' + $json.fragen + '.' : '') + ' Return 3 to 5 key facts, each on its own line in the form \"- <fact> (Quelle: <full URL>, <publication date if known>)\". Prefer sources from the last 12 months and primary sources. Leave out any fact without a reliable source. If there is no reliable source at all, answer only with the line KEINE_BELEGE.' } ] }) }}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "77289077-6f7b-4093-bc9c-c78774824ffe",
+      "name": "Recherche Sonar [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        912,
+        896
+      ],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "openAiApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "OpenRouter API | KI-AGT-2606"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Rückgabe an den Agenten: Fakten mit Quelle, Kosten aus usage.cost, feste Nicht-Treffer-Werte\n// v02 (10.11.2026): nur Fakten, deren Link-Host in den echten Suchtreffern der Antwort steht (citations, annotations); Zeilen auf 400 Zeichen begrenzt.\n// v03.1 (10.11.2026): Links werden bei der Kuerzung auf 400 Zeichen nicht mehr durchgeschnitten.\n// v03 (10.11.2026): Sonar schreibt Quellen oft als Fußnote [n] statt als Link (Lauf 2601: 5 belegte Zeilen, 14 Suchtreffer, trotzdem NICHT_GEFUNDEN, bezahlt). Die Fußnote [n] zeigt auf den n-ten Suchtreffer (citations, sonst annotations); die Zeile bekommt den Link dieses Treffers. Eine Fußnote ohne Suchtreffer bleibt unbelegt und wird verworfen.\nconst r = $input.first().json || {};\nif (r.error) {\n  const m = (r.error && (r.error.message || r.error)) || 'unbekannt';\n  return [{ json: { antwort: 'FEHLER: Recherche nicht erreichbar (' + String(m).slice(0, 160) + ').', kosten_usd: null } }];\n}\nconst msg = (((r.choices || [])[0] || {}).message) || {};\nconst text = String(msg.content || '').trim();\nconst kosten = (r.usage && typeof r.usage.cost === 'number') ? r.usage.cost : null;\nconst tokens = r.usage ? (r.usage.total_tokens || null) : null;\n// echte Quellen: Suchtreffer der Antwort in ihrer Reihenfolge, nicht der Text des Modells\nconst cit = (Array.isArray(r.citations) ? r.citations : []).filter(c => typeof c === 'string');\nconst ann = (Array.isArray(msg.annotations) ? msg.annotations : []).map(a => a && ((a.url_citation && a.url_citation.url) || a.url)).filter(u => typeof u === 'string');\nconst treffer = cit.length > 0 ? cit : ann;\nconst urls = cit.concat(ann);\nconst host = u => String(u).replace(/^https?:\\/\\/(www\\.)?/i, '').split(/[\\/?#]/)[0].toLowerCase();\nconst hosts = new Set(urls.map(host).filter(Boolean));\nconst kuerzen = s => (s.length > 400 ? s.slice(0, 399).trimEnd() + '…' : s);\n// Zeilen mit Link: gekuerzt wird der Text vor \"(Quelle: ...)\", nie der Link (Lauf 2617: Links wurden bei 400 Zeichen mitten in der Adresse abgeschnitten)\nconst kuerzenMitLink = z => {\n  if (z.length <= 400) return z;\n  const m = z.match(/\\s*\\((?:Quelle|Quellen):/i);\n  if (m && m.index > 0) { const tail = z.slice(m.index); if (tail.length <= 360) return z.slice(0, 400 - tail.length - 1).trimEnd() + '…' + tail; }\n  return kuerzen(z);\n};\nconst zeilen0 = text.split('\\n').map(z => z.trim()).filter(z => z.startsWith('-'));\nconst FUSS = /\\[(\\d{1,2})\\]/g;\nlet vorher = 0;\nconst fakten = [];\nfor (const z of zeilen0) {\n  if (/https?:\\/\\//.test(z)) {\n    // Zeile mit Link: nur behalten, wenn der Host in den Suchtreffern steht (ohne Suchtreffer bleibt die Link-Prüfung des Modells)\n    vorher += 1;\n    if (hosts.size > 0 && !(z.match(/https?:\\/\\/[^\\s)\\],]+/g) || []).some(u => hosts.has(host(u)))) continue;\n    fakten.push(kuerzenMitLink(z));\n    continue;\n  }\n  const nummern = Array.from(z.matchAll(FUSS)).map(m => parseInt(m[1], 10));\n  if (nummern.length === 0) continue; // weder Link noch Fußnote: unbelegt\n  vorher += 1;\n  const quellen = [];\n  let alleGefunden = true;\n  for (const n of nummern) { const u = treffer[n - 1]; if (typeof u !== 'string') alleGefunden = false; else if (!quellen.includes(u)) quellen.push(u); }\n  if (!alleGefunden || quellen.length === 0) continue; // eine Fußnote ohne Suchtreffer: die Zeile gilt als unbelegt\n  const nutz = quellen.slice(0, 2);\n  const suffix = ' (Quelle: ' + nutz.join('; ') + ')';\n  if (suffix.length > 350) continue; // Link zu lang, um die Zeile sinnvoll zu kürzen\n  let koerper = z.replace(FUSS, '').replace(/\\s+([.,;:])/g, '$1').replace(/\\s{2,}/g, ' ').trim();\n  if (koerper.length + suffix.length > 400) koerper = koerper.slice(0, 400 - suffix.length - 1).trimEnd() + '…';\n  fakten.push(koerper + suffix);\n}\nif (!text || /KEINE_BELEGE/.test(text) || fakten.length === 0) {\n  return [{ json: { antwort: 'NICHT_GEFUNDEN: Keine belegten Fakten zu diesem Thema gefunden.', kosten_usd: kosten, tokens: tokens, quellen_treffer: hosts.size, fakten_verworfen: vorher } }];\n}\nconst zeilen = ['STATUS: OK', 'Fakten mit Quelle (nur diese verwenden):'].concat(fakten.slice(0, 5));\nreturn [{ json: { antwort: zeilen.join('\\n'), kosten_usd: kosten, tokens: tokens, quellen_treffer: hosts.size, fakten_verworfen: vorher - fakten.length } }];\n"
+      },
+      "id": "fcc2b92f-1d87-41bf-88de-55ded8632756",
+      "name": "Antwort bauen [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        896
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "antwort",
+              "name": "antwort",
+              "value": "={{ $json.fehler_text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e82ecd28-fd0e-4fb4-b859-3e4c0e88dea3",
+      "name": "Fehler zurückgeben [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        912,
+        1136
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# SUB P2 Thema recherchieren\nWerkzeug 2 des Redaktions-Agenten (Projekt 2): holt 3 bis 5 belegte Fakten mit Quelle über Perplexity Sonar.",
+        "height": 100,
+        "width": 2000,
+        "color": 5
+      },
+      "id": "f236170c-526e-4720-bb7e-ca89cafb18ab",
+      "name": "Sticky Note 0dd68797",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 548,
+        "width": 1460,
+        "color": 0
+      },
+      "id": "01309390-9a1a-400a-b3f1-ba61028b1e5d",
+      "name": "Sticky Note 67a6e1cc",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# 📋 Workflow-Beschreibung\n🎯 **Zweck:** Der Agent bekommt aktuelle, belegte Fakten, wenn Quelltext und Markenwissen nicht reichen.\n👥 **Für wen:** den Redaktions-Agenten im Workflow AGT-2606 P2 Redaktions-Agent.\n🕹️ **So nutzt du ihn:** Der Agent ruft Thema_recherchieren mit Thema und 1 bis 3 Fragen auf, höchstens 2 Mal je Auftrag (1 Recherche plus 1 Wiederholung nach FEHLER); der Sub sperrt ab dem 3. Aufruf je Auftrag.\n## Status: 🟢 im Agenten gelaufen, Obergrenze, Quellenprüfung und Fußnoten gebaut",
+        "height": 254,
+        "width": 720,
+        "color": 7
+      },
+      "id": "ced31a65-9143-40e9-8847-f1d2bc7a891b",
+      "name": "Sticky Note 8d31a880",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        16,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🧾 Version\nv03 vom 10.11.2026: Fußnoten [n] der Antwort werden auf die Suchtreffer abgebildet, Links werden beim Kürzen nie durchgeschnitten. Davor v02 (Obergrenze, Quellenprüfung) und v01.1 vom 09.11.2026.\nDie Workflow-Stände stehen in versionen.md.",
+        "height": 254,
+        "width": 694,
+        "color": 7
+      },
+      "id": "b4caebde-cc09-46b0-9b91-5cad66cbcb34",
+      "name": "Sticky Note 4258ae92",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        752,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# 🧪 Belegte Recherche\n**Aufgabe:** Fakten nur mit Quelle zurückgeben.\n**Die Idee:** Sonar sucht im Web, der Code behält nur Zeilen, deren Link in den echten Suchtreffern steht.\n**Warum so?** Der Agent darf keine Fakten erfinden (Systemprompt), und das Werkzeug kostet Geld, deshalb gibt es eine harte Obergrenze.\n**Hinweis:** Stufe: Durchstich bis 13.11.2026",
+        "height": 248,
+        "width": 720,
+        "color": 7
+      },
+      "id": "43eeb803-3e31-4f68-9421-c2736262b9df",
+      "name": "Sticky Note 9d4bd1a3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        16,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Ablauf\n① Thema, Fragen und trace_id empfangen\n② Eingabe und Obergrenze prüfen\n③ Sonar fragen\n④ Fakten mit Suchtreffer zurückgeben\n⑤ Ungültige Eingabe oder Grenze melden",
+        "height": 248,
+        "width": 334,
+        "color": 7
+      },
+      "id": "b2f849aa-8948-4ce0-af0b-f89afc97765b",
+      "name": "Sticky Note 5babb521",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        752,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Status\n🟢 Im Agenten gelaufen (Läufe 2600, 2601, 2603)\n🟢 Obergrenze gemessen (Lauf 2602), Fußnoten auf Suchtreffer (v03)\n🔴 Kostet Geld, Schlüssel, etwa 0,0055 USD je Aufruf",
+        "height": 248,
+        "width": 334,
+        "color": 7
+      },
+      "id": "f4126efa-6cc1-4f91-83cd-64adae624865",
+      "name": "Sticky Note 93b94a48",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## ① Auftrag\nThema und Fragen vom Agenten.\n\n### 🟢 Eingang steht",
+        "width": 260
+      },
+      "id": "6cbaa86e-1d37-497c-83d0-e3c135331fd2",
+      "name": "Sticky Note a04116e0",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## ② Eingabe prüfen\nThema mindestens 3 Zeichen, beides gekürzt. Der Zähler je trace_id lässt höchstens 2 Aufrufe je Auftrag durch (1 Recherche plus 1 Wiederholung).\n\n### 🟢 Prüfung steht",
+        "width": 400
+      },
+      "id": "8bb8afaf-82bd-40c2-966c-4155e3519746",
+      "name": "Sticky Note b222208a",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        336,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## ③ Sonar\nperplexity/sonar über OpenRouter, Temperatur 0, 1 Wiederholung.\n\n### 🔴 Kostenpflichtig",
+        "width": 260
+      },
+      "id": "dd0cc5f7-ee73-4952-bc08-157e0f28d4b4",
+      "name": "Sticky Note d874236c",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        848,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## ④ Antwort\nNur Zeilen mit Suchtreffer; eine Fußnote [n] wird zum Link des n-ten Treffers. Höchstens 400 Zeichen, Kosten aus usage.cost.\n\n### 🟢 Rückgabe steht",
+        "width": 260
+      },
+      "id": "b7c36f43-2e33-41fc-a567-7861ab8cefe2",
+      "name": "Sticky Note 7d3aa28c",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## ⑤ Ungültige Eingabe oder Grenze\nGibt FEHLER zurück, ohne Sonar zu fragen.\n\n### 🟢 Melden statt raten",
+        "width": 300
+      },
+      "id": "593aeaf8-36f5-4174-a873-1a0bad773f27",
+      "name": "Sticky Note cbaeb2a6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        1104
+      ]
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 1136,
+        "width": 500,
+        "color": 5
+      },
+      "id": "188fc2b7-bd0f-4b06-87f2-1b51580a3e70",
+      "name": "Sticky Note 341eae66",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# ✅ Setup-Checkliste\n1. Credential OpenRouter API | KI-AGT-2606 (Schlüssel, Typ OpenAI) am Sonar-Knoten.\n2. Aufrufrecht: nur Workflows desselben Besitzers.\n3. Veröffentlichen, sonst kann der Agent das Werkzeug nicht aufrufen; nach jeder Änderung erneut.\n4. Der Hauptworkflow übergibt trace_id (Ausführungsnummer des Hauptlaufs) fest, der Agent kann sie nicht ändern.\n5. Erster Test: im Hauptworkflow ein Thema mit aktuellen Zahlen schreiben.",
+        "height": 358,
+        "width": 464,
+        "color": 7
+      },
+      "id": "225320eb-e377-407d-b3c4-694584ca90e2",
+      "name": "Sticky Note af5df1b5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# 🌐 Plattform-Hinweise\n**https://DEINE-N8N-INSTANZ (n8n):** Erlaubt: Aufruf als Werkzeug. 🟡 Besonderheit: Sub muss veröffentlicht sein.\n**OpenRouter, Perplexity Sonar:** Erlaubt: Websuche mit Quellen. 🟡 Besonderheit: kostet je Aufruf, Kosten stehen in usage.cost.",
+        "height": 342,
+        "width": 464,
+        "color": 7
+      },
+      "id": "9c8c5b4d-c4a4-4ea6-92b3-e03849aea705",
+      "name": "Sticky Note 1b70ba6e",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        512
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# 🩺 Fehlerbehebung\n**FEHLER Grenze erreicht:** je Auftrag höchstens 2 Recherchen, einen neuen Auftrag starten.\n**NICHT_GEFUNDEN:** keine belegten Fakten, das Thema anders fragen.\n**FEHLER nicht erreichbar:** Guthaben und Schlüssel des Kurses bei OpenRouter prüfen.",
+        "height": 362,
+        "width": 464,
+        "color": 7
+      },
+      "id": "a646f37b-e95e-4b6a-a81e-0b247f3bfe37",
+      "name": "Karte Fehlerbehebung",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        880
+      ]
+    }
+  ],
+  "connections": {
+    "Auftrag empfangen [Execute Workflow Trigger]": {
+      "main": [
+        [
+          {
+            "node": "Eingabe prüfen [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eingabe prüfen [Code]": {
+      "main": [
+        [
+          {
+            "node": "Eingabe gültig? [If]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eingabe gültig? [If]": {
+      "main": [
+        [
+          {
+            "node": "Recherche Sonar [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fehler zurückgeben [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recherche Sonar [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Antwort bauen [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "ERROR_WORKFLOW_ID",
+    "callerPolicy": "workflowsFromSameOwner",
+    "binaryMode": "separate"
+  },
+  "meta": {
+    "builderVariant": "mcp"
+  },
+  "pinData": {},
+  "tags": [
+    {
+      "updatedAt": "2026-10-11T18:48:41.447Z",
+      "createdAt": "2026-10-11T18:48:41.447Z",
+      "id": "TAG_ID_SCHULUNG",
+      "name": "schulung"
+    },
+    {
+      "updatedAt": "2026-11-09T15:22:56.779Z",
+      "createdAt": "2026-11-09T15:22:56.779Z",
+      "id": "TAG_ID_PROJEKT_2",
+      "name": "projekt-2"
+    },
+    {
+      "updatedAt": "2026-09-29T22:49:28.793Z",
+      "createdAt": "2026-09-29T22:49:28.793Z",
+      "id": "TAG_ID_SUB_WORKFLOW",
+      "name": "sub-workflow"
+    },
+    {
+      "updatedAt": "2026-11-09T15:22:56.776Z",
+      "createdAt": "2026-11-09T15:22:56.776Z",
+      "id": "TAG_ID_WOCHE_8",
+      "name": "woche-8"
+    },
+    {
+      "updatedAt": "2026-09-29T22:51:24.974Z",
+      "createdAt": "2026-09-29T22:51:24.974Z",
+      "id": "TAG_ID_KURS",
+      "name": "KI-AGT-2606"
+    }
+  ],
+  "id": "WORKFLOW_ID_SUB_RECHERCHE",
+  "versionId": "0ecca784-cf84-4944-8588-7ff4767da2f5",
+  "active": true,
+  "activeVersionId": "0ecca784-cf84-4944-8588-7ff4767da2f5",
+  "description": "Projekt 2 AGT-2606: Werkzeug 2 des Redaktions-Agenten, 3 bis 5 belegte Fakten über Perplexity Sonar.",
+  "nodeGroups": [],
+  "staticData": null,
+  "sourceWorkflowId": null,
+  "isArchived": false,
+  "parentFolder": {
+    "id": "FOLDER_ID_PROJEKTORDNER",
+    "name": "Projektordner"
+  }
+}

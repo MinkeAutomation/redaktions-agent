@@ -24,12 +24,13 @@
 <a aria-current="page" href="w08t03.html">Tag 3</a>
 <span class="aus">Tag 4</span>
 <span class="aus">Tag 5</span>
+<a href="charter.html">Projekt-Charter</a>
 <a href="https://github.com/MinkeAutomation/redaktions-agent">Repository</a>
 </nav>
 </header>
 <div class="titelkopf">
 <div>
-<p class="oberzeile"><span aria-hidden="true" class="marke"></span>Tages-Doku W08T03 · Mi 11.11.2026 · Hauptworkflow v08 bis v16</p>
+<p class="oberzeile"><span aria-hidden="true" class="marke"></span>Tages-Doku W08T03 · Mi 11.11.2026 · Hauptworkflow v08 bis v16.2</p>
 <h1>Prototyp <span class="leise">mit</span> Freigabe und Ablage</h1>
 <p class="untertitel">An Tag 3 wurde der Agent zum Prototyp: Werkzeug 4 baut die Bilder, Werkzeug 5 reicht den Beitrag ein, ein Mensch gibt in Telegram frei oder lehnt mit Grund ab, und freigegebene Beiträge landen in Nextcloud. Dazu der Vergleich von Prompt V1 und V2 an denselben 10 Anfragen.</p>
 </div>
@@ -41,11 +42,11 @@
 <a class="knopf zweit" href="w08t02.html">Vorheriger Tag: Tag 2 <span aria-hidden="true" class="pfeil">←</span></a>
 <span class="knopf aus">Tag 4 folgt</span>
 <a class="knopf" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/test-tabelle.md">Test-Tabelle <span aria-hidden="true" class="pfeil">↗</span></a>
-<a class="knopf" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/redaktions-agent.json">Export Hauptworkflow v16 <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/redaktions-agent.json">Export Hauptworkflow v16.2 <span aria-hidden="true" class="pfeil">↗</span></a>
 <a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/CHANGELOG.md">CHANGELOG <span aria-hidden="true" class="pfeil">↗</span></a>
 <a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/releases/tag/v16">Release W08 Abgabe <span aria-hidden="true" class="pfeil">↗</span></a>
 </div>
-<main class="inhalt" id="inhalt">
+<main id="inhalt">
 <div class="merksatz einminute" id="in-1-minute"><span class="ktag">In 1 Minute</span>
 <ul>
 <li><strong>Ziel des Tages:</strong> Den Agenten Werkzeug für Werkzeug zum Prototyp ausbauen, nach jedem neuen Werkzeug die Werkzeugwahl prüfen, die aktuelle Prompt-Fassung gegen die Vorfassung testen und abends alles versioniert ablegen.</li>
@@ -86,11 +87,15 @@
 <tr><th data-label="Zeit" scope="row">12:22</th><td data-label="Version">Hauptworkflow v14</td><td data-label="Änderung">Vorschau in Telegram als lesbare Zeilen im HTML-Modus; vorher entfernte Telegram Unterstriche aus den Links (HTTP 400)</td><td data-label="Beleg">Lauf 2768</td></tr>
 <tr><th data-label="Zeit" scope="row">12:43</th><td data-label="Version">Hauptworkflow v15</td><td data-label="Änderung">nach der Ablage eine Bestätigung mit Link zum Kundenordner, sonst eine Meldung über das Ablage-Problem</td><td data-label="Beleg">Lauf 2782</td></tr>
 <tr><th data-label="Zeit" scope="row">12:56</th><td data-label="Version">Hauptworkflow v16</td><td data-label="Änderung">nur Notiztext der Karte „Entscheidung und Ablage“</td><td data-label="Beleg">Git-Tag v16</td></tr>
+<tr><th data-label="Zeit" scope="row">21:00</th><td data-label="Version">Hauptworkflow v16.2, Markenwissen v03.3, Recherche v03.2, Text v07.1, Bilder v01.2, Freigabe v01.2</td><td data-label="Änderung">Anordnung der Werkzeug-Workflows im Editor und überarbeitete Notiztexte, Funktion unverändert</td><td data-label="Beleg"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/versionen.md">versionen.md</a></td></tr>
 </tbody>
 </table>
 </div>
 <figure id="plan"><a href="plan/plan-w08t03-v16.png"><img alt="Plan v16: Chat-Eingang, Konfiguration, Redaktions-Agent mit Nemotron 3.5 Super free und Systemprompt V2, Ausgabe-Prüfung und Weiche Beitrag zur Freigabe da. Bei Nein Antwort an den Chat, bei Ja Vorschau in Telegram, Freigabe abwarten höchstens 24 Stunden und Entscheidung: Ablehnen mit Grund per Formular, Freigeben mit Ablage in Nextcloud und Bestätigung mit Link zum Kundenordner, sonst Meldung über das Ablage-Problem. Darunter alle 5 Werkzeuge mit ihren Datenquellen Supabase, Perplexity Sonar, OpenRouter, Pixabay, Cloudflare Workers AI, Gotenberg und Supabase Storage. Oben rot Fehlerweg und Sperre der Prüfung." height="1155" src="bilder/w08t03-plan-v16.png" width="2600"/></a><figcaption><strong>Plan v16, Endstand 11.11.2026.</strong> „neu“ markiert, was an diesem Tag neu oder geändert ist. <a href="plan/plan-w08t03-v16.png">Volle Auflösung</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/plan/plan-w08t03-v16.excalidraw">Excalidraw-Datei</a>, <a href="w08t02.html#plan">Plan des Vortags</a>.</figcaption></figure>
-<figure><a href="bilder/werkzeug-4-und-5.png"><img alt="Werkzeug 4 Bilder gestalten oben und Werkzeug 5 Zur Freigabe einreichen unten in n8n; rot markiert die Fehlerwege, der Bild-Ersatz und der Knoten Beitrag speichern" height="417" src="bilder/werkzeug-4-und-5.png" width="1410"/></a><figcaption>Werkzeug 4 (oben) und Werkzeug 5 (unten). Rot markiert: Fehlerwege, Bild-Ersatz mit KI-Bild und der Speicherknoten. Klick vergrößert.</figcaption></figure>
+<figure><a href="bilder/w08t03-hauptworkflow-v16-2-gesamt.png"><img alt="Hauptworkflow Redaktions-Agent v16.2 in n8n, dunkel, Gesamtansicht: Kopfnotizen, Bereiche Eingang, KI, Verarbeitung, Fehlerweg und Freigabe und Ablage" height="411" src="bilder/w08t03-hauptworkflow-v16-2-gesamt.png" width="1526"/></a><figcaption>Hauptworkflow v16.2, Gesamtansicht. Klick vergrößert.</figcaption></figure>
+<figure><a href="bilder/w08t03-werkzeug1-markenwissen-v03-3.png"><img alt="Werkzeug 1 Markenwissen abfragen v03.3 in n8n, Gesamtansicht: Auftrag empfangen, Eingabe prüfen, 2 Supabase-Lesungen, Antwort bauen, Fehlerwege" height="767" src="bilder/w08t03-werkzeug1-markenwissen-v03-3.png" width="1517"/></a><figcaption>Werkzeug 1 Markenwissen abfragen v03.3.</figcaption></figure>
+<figure><a href="bilder/w08t03-werkzeug4-bilder-v01-2.png"><img alt="Werkzeug 4 Bilder gestalten v01.2 in n8n, Gesamtansicht: Paket und Branding lesen, Foto suchen und laden, Rendern und ablegen, Fehlerweg und KI-Bild als Ersatz" height="392" src="bilder/w08t03-werkzeug4-bilder-v01-2.png" width="1539"/></a><figcaption>Werkzeug 4 Bilder gestalten v01.2.</figcaption></figure>
+<figure><a href="bilder/w08t03-werkzeug5-freigabe-v01-2.png"><img alt="Werkzeug 5 Zur Freigabe einreichen v01.2 in n8n, Gesamtansicht: Paket, Kunde und vorhandenen Beitrag lesen, Beitrag bauen und speichern, Fehlerweg" height="656" src="bilder/w08t03-werkzeug5-freigabe-v01-2.png" width="1537"/></a><figcaption>Werkzeug 5 Zur Freigabe einreichen v01.2.</figcaption></figure>
 <figure><a href="bilder/w08t03-hauptworkflow-v15-bestaetigung.png"><img alt="Bereich Entscheidung und Ablage im Hauptworkflow v15: Freigabe abwarten, Entscheidung verteilen, Status setzen, Ablage in Nextcloud, rot markiert die neuen Knoten Freigabelink vorhanden, Freigabe-Bestätigung senden und Ablage-Problem senden" height="430" src="bilder/w08t03-hauptworkflow-v15-bestaetigung.png" width="660"/></a><figcaption>Hauptworkflow v15: die 3 neuen Knoten nach der Ablage (rot markiert). Die Parameterzeile unter „In Nextcloud ablegen“ ist geschwärzt.</figcaption></figure>
 </section>
 
@@ -168,10 +173,10 @@
 </div></div>
 <div aria-labelledby="t-dat" class="tabelle" role="region" tabindex="0">
 <table class="mittel">
-<caption id="t-dat">Dateien</caption>
+<caption id="t-dat">Dateien im Repository</caption>
 <thead><tr><th scope="col">Datei</th><th scope="col">Inhalt</th></tr></thead>
 <tbody>
-<tr><th data-label="Datei" scope="row"><a href="https://github.com/MinkeAutomation/redaktions-agent/tree/main/workflows"><code>workflows/</code></a></th><td data-label="Inhalt">Hauptworkflow v16, die 5 Werkzeuge und die Testkopien, für die Veröffentlichung bereinigt (Platzhalter statt Kennungen)</td></tr>
+<tr><th data-label="Datei" scope="row"><a href="https://github.com/MinkeAutomation/redaktions-agent/tree/main/workflows"><code>workflows/</code></a></th><td data-label="Inhalt">Hauptworkflow v16.2, die 5 Werkzeuge und die Testkopien, für die Veröffentlichung bereinigt (Platzhalter statt Kennungen)</td></tr>
 <tr><th data-label="Datei" scope="row"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/prompts/20261110_System-Prompt-Redaktions-Agent_V2.md"><code>prompts/</code></a></th><td data-label="Inhalt">geltender Systemprompt V2; V1, V3 und die Testprompts in <a href="https://github.com/MinkeAutomation/redaktions-agent/tree/main/archiv/prompts"><code>archiv/prompts/</code></a></td></tr>
 <tr><th data-label="Datei" scope="row"><a href="https://github.com/MinkeAutomation/redaktions-agent/tree/main/konfiguration"><code>konfiguration/</code></a></th><td data-label="Inhalt">Agent-Konfiguration je Prompt-Version als JSON</td></tr>
 <tr><th data-label="Datei" scope="row"><a href="https://github.com/MinkeAutomation/redaktions-agent/tree/main/sql"><code>sql/</code></a></th><td data-label="Inhalt">Views und Tabelle <code>k2_pakete</code></td></tr>
@@ -197,7 +202,7 @@
 </main>
 <footer class="fuss">
 <span>Patrick Minkler · Redaktions-Agent K2 · Projekt 2</span>
-<span>Stand 11.11.2026 · Hauptworkflow v16</span>
+<span>Stand 11.11.2026 · Hauptworkflow v16.2</span>
 </footer>
 </div>
 </body>

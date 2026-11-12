@@ -24,6 +24,7 @@
 <a href="w08t03.html">Tag 3</a>
 <span class="aus">Tag 4</span>
 <span class="aus">Tag 5</span>
+<a href="charter.html">Projekt-Charter</a>
 <a href="https://github.com/MinkeAutomation/redaktions-agent">Repository</a>
 </nav>
 </header>
@@ -44,10 +45,10 @@
 <a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/sql/p2_k2_views_v01.sql">SQL Views <span aria-hidden="true" class="pfeil">↗</span></a>
 <a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/versionen.md">Versionen <span aria-hidden="true" class="pfeil">↗</span></a>
 </div>
-<main class="inhalt" id="inhalt">
+<main id="inhalt">
 <div class="merksatz einminute" id="in-1-minute"><span class="ktag">In 1 Minute</span>
 <ul>
-<li><strong>Ziel des Tages:</strong> Klären, welches Problem der Agent löst, welche Architektur passt, welche Dienste er braucht, und einen ersten lauffähigen Kern bauen.</li>
+<li><strong>Ziel des Tages:</strong> Am Abend steht ein erster lauffähiger Kern. Vorher festgelegt wurden die Dienste, die der Agent anspricht, das Problem, für das er da ist, und der Grund für die gewählte Architektur.</li>
 <li><strong>Use Case:</strong> Markengerechte Posts für Instagram und LinkedIn, bei denen ein Agent selbst prüft, ob ein Thema zur Marke passt, schon gepostet wurde oder neue Fakten braucht. Ein Mensch gibt vor jeder Ablage frei.</li>
 <li><strong>Gebaut:</strong> Hauptworkflow v01 mit Chat, Konfiguration, Agent, Gedächtnis, Werkzeug 1 (Markenwissen) und Werkzeug 2 (Recherche) sowie eine Ausgabe-Prüfung.</li>
 <li><strong>Grenze:</strong> Ohne die Werkzeuge 3 bis 5 lief der Agent bei einem echten Post-Auftrag in „Max iterations (8)“.</li>
@@ -59,11 +60,11 @@
 <p class="klede">Das Tagesziel.</p>
 </div></div>
 <ol>
-<li>Das Problem in einem Satz fassen und den Use Case festlegen.</li>
-<li>Single-Agent oder mehrere Agenten entscheiden und die Entscheidung begründen.</li>
-<li>Datenquellen und Dienste benennen und jeden Zugang einmal echt aufrufen.</li>
-<li>Den Systemprompt als erste Fassung in eine eigene Datei schreiben.</li>
-<li>Einen ersten Teil in n8n bauen, damit der Agent schon etwas Echtes tut.</li>
+<li>Den Anwendungsfall eingrenzen: Welche Aufgabe nimmt der Agent einem Kunden ab, und welches Problem steckt dahinter?</li>
+<li>Festhalten, welche Datenquellen und Dienste der Agent braucht, und bei jedem prüfen, dass der Zugang wirklich antwortet.</li>
+<li>Abwägen, ob ein einzelner Agent mit Werkzeugen reicht oder mehrere Agenten sinnvoll wären, und den Grund notieren.</li>
+<li>Den Systemprompt zum ersten Mal ausformulieren und in einer eigenen Datei ablegen.</li>
+<li>Einen ersten Baustein in n8n umsetzen, sodass der Agent schon etwas Echtes erledigt.</li>
 </ol>
 <p>Die Architekturentscheidung (1 Agent mit 5 Werkzeugen) und ihre Begründung stehen ausführlich in der <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/projekt-charter.md">Projekt-Charter</a> und in der <a href="index.html#architektur">Wochen-Doku</a>.</p>
 </section>
@@ -105,7 +106,7 @@
 <caption id="t-test1">Läufe am 09.11.2026</caption>
 <thead><tr><th scope="col">Lauf</th><th scope="col">Test</th><th scope="col">Ergebnis</th><th scope="col">Urteil</th></tr></thead>
 <tbody>
-<tr class="abw"><th data-label="Lauf" scope="row">2564</th><td data-label="Test">Post-Auftrag mit Werkzeug 1</td><td data-label="Ergebnis">Werkzeug meldete „Workflow is not active“, weil der Sub noch nicht veröffentlicht war; der Agent rief es 4 Mal statt 1 Mal auf und meldete ehrlich einen Fehler</td><td data-label="Urteil"><span class="marke-abw">nicht bestanden</span></td></tr>
+<tr class="abw"><th data-label="Lauf" scope="row">2564</th><td data-label="Test">Post-Auftrag mit Werkzeug 1</td><td data-label="Ergebnis">Werkzeug meldete „Workflow is not active“, weil der Sub noch nicht veröffentlicht war; der Agent rief es 4 Mal statt 1 Mal auf und meldete einen Fehler</td><td data-label="Urteil"><span class="marke-abw">nicht bestanden</span></td></tr>
 <tr><th data-label="Lauf" scope="row">2565</th><td data-label="Test">derselbe Auftrag nach der Veröffentlichung</td><td data-label="Ergebnis">Werkzeug 1 lieferte in 1,3 s, der Agent stellte genau 1 Rückfrage, die Ausgabe-Prüfung ließ die Antwort durch</td><td data-label="Urteil"><span class="marke-ok">bestanden</span></td></tr>
 <tr class="abw"><th data-label="Lauf" scope="row">2567</th><td data-label="Test">Post-Auftrag, für den Schreiben, Bilder und Einreichen nötig sind</td><td data-label="Ergebnis">Agent brach mit „Max iterations (8)“ ab, weil die Werkzeuge 3 bis 5 noch fehlten</td><td data-label="Urteil"><span class="marke-abw">nicht bestanden</span></td></tr>
 <tr><th data-label="Lauf" scope="row">2569 (Sub 2571)</th><td data-label="Test">Recherche über Werkzeug 2</td><td data-label="Ergebnis">Werkzeug 2 lieferte 5 Fakten mit Quelle in 4,7 s für 0,00558 USD; der Hauptlauf endete wieder im Fehler, weil Werkzeug 3 bis 5 fehlten</td><td data-label="Urteil"><span class="marke-ok">Werkzeug bestanden</span></td></tr>

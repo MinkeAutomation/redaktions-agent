@@ -563,8 +563,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1168,
-        1184
+        1824,
+        1408
       ],
       "parameters": {
         "assignments": {
@@ -586,8 +586,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3280,
-        1184
+        3264,
+        1408
       ],
       "parameters": {
         "jsCode": "// Fehlerausgänge können den Kontext verlieren. Den geprüften Kontext gezielt wiederherstellen und mit dem KI-Bild weitermachen.\nconst basis = $('Branding wählen [Code]').first().json;\nlet notiz = '';\ntry { notiz = String($('Foto auswerten [Code]').first().json.photo_note || ''); } catch (e) { notiz = ''; }\nconst fehler = $input.first().json || {};\nconst grund = fehler.error ? String(fehler.error.message || fehler.error).slice(0, 160) : '';\nreturn [{ json: { ...basis, photo_ok: false, photo_url: '', photo_data_uri: '', photo_credit: null,\n  photo_note: notiz || ('Pixabay-Fotopfad gescheitert' + (grund ? ' (' + grund + ')' : '') + ', weiter mit KI-Bild.') }, pairedItem: { item: 0 } }];\n"
@@ -600,8 +600,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3632,
-        1184
+        3616,
+        1408
       ],
       "parameters": {
         "url": "https://SUPABASE_URL/rest/v1/k1_einstellungen?select=setting_value&setting_key=eq.cloudflare_account_id",
@@ -626,8 +626,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3984,
-        1184
+        4000,
+        1408
       ],
       "parameters": {
         "method": "POST",
@@ -655,13 +655,13 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        0,
+        16,
         0
       ],
       "parameters": {
         "content": "# SUB P2 Bilder gestalten\nWerkzeug 4 des Redaktions-Agenten (Projekt 2): baut aus dem gespeicherten Text-Paket die Bilder im Kundenbranding.",
         "height": 110,
-        "width": 6900,
+        "width": 3540,
         "color": 5
       }
     },
@@ -786,7 +786,7 @@
         176
       ],
       "parameters": {
-        "content": "# ✅ Setup-Checkliste\n1. Credential Supabase API | KI-AGT-2606 an allen Supabase-Zugriffen.\n2. Pixabay API, Cloudflare Workers AI und Gotenberg erreichbar.\n3. Tabelle k2_pakete mit Spalte bilder (Migrationen v01 und v02).\n4. Aufrufrecht: nur Workflows desselben Besitzers.\n5. Veröffentlichen, nach jeder Änderung erneut.\n6. Erster Test: im Hauptworkflow ein Thema schreiben lassen und Bilder verlangen.",
+        "content": "# ✅ Setup-Checkliste\n1. Credential Supabase API | KI-AGT-2606 an allen Supabase-Zugriffen.\n2. Pixabay API, Cloudflare Workers AI und Gotenberg erreichbar.\n3. Tabelle k2_pakete mit Spalte bilder (Migrationen v01 und v02).\n4. Aufrufrecht: nur Workflows desselben Besitzers.\n5. Veröffentlichen, nach jedem Umbau wieder.\n6. Erster Test: im Hauptworkflow ein Thema schreiben lassen und Bilder verlangen.",
         "height": 442,
         "width": 412,
         "color": 7
@@ -830,7 +830,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        64,
+        16,
         672
       ],
       "parameters": {
@@ -851,7 +851,7 @@
       "parameters": {
         "content": "## ② Eingabe prüfen\nKundenkennung, paket_id und trace_id müssen zusammenpassen. Ungültig geht ohne Aufruf nach ⑧.\n\n### 🟢 Prüfung steht",
         "height": 196,
-        "width": 650
+        "width": 586
       }
     },
     {
@@ -866,7 +866,7 @@
       "parameters": {
         "content": "## ③ Paket und Branding lesen\nPaket aus k2_pakete (nur eigener Kunde), Farben und Schriften aus dem Kundenprofil, Standardwerte wenn leer.\n\n### 🟢 Lesen steht",
         "height": 196,
-        "width": 700
+        "width": 572
       }
     },
     {
@@ -875,13 +875,13 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1824,
+        1840,
         672
       ],
       "parameters": {
         "content": "## ④ Bereit?\nPaket mit 5 bis 8 Folien und aktives Branding, sonst NICHT_GEFUNDEN oder FEHLER.\n\n### 🟢 Prüfung steht",
         "height": 196,
-        "width": 650
+        "width": 554
       }
     },
     {
@@ -896,7 +896,7 @@
       "parameters": {
         "content": "## ⑤ Foto suchen\nPixabay-Suche mit dem Bildmotiv, nur ganze Schlagwörter, mindestens 2 passende. Sonst weiter mit dem KI-Bild.\n\n### 🟡 Passung nur über Schlagwörter",
         "height": 196,
-        "width": 1050
+        "width": 874
       }
     },
     {
@@ -905,13 +905,13 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        3584,
+        3600,
         672
       ],
       "parameters": {
         "content": "## ⑥ Foto laden\nFoto laden und einbetten (JPEG oder PNG, höchstens 12 MiB). Scheitert etwas, übernimmt das KI-Bild.\n\n### 🟢 Fallback steht",
         "height": 196,
-        "width": 800
+        "width": 848
       }
     },
     {
@@ -920,13 +920,13 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        4288,
+        4608,
         672
       ],
       "parameters": {
         "content": "## ⑦ Rendern und ablegen\nJede Folie und das Einzelbild als HTML in Gotenberg zu PNG, in Supabase Storage hochladen, Pfade im Paket vermerken. Soll gegen Ist: jedes Bild muss ankommen.\n\n### 🟡 Layout 4 nicht gebaut",
         "height": 196,
-        "width": 1400
+        "width": 952
       }
     },
     {
@@ -941,7 +941,7 @@
       "parameters": {
         "content": "## ⑧ Antwort\nKurzer Text mit Anzahl, Bildquelle und KI-Kennzeichen. Die Pfade stehen im Paket.\n\n### 🟢 Rückgabe steht",
         "height": 196,
-        "width": 800
+        "width": 944
       }
     },
     {
@@ -950,12 +950,12 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1100,
-        1140
+        1760,
+        1152
       ],
       "parameters": {
         "content": "",
-        "height": 260,
+        "height": 436,
         "width": 700,
         "color": 5
       }
@@ -966,13 +966,13 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1120,
-        1160
+        1776,
+        1168
       ],
       "parameters": {
         "content": "## ⑨ Fehlerweg\nUngültige Eingabe, kein Paket, kein Branding, Renderfehler: immer ein Text mit FEHLER oder NICHT_GEFUNDEN, nie leer.\n\n### 🔴 Melden statt raten",
-        "height": 180,
-        "width": 640,
+        "height": 212,
+        "width": 656,
         "color": 3
       }
     },
@@ -983,12 +983,12 @@
       "typeVersion": 1,
       "position": [
         3200,
-        1140
+        1152
       ],
       "parameters": {
         "content": "",
-        "height": 260,
-        "width": 1200,
+        "height": 436,
+        "width": 1072,
         "color": 5
       }
     },
@@ -998,13 +998,13 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        3220,
-        1160
+        3216,
+        1168
       ],
       "parameters": {
         "content": "## ⑩ KI-Bild als Ersatz\nKonto-ID aus den Einstellungen lesen, FLUX-Bild erzeugen. Fehlt es, kommt ein Farbverlauf. Ein KI-Bild wird in der Antwort gekennzeichnet.\n\n### 🟡 KI-Bild nur Ersatz",
-        "height": 200,
-        "width": 1160,
+        "height": 216,
+        "width": 936,
         "color": 3
       }
     }
@@ -1348,7 +1348,8 @@
   "settings": {
     "executionOrder": "v1",
     "errorWorkflow": "ERROR_WORKFLOW_ID",
-    "callerPolicy": "workflowsFromSameOwner"
+    "callerPolicy": "workflowsFromSameOwner",
+    "binaryMode": "separate"
   },
   "meta": {
     "builderVariant": "mcp"
@@ -1387,9 +1388,9 @@
     }
   ],
   "id": "WORKFLOW_ID_SUB_BILDER",
-  "versionId": "4be24a5b-c5e5-4a73-8249-cc1925cda81b",
+  "versionId": "76572e2c-a2d6-4f0a-9996-32124b297987",
   "active": true,
-  "activeVersionId": "4be24a5b-c5e5-4a73-8249-cc1925cda81b",
+  "activeVersionId": "76572e2c-a2d6-4f0a-9996-32124b297987",
   "description": "Projekt 2 AGT-2606: Werkzeug 4 des Redaktions-Agenten, baut aus dem gespeicherten Text-Paket die Bilder im Kundenbranding (Foto von Pixabay oder KI-Bild, Rendern mit Gotenberg, Ablage in Supabase Storage).",
   "nodeGroups": [],
   "staticData": null,

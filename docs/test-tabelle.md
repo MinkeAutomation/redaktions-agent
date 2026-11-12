@@ -15,7 +15,7 @@ Die Spalte Kommentar nennt kurz den Grund für das Urteil. Alle Läufe: n8n (eig
 
 ## B Baseline: dieselben 10 Anfragen auf Prompt v2 und auf Prompt v1
 
-Bedeutung der Prüfung: „ok“ = die Ausgabe-Prüfung (Ebene 3) ließ die Antwort durch, sonst steht der Fund. „Bewertung“ = Urteil nach der Erwartung des Falls (Tool-Wahl und Ergebnis).
+Bedeutung der Prüfung: „ok“ = die Ausgabe-Prüfung (Ebene 3) ließ die Antwort durch, sonst steht der Fund. „Urteil“ = Ergebnis nach der Erwartung des Falls (Tool-Wahl und Ergebnis).
 
 | Nr | Anfrage (gekürzt) | Erwartung | v2: Lauf, Werkzeuge, Status | v2 Urteil | v1: Lauf, Werkzeuge, Status | v1 Urteil | Kommentar |
 |---|---|---|---|---|---|---|---|

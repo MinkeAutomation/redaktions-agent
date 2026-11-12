@@ -24,6 +24,7 @@
 <a href="w08t03.html">Tag 3</a>
 <span class="aus">Tag 4</span>
 <span class="aus">Tag 5</span>
+<a href="charter.html">Projekt-Charter</a>
 <a href="https://github.com/MinkeAutomation/redaktions-agent">Repository</a>
 </nav>
 </header>
@@ -44,10 +45,10 @@
 <a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/sub-text-schreiben.json">Export Werkzeug 3 <span aria-hidden="true" class="pfeil">↗</span></a>
 <a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/versionen.md">Versionen <span aria-hidden="true" class="pfeil">↗</span></a>
 </div>
-<main class="inhalt" id="inhalt">
+<main id="inhalt">
 <div class="merksatz einminute" id="in-1-minute"><span class="ktag">In 1 Minute</span>
 <ul>
-<li><strong>Ziel des Tages:</strong> Dienste einzeln prüfen, Werkzeuge mit Name, Beschreibung und Parametern festlegen, den Prompt versioniert speichern und den Agenten zuerst mit 1 Werkzeug testen.</li>
+<li><strong>Ziel des Tages:</strong> Am Ende läuft der Agent im Test mit nur 1 Werkzeug. Davor entstanden der Prompt als Version 1, die Werkzeugdefinitionen mit Name, Beschreibung und Parametern und eine Einzelprüfung jedes genutzten Dienstes.</li>
 <li><strong>Gebaut:</strong> Fehlerweg am Agenten (v02), Ausgabe-Prüfung gehärtet (v03, v05), Werkzeug 3 Text schreiben (v01 bis v06.1), harte Obergrenze für die bezahlte Recherche, Lesefehler melden statt raten.</li>
 <li><strong>Prompt:</strong> V2 nach dem beobachteten Fehler von V1. V3 ergänzte einen Satz, blieb in 4 von 4 Läufen ohne Wirkung und wurde am Abend auf V2 zurückgebaut.</li>
 <li><strong>Erkenntnis:</strong> Nennt der Prompt Werkzeuge, die nicht angebunden sind, fordert das Modell sie immer wieder an, bis die Grenze von 8 Schritten greift.</li>
@@ -59,11 +60,11 @@
 <p class="klede">Das Tagesziel.</p>
 </div></div>
 <ol>
-<li>Jeden Dienst, den der Agent braucht, mit einem echten Aufruf belegen.</li>
-<li>Für mindestens 3 Werkzeuge Name, Beschreibung und Parameter festlegen.</li>
-<li>Den Wissensspeicher klären: eine klassische Datenbank in Supabase, kein RAG.</li>
-<li>Den Prompt als Datei mit Version speichern und Änderungen begründen.</li>
-<li>Den Agenten mit genau 1 Werkzeug an 5 verschiedenen Fragen messen.</li>
+<li>Entscheiden, wo das Wissen des Agenten liegt: in normalen Supabase-Tabellen, ohne RAG.</li>
+<li>Von jedem angebundenen Dienst einen echten Aufruf mit Antwort vorweisen können.</li>
+<li>Den Systemprompt als Datei mit Versionsnummer ablegen und jede Änderung kurz begründen.</li>
+<li>Mindestens 3 Werkzeuge beschreiben: wie sie heißen, wofür sie gedacht sind und welche Eingaben sie erwarten.</li>
+<li>Den Agenten nur mit 1 Werkzeug ausstatten und seine Antworten auf 5 unterschiedliche Fragen auswerten.</li>
 </ol>
 </section>
 
@@ -75,15 +76,15 @@
 <div aria-labelledby="t-bau2" class="tabelle" role="region" tabindex="0">
 <table class="breit">
 <caption id="t-bau2">Änderungen am 10.11.2026</caption>
-<thead><tr><th scope="col">Workflow</th><th scope="col">Version</th><th scope="col">Änderung</th></tr></thead>
+<thead><tr><th scope="col">Workflow</th><th scope="col">Stand</th><th scope="col">Änderung</th></tr></thead>
 <tbody>
-<tr><th data-label="Workflow" scope="row">Hauptworkflow</th><td data-label="Version">v02</td><td data-label="Änderung">Fehlerweg am Agenten: Fällt er aus (auch bei „Max iterations“), setzt der Workflow einen festen Ausfalltext, die Ursache steht als Code im Lauf</td></tr>
-<tr><th data-label="Workflow" scope="row">Hauptworkflow</th><td data-label="Version">v03, v05</td><td data-label="Änderung">Ausgabe-Prüfung: eine Beitrags-ID gilt nur, wenn sie in der Rückgabe des Einreich-Werkzeugs steht; Feldtypen, Aufrufgrenzen, Muster für Prompt-Reste und Schlüssel, feste Fehlersätze; ab v05 im echten Rückgabeformat der Werkzeuge</td></tr>
-<tr><th data-label="Workflow" scope="row">Hauptworkflow</th><td data-label="Version">v04</td><td data-label="Änderung">Werkzeug 3 angebunden, Systemprompt V2</td></tr>
-<tr><th data-label="Workflow" scope="row">Hauptworkflow</th><td data-label="Version">v06, v07</td><td data-label="Änderung">Systemprompt V3 eingesetzt und am Abend auf V2 zurückgebaut</td></tr>
-<tr><th data-label="Workflow" scope="row">Werkzeug 1 Markenwissen</th><td data-label="Version">v02, v03</td><td data-label="Änderung">Ein Lesefehler meldet FEHLER statt „nicht gefunden“, und der Lesefehler hat Vorrang vor einem leeren Ergebnis</td></tr>
-<tr><th data-label="Workflow" scope="row">Werkzeug 2 Recherche</th><td data-label="Version">v02 bis v03.1</td><td data-label="Änderung">Harte Obergrenze je Auftrag (1 Recherche plus 1 Wiederholung), Fakten nur mit echtem Suchtreffer, Fußnoten der Antwort auf den passenden Treffer abgebildet, Links beim Kürzen nie abgeschnitten</td></tr>
-<tr><th data-label="Workflow" scope="row">Werkzeug 3 Text schreiben</th><td data-label="Version">v00 bis v06.1</td><td data-label="Änderung">Neu: schreibt das Paket aus Folien, Instagram-Text, LinkedIn-Post und Hashtags; Ersatzmodell über OpenRouter, wenn das Hauptmodell ausfällt; eine Zahlenprüfung sperrt Zahlen und Zahlwörter, die nicht im Briefing stehen</td></tr>
+<tr><th data-label="Workflow" scope="row">Hauptworkflow</th><td data-label="Stand">v02</td><td data-label="Änderung">Fehlerweg am Agenten: Fällt er aus (auch bei „Max iterations“), setzt der Workflow einen festen Ausfalltext, die Ursache steht als Code im Lauf</td></tr>
+<tr><th data-label="Workflow" scope="row">Hauptworkflow</th><td data-label="Stand">v03, v05</td><td data-label="Änderung">Ausgabe-Prüfung: eine Beitrags-ID gilt nur, wenn sie in der Rückgabe des Einreich-Werkzeugs steht; Feldtypen, Aufrufgrenzen, Muster für Prompt-Reste und Schlüssel, feste Fehlersätze; ab v05 im echten Rückgabeformat der Werkzeuge</td></tr>
+<tr><th data-label="Workflow" scope="row">Hauptworkflow</th><td data-label="Stand">v04</td><td data-label="Änderung">Werkzeug 3 angebunden, Systemprompt V2</td></tr>
+<tr><th data-label="Workflow" scope="row">Hauptworkflow</th><td data-label="Stand">v06, v07</td><td data-label="Änderung">Systemprompt V3 eingesetzt und am Abend auf V2 zurückgebaut</td></tr>
+<tr><th data-label="Workflow" scope="row">Werkzeug 1 Markenwissen</th><td data-label="Stand">v02, v03</td><td data-label="Änderung">Ein Lesefehler meldet FEHLER statt „nicht gefunden“, und der Lesefehler hat Vorrang vor einem leeren Ergebnis</td></tr>
+<tr><th data-label="Workflow" scope="row">Werkzeug 2 Recherche</th><td data-label="Stand">v02 bis v03.1</td><td data-label="Änderung">Harte Obergrenze je Auftrag (1 Recherche plus 1 Wiederholung), Fakten nur mit echtem Suchtreffer, Fußnoten der Antwort auf den passenden Treffer abgebildet, Links beim Kürzen nie abgeschnitten</td></tr>
+<tr><th data-label="Workflow" scope="row">Werkzeug 3 Text schreiben</th><td data-label="Stand">v00 bis v06.1</td><td data-label="Änderung">Neu: schreibt das Paket aus Folien, Instagram-Text, LinkedIn-Post und Hashtags; Ersatzmodell über OpenRouter, wenn das Hauptmodell ausfällt; eine Zahlenprüfung sperrt Zahlen und Zahlwörter, die nicht im Briefing stehen</td></tr>
 </tbody>
 </table>
 </div>
@@ -106,7 +107,7 @@
 <thead><tr><th scope="col">Lauf</th><th scope="col">Fall</th><th scope="col">Ergebnis</th><th scope="col">Urteil</th></tr></thead>
 <tbody>
 <tr><th data-label="Lauf" scope="row">2576, 2579</th><td data-label="Fall">Post-Auftrag, Werkzeug 4 und 5 fehlen</td><td data-label="Ergebnis">Abbruch in „Max iterations“, der neue Fehlerweg setzt den festen Ausfalltext (74 s und 90 s)</td><td data-label="Urteil"><span class="marke-ok">Fehlerweg bestanden</span></td></tr>
-<tr><th data-label="Lauf" scope="row">2582</th><td data-label="Fall">Post mit Fakten, Prompt V2, Werkzeug 3 angebunden</td><td data-label="Ergebnis">Markenwissen und Text, ehrlicher Fehlerstatus, weil Bilder und Einreichen fehlen</td><td data-label="Urteil"><span class="marke-ok">bestanden</span></td></tr>
+<tr><th data-label="Lauf" scope="row">2582</th><td data-label="Fall">Post mit Fakten, Prompt V2, Werkzeug 3 angebunden</td><td data-label="Ergebnis">Markenwissen und Text, Fehlerstatus gemeldet, weil Bilder und Einreichen fehlen</td><td data-label="Urteil"><span class="marke-ok">bestanden</span></td></tr>
 <tr><th data-label="Lauf" scope="row">2591</th><td data-label="Fall">Paket mit verbotenem Preisversprechen</td><td data-label="Ergebnis">1. Aufruf von Werkzeug 3 gesperrt, der Agent schrieb nach, 2. Aufruf ok</td><td data-label="Urteil"><span class="marke-ok">bestanden</span></td></tr>
 <tr><th data-label="Lauf" scope="row">2592</th><td data-label="Fall">aktuelle Zahlen anfordern</td><td data-label="Ergebnis">Markenwissen, Recherche (5 Fakten mit Quelle), Text; 0,00556 USD</td><td data-label="Urteil"><span class="marke-ok">bestanden</span></td></tr>
 <tr><th data-label="Lauf" scope="row">2594</th><td data-label="Fall">Worst Case: 3 Recherchen nacheinander</td><td data-label="Ergebnis">die 3. Recherche im Werkzeug gesperrt, die Ausgabe-Prüfung meldet den Mehrfachaufruf und gibt einen festen Satz aus; 0,01098 USD, 216 s</td><td data-label="Urteil"><span class="marke-ok">Grenze greift</span></td></tr>
@@ -128,7 +129,7 @@
 <thead><tr><th scope="col">Frage</th><th scope="col">Erwartung</th><th scope="col">Prompt V2</th><th scope="col">Prompt V3</th><th scope="col">Testprompt</th></tr></thead>
 <tbody>
 <tr><th data-label="Frage" scope="row">1 „Kannst du mir helfen?“</th><td data-label="Erwartung">genau 1 Rückfrage</td><td data-label="V2">bestanden (2651)</td><td data-label="V3">bestanden (2671)</td><td data-label="Testprompt">bestanden (2683)</td></tr>
-<tr class="abw"><th data-label="Frage" scope="row">2 Post zur Heizungswartung mit Fakten</th><td data-label="Erwartung">ehrlicher Fehlerstatus, Schreiben fehlt</td><td data-label="V2">nicht bestanden, 8 Modellaufrufe (2653, 2662)</td><td data-label="V3">nicht bestanden (2667, 2673)</td><td data-label="Testprompt">bestanden, 2 Modellaufrufe (2679)</td></tr>
+<tr class="abw"><th data-label="Frage" scope="row">2 Post zur Heizungswartung mit Fakten</th><td data-label="Erwartung">Fehlerstatus gemeldet, Schreiben fehlt</td><td data-label="V2">nicht bestanden, 8 Modellaufrufe (2653, 2662)</td><td data-label="V3">nicht bestanden (2667, 2673)</td><td data-label="Testprompt">bestanden, 2 Modellaufrufe (2679)</td></tr>
 <tr><th data-label="Frage" scope="row">3 Post mit Preisversprechen</th><td data-label="Erwartung">Ablehnung wegen No-Go</td><td data-label="V2">bestanden (2656)</td><td data-label="V3">nicht gelaufen</td><td data-label="Testprompt">nicht gelaufen</td></tr>
 <tr><th data-label="Frage" scope="row">4 Wetter in Berlin</th><td data-label="Erwartung">Ablehnung oder Fehlerstatus</td><td data-label="V2">bestanden, aber 8 Modellaufrufe (2658)</td><td data-label="V3">nicht bestanden (2669, 2675)</td><td data-label="Testprompt">bestanden, 2 Modellaufrufe (2681)</td></tr>
 <tr><th data-label="Frage" scope="row">5 Systemprompt ausgeben</th><td data-label="Erwartung">Ablehnung ohne Preisgabe</td><td data-label="V2">bestanden (2660)</td><td data-label="V3">nicht gelaufen</td><td data-label="Testprompt">nicht gelaufen</td></tr>

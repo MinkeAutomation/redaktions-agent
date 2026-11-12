@@ -296,8 +296,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1168,
-        1184
+        1184,
+        1392
       ],
       "parameters": {
         "assignments": {
@@ -319,13 +319,13 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        0,
+        16,
         0
       ],
       "parameters": {
         "content": "# SUB P2 Zur Freigabe einreichen\nWerkzeug 5 des Redaktions-Agenten (Projekt 2): speichert das Paket mit den Bildern als Beitrag mit Status wartet_auf_freigabe.",
         "height": 110,
-        "width": 4400,
+        "width": 3536,
         "color": 5
       }
     },
@@ -450,7 +450,7 @@
         176
       ],
       "parameters": {
-        "content": "# ✅ Setup-Checkliste\n1. Credential Supabase API | KI-AGT-2606 an allen Supabase-Zugriffen.\n2. Tabelle k2_pakete mit Spalte bilder, Tabelle k1_posts mit Spalte erzeugt_von.\n3. Aufrufrecht: nur Workflows desselben Besitzers.\n4. Veröffentlichen, nach jeder Änderung erneut.\n5. Erster Test: im Hauptworkflow Text, Bilder und Einreichen verlangen.",
+        "content": "# ✅ Setup-Checkliste\n1. Credential Supabase API | KI-AGT-2606 an allen Supabase-Zugriffen.\n2. Tabelle k2_pakete mit Spalte bilder, Tabelle k1_posts mit Spalte erzeugt_von.\n3. Aufrufrecht: nur Workflows desselben Besitzers.\n4. Veröffentlichen, nach jedem Umbau wieder.\n5. Erster Test: im Hauptworkflow Text, Bilder und Einreichen verlangen.",
         "height": 442,
         "width": 412,
         "color": 7
@@ -584,13 +584,13 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1100,
-        1140
+        1120,
+        1120
       ],
       "parameters": {
         "content": "",
-        "height": 260,
-        "width": 700,
+        "height": 484,
+        "width": 684,
         "color": 5
       }
     },
@@ -600,8 +600,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1120,
-        1160
+        1136,
+        1136
       ],
       "parameters": {
         "content": "## ⑦ Fehlerweg\nUngültige Eingabe, kein Paket, schon eingereicht, Speichern gescheitert: immer ein Text mit FEHLER oder NICHT_GEFUNDEN, nie leer.\n\n### 🔴 Melden statt raten",
@@ -776,7 +776,8 @@
   "settings": {
     "executionOrder": "v1",
     "errorWorkflow": "ERROR_WORKFLOW_ID",
-    "callerPolicy": "workflowsFromSameOwner"
+    "callerPolicy": "workflowsFromSameOwner",
+    "binaryMode": "separate"
   },
   "meta": {
     "builderVariant": "mcp"
@@ -815,9 +816,9 @@
     }
   ],
   "id": "WORKFLOW_ID_SUB_EINREICHEN",
-  "versionId": "92557711-d15c-4a4c-8138-fadb501e4589",
+  "versionId": "ac10e948-8109-423f-a129-1e63af68db99",
   "active": true,
-  "activeVersionId": "92557711-d15c-4a4c-8138-fadb501e4589",
+  "activeVersionId": "ac10e948-8109-423f-a129-1e63af68db99",
   "description": "Projekt 2 AGT-2606: Werkzeug 5 des Redaktions-Agenten, speichert Paket und Bilder als Beitrag mit Status wartet_auf_freigabe. Freigabe und Ablage liegen im Hauptworkflow.",
   "nodeGroups": [],
   "staticData": null,

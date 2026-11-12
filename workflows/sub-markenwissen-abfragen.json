@@ -176,7 +176,7 @@
       "parameters": {
         "content": "# SUB P2 Markenwissen abfragen\nWerkzeug 1 des Redaktions-Agenten (Projekt 2): liest Markenrichtlinien und frühere Posts genau eines Kunden.",
         "height": 110,
-        "width": 2700,
+        "width": 2684,
         "color": 5
       },
       "id": "bc711748-520c-442e-8ca1-f4f2bd62a7ac",
@@ -377,7 +377,7 @@
     },
     {
       "parameters": {
-        "content": "# ✅ Setup-Checkliste\n1. Credential Supabase API | KI-AGT-2606 (Service-Key) an beiden Supabase-Knoten.\n2. Views k2_v_markenwissen und k2_v_fruehere_posts aus der Migration p2_redaktions_agent_v01 müssen existieren.\n3. Aufrufrecht: nur Workflows desselben Besitzers.\n4. Veröffentlichen: ein Sub, der als Werkzeug läuft, muss veröffentlicht sein, nach jeder Änderung erneut.\n5. Erster Test: im Hauptworkflow im Chat fragen, was zur Marke bekannt ist.",
+        "content": "# ✅ Setup-Checkliste\n1. Credential Supabase API | KI-AGT-2606 (Service-Key) an beiden Supabase-Knoten.\n2. Views k2_v_markenwissen und k2_v_fruehere_posts aus der Migration p2_redaktions_agent_v01 müssen existieren.\n3. Aufrufrecht: nur Workflows desselben Besitzers.\n4. Veröffentlichen: ein Sub, der als Werkzeug läuft, muss veröffentlicht sein, und nach jedem Umbau wieder.\n5. Erster Test: im Hauptworkflow im Chat fragen, was zur Marke bekannt ist.",
         "height": 288,
         "width": 420,
         "color": 7
@@ -584,9 +584,9 @@
     }
   ],
   "id": "WORKFLOW_ID_SUB_MARKENWISSEN",
-  "versionId": "745d5884-b595-446e-88d4-7960d1bee5f0",
+  "versionId": "89390b1e-326f-4bbb-aa6f-1c902b0b703a",
   "active": true,
-  "activeVersionId": "745d5884-b595-446e-88d4-7960d1bee5f0",
+  "activeVersionId": "89390b1e-326f-4bbb-aa6f-1c902b0b703a",
   "description": "Projekt 2 AGT-2606: Werkzeug 1 des Redaktions-Agenten, liest Markenwissen und frühere Posts eines Kunden über 2 Views.",
   "nodeGroups": [],
   "staticData": null,

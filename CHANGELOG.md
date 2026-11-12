@@ -1,28 +1,28 @@
 # Changelog: Redaktions-Agent K2
 
-> Versionsverlauf der Systemprompts des Redaktions-Agenten (Projekt 2, Kurs AGT-2606). Neueste Version steht **oben**. Gebaut nach einem Changelog-Muster mit Datum, Version, Beschreibung und Status. Die Stände der einzelnen Workflows stehen in [versionen.md](versionen.md), die Tests in [docs/test-tabelle.md](docs/test-tabelle.md).
+> Alle Fassungen der Systemprompts des Redaktions-Agenten (Projekt 2, Kurs AGT-2606), die jüngste zuerst. Jeder Eintrag nennt Datum, Status und Version und sagt in höchstens 3 Sätzen, was sich geändert hat. Die Stände der einzelnen Workflows stehen in [versionen.md](versionen.md), die Tests in [docs/test-tabelle.md](docs/test-tabelle.md).
 
-## Regeln
+## Namensschema
 
-| Bestandteil | Format | Beispiel |
+| Teil | Schreibweise | So sieht es aus |
 |---|---|---|
 | Datum | `YYYYMMDD` | `20261110` |
-| Was ist es? | `System-Prompt-Redaktions-Agent` | |
 | Version | `V<Nummer>` | `V1`, `V2` |
-| Beschreibung | 1 bis 3 Sätze: Was, Ergebnis, nächste Idee | siehe unten |
+| Gegenstand | `System-Prompt-Redaktions-Agent` | |
+| Kurztext | höchstens 3 Sätze zu Änderung, Wirkung und nächstem Schritt | in jedem Eintrag unten |
 
-Dateiname: `YYYYMMDD_System-Prompt-Redaktions-Agent_V<Nummer>.md`. Je Eintrag gehören die Prompt-Datei und die exportierte Agent-Konfiguration (JSON) dazu. Archivierte und verworfene Fassungen liegen in [archiv/](archiv/), die Workflow-Versionen mit demselben Status stehen in [versionen.md](versionen.md).
+Name der Prompt-Datei: `YYYYMMDD_System-Prompt-Redaktions-Agent_V<Nummer>.md`. Je Eintrag gehören die Prompt-Datei und die exportierte Agent-Konfiguration (JSON) dazu. Archivierte und verworfene Fassungen liegen in [archiv/](archiv/), die Workflow-Versionen mit demselben Status stehen in [versionen.md](versionen.md).
 
-### Status-Legende
+### Statuswerte
 
 Dieselben 4 Statuswörter stehen in der Spalte Status von [versionen.md](versionen.md).
 
-| Symbol | Status | Bedeutung |
-|---|---|---|
-| ✅ | Live | der geltende Stand |
-| 🧪 | In Test | Testkopie oder Kandidat in Erprobung (Testkopien werden nicht Live) |
-| 🗄️ | Archiviert | abgelöst durch eine spätere Version, Datei unter `archiv/` |
-| 🚫 | Verworfen | getestet, nicht übernommen; dazu steht, welcher Stand live bleibt |
+| Status | Bedeutung |
+|---|---|
+| Live | der geltende Stand |
+| In Test | Testkopie oder Kandidat in Erprobung (Testkopien werden nicht Live) |
+| Archiviert | abgelöst durch eine spätere Version, Datei unter `archiv/` |
+| Verworfen | getestet, nicht übernommen; dazu steht, welcher Stand live bleibt |
 
 ---
 
@@ -35,9 +35,9 @@ Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V2 steht 
 | | |
 |---|---|
 | **Datum** | 10.11.2026 (seit 11.11.2026 mit allen 5 Werkzeugen) |
+| **Status** | Live |
 | **Agent** | Redaktions-Agent |
 | **Version** | V2 |
-| **Status** | ✅ Live |
 | **Prompt-Datei** | [prompts/20261110_System-Prompt-Redaktions-Agent_V2.md](prompts/20261110_System-Prompt-Redaktions-Agent_V2.md) |
 | **Agent-Konfiguration** | [konfiguration/20261111_Redaktions-Agent_V2_Agent-Konfiguration.json](konfiguration/20261111_Redaktions-Agent_V2_Agent-Konfiguration.json) |
 
@@ -49,7 +49,7 @@ Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V2 steht 
 - Text_schreiben genauer beschrieben, Zahlen nur mit Quelle, Wiederholung bei unbelegten Zahlen.
 - Der Agent gibt nur die `paket_id` weiter, das Paket liegt in `k2_pakete` (Workflow-Änderung am 11.11.2026, Prompt-Text unverändert).
 
-**Ergebnis (Baseline 11.11.2026, 10 Anfragen, Modell Nemotron 3.5 Super free):** Werkzeugwahl bei Aufträgen mit Post stimmt, die Ausgabe-Prüfung fängt falsche Antworten ab. Schwächen: ruft Bilder auch bei „keine Bilder“ (Anfrage 2), bearbeitet Off-Topic-Aufträge (Anfrage 10), ruft bei Smalltalk Text und Einreichen (Anfrage 7, bei V1 ebenfalls), Statuswert für reine Auskünfte fehlt (Anfrage 4). Gegen V1: v2 vollständig bestanden 2 von 10, v1 5 von 10 (1 Lauf je Anfrage, Gratismodell, nur eine Richtung). V1 war bei Anfrage 2, 3, 6, 8 und 10 besser, V2 bei Anfrage 5 und 9; bei Anfrage 1, 4 und 7 schnitten beide gleich ab (bei Anfrage 7 beide nicht bestanden, v2 erzeugte aber keinen Post, v1 erzeugte und gab einen Post frei). Freigabe und Ablage nach dem Klick in Telegram liefen in 3 Läufen durch (2768 und 2782 mit v2, 2748 mit v1); der Ablehnen-Zweig lief mit Lauf 2735 durch (Status abgelehnt, Grund gespeichert). Bis v14 ging nach dem Klick keine Bestätigung an Telegram; seit v15 (Lauf 2782) kommt die Nachricht „Freigegeben und in Nextcloud abgelegt“ mit dem Link zum Kundenordner.
+**Ergebnis (Baseline 11.11.2026, 10 Anfragen, Modell Nemotron 3.5 Super free):** Die Werkzeugwahl stimmt bei dem Auftrag mit Text und Bildern (Anfrage 1), die Ausgabe-Prüfung fängt falsche Antworten ab. Schwächen: ruft Bilder auch bei „keine Bilder“ (Anfrage 2), bearbeitet Off-Topic-Aufträge (Anfrage 10), ruft bei Smalltalk Text und Einreichen (Anfrage 7, bei V1 ebenfalls), Statuswert für reine Auskünfte fehlt (Anfrage 4). Gegen V1: v2 vollständig bestanden 2 von 10, v1 5 von 10 (1 Lauf je Anfrage, Gratismodell, nur eine Richtung). V1 war bei Anfrage 2, 3, 6, 8 und 10 besser, V2 bei Anfrage 5 und 9; bei Anfrage 1, 4 und 7 schnitten beide gleich ab (bei Anfrage 7 beide nicht bestanden, v2 erzeugte aber keinen Post, v1 erzeugte und gab einen Post frei). Freigabe und Ablage nach dem Klick in Telegram liefen in 3 Läufen durch (2768 und 2782 mit v2, 2748 mit v1); der Ablehnen-Zweig lief mit Lauf 2735 durch (Status abgelehnt, Grund gespeichert). Bis v14 ging nach dem Klick keine Bestätigung an Telegram; seit v15 (Lauf 2782) kommt die Nachricht „Freigegeben und in Nextcloud abgelegt“ mit dem Link zum Kundenordner.
 
 **Nächste Idee:**
 
@@ -62,9 +62,9 @@ Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V2 steht 
 | | |
 |---|---|
 | **Datum** | 10.11.2026 |
+| **Status** | Verworfen (live bleibt V2) |
 | **Agent** | Redaktions-Agent |
 | **Version** | V3 |
-| **Status** | 🚫 Verworfen (live bleibt V2) |
 | **Prompt-Datei** | [archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md](archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md) |
 | **Agent-Konfiguration** | [archiv/konfiguration/20261110_Redaktions-Agent_V3_Agent-Konfiguration.json](archiv/konfiguration/20261110_Redaktions-Agent_V3_Agent-Konfiguration.json) |
 
@@ -85,9 +85,9 @@ Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V2 steht 
 | | |
 |---|---|
 | **Datum** | 09.11.2026 |
+| **Status** | Archiviert |
 | **Agent** | Redaktions-Agent |
 | **Version** | V1 |
-| **Status** | 🗄️ Archiviert |
 | **Prompt-Datei** | [archiv/prompts/20261109_System-Prompt-Redaktions-Agent_V1.md](archiv/prompts/20261109_System-Prompt-Redaktions-Agent_V1.md) |
 | **Agent-Konfiguration** | [konfiguration/20261109_Redaktions-Agent_V1_Agent-Konfiguration.json](konfiguration/20261109_Redaktions-Agent_V1_Agent-Konfiguration.json) |
 
@@ -95,7 +95,7 @@ Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V2 steht 
 
 **Änderungen:**
 
-- Initiale Version.
+- Keine, Ausgangsfassung.
 
 **Nächste Idee:**
 
@@ -120,19 +120,26 @@ Die Prompt-Versionen stehen oben, hier die Arbeitsschritte des Tages (Zeit lokal
 | 12:56 | Notiztext der Karte „Entscheidung und Ablage“ (v16) | nur Text |
 | 13:00 | Ablehnen mit Grund getestet | Lauf 2735, Grund-Abfrage per Webformular |
 | 18:05 | Archiv, Status, Versionsmatrix, `.env.example`, Verbindung zu Projekt 1 | 54 ältere Workflow-Versionen bereinigt unter [archiv/workflows/](archiv/workflows/), Testkopien in [workflows/test/](workflows/test/), Spalten Status und Archivdatei in [versionen.md](versionen.md) (6 Live, 4 In Test, 2 Verworfen, 50 Archiviert), [docs/versionsmatrix.md](docs/versionsmatrix.md), [.env.example](.env.example), Tabelle der Workflow-Dateien und Abschnitt „Grundlage aus Projekt 1“ im [README](README.md); Prompt und Konfiguration V3 als Verworfen geführt, Funktion der Workflows unverändert |
+| abends | Korrekturen nach Durchsicht: Archiv und Status, Doku-Seiten, Testzahl, Zusatzfunktionen | Archiv und Status: V3 überall als Verworfen geführt (live bleibt V2), Tag 1 verweist für ältere Stände aufs Archiv. Doku-Seiten: Selbsthinweis zur Gliederung entfernt, Zahlen als Ziffern. Testzahl: Tag 2 und Plan v07 nennen „3 von 3 ausgeführten“ Fällen mit Testprompt statt „5 von 5“ (Frage 3 und 5 sind nicht mit dem Testprompt gelaufen). Neuer Abschnitt „Zusatzfunktionen“ im [README](README.md) und in [docs/index.html](docs/index.html): Human in the Loop umgesetzt (3 Freigaben, 1 Ablehnung), Monitoring und Alerting als Ansatz, die übrigen 5 nicht umgesetzt. [docs/versionsmatrix.md](docs/versionsmatrix.md): Zusatzexport „7 Felder mehr“ statt „3“ (nachgezählt an allen 3 Zusatzexporten). Funktion der Workflows unverändert |
+| 21:00 | Anordnung der Werkzeug-Workflows im Editor und Notiztexte überarbeitet: Hauptworkflow v16.2, Markenwissen v03.3, Recherche v03.2, Text v07.1, Bilder v01.2, Freigabe v01.2 | Funktion unverändert; die bisherigen Stände liegen unverändert unter [archiv/workflows/](archiv/workflows/), Zeilen in [versionen.md](versionen.md) |
+| später | Planbild Tag 3 überarbeitet: alle Pfeile schwarz, die 5 Werkzeuge hängen mit 1 beschrifteten Eingangspfeil am Agenten, Einstiege markiert; Projekt-Charter in Fassung 6 und als Webseite | [docs/plan/](docs/plan/), [docs/charter.html](docs/charter.html), der Stand davor unter [archiv/plaene/](archiv/plaene/) |
 
-Bildschirmfoto der großen Änderung (Werkzeug 4 oben, Werkzeug 5 unten, rot markiert die Fehlerwege beziehungsweise den Speicherknoten):
+Gesamtansichten nach der Anordnung am Abend (von den 6 Workflows zeigt die [Tages-Doku](docs/w08t03.html) 4 Bilder: Hauptworkflow, Werkzeug 1, 4 und 5), hier der Hauptworkflow und Werkzeug 5; Adressen und Ablagehinweise sind geschwärzt:
 
-![Werkzeug 4 und 5](docs/bilder/werkzeug-4-und-5.png)
+![Hauptworkflow v16.2, Gesamtansicht](docs/bilder/w08t03-hauptworkflow-v16-2-gesamt.png)
+
+![Werkzeug 5 Zur Freigabe einreichen v01.2, Gesamtansicht](docs/bilder/w08t03-werkzeug5-freigabe-v01-2.png)
 
 ## Stände der Werkzeuge und Workflows (11.11.2026)
 
 | Gegenstand | Stand | Datei |
 |---|---|---|
-| Hauptworkflow Redaktions-Agent | v16, nicht veröffentlicht | `workflows/redaktions-agent.json` |
-| Werkzeug 3 Text schreiben | v07, speichert das Paket (k2_pakete) | `workflows/sub-text-schreiben.json` |
-| Werkzeug 4 Bilder gestalten | v01, ohne Layout 4 | `workflows/sub-bilder-gestalten.json` |
-| Werkzeug 5 Zur Freigabe einreichen | v01 | `workflows/sub-zur-freigabe-einreichen.json` |
+| Hauptworkflow Redaktions-Agent | v16.2, nicht veröffentlicht | `workflows/redaktions-agent.json` |
+| Werkzeug 1 Markenwissen abfragen | v03.3 | `workflows/sub-markenwissen-abfragen.json` |
+| Werkzeug 2 Thema recherchieren | v03.2 | `workflows/sub-thema-recherchieren.json` |
+| Werkzeug 3 Text schreiben | v07.1, speichert das Paket (k2_pakete) | `workflows/sub-text-schreiben.json` |
+| Werkzeug 4 Bilder gestalten | v01.2, ohne Layout 4 | `workflows/sub-bilder-gestalten.json` |
+| Werkzeug 5 Zur Freigabe einreichen | v01.2 | `workflows/sub-zur-freigabe-einreichen.json` |
 | Paket-Speicher | Tabelle `k2_pakete` | `sql/p2_k2_pakete_v01.sql` |
 
 Das Agent-Modell wechselte am 11.11.2026 von Nemotron 3 Ultra free auf Nemotron 3.5 Super free, weil der Endpunkt von Ultra zeitweise ausfiel.

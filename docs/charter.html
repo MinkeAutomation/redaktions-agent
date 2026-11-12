@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#FAFAF8" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#121416" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<title>Projekt-Charter Redaktions-Agent K2</title>
+<meta content="Projekt-Charter und Architekturentscheidung des Redaktions-Agenten K2 (Projekt 2): Ziel, Scope, Architekturentscheidung mit Begründung, Werkzeug 6 als geplante Erweiterung, Datenquellen, Schutz, Compliance, Risiken, Zeitplan, Erfolgskriterien und Stand der Zusatzfunktionen." name="description"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&amp;display=swap" rel="stylesheet"/>
+<link href="assets/doku.css" rel="stylesheet"/>
+</head>
+<body>
+<a class="sprung" href="#inhalt">Zum Inhalt springen</a>
+<div class="huelle">
+<header class="leiste">
+<span>Redaktions-Agent K2 · Woche 8</span>
+<nav aria-label="Seiten">
+<a href="index.html">Wochen-Doku</a>
+<a href="w08t01.html">Tag 1</a>
+<a href="w08t02.html">Tag 2</a>
+<a href="w08t03.html">Tag 3</a>
+<span class="aus">Tag 4</span>
+<span class="aus">Tag 5</span>
+<a aria-current="page" href="charter.html">Projekt-Charter</a>
+<a href="https://github.com/MinkeAutomation/redaktions-agent">Repository</a>
+</nav>
+</header>
+<div class="titelkopf">
+<div>
+<p class="oberzeile"><span aria-hidden="true" class="marke"></span>Charter und Architekturentscheidung · Fassung 6 · Stand 11.11.2026</p>
+<h1>Projekt-Charter <span class="leise">Redaktions-Agent</span></h1>
+<p class="untertitel">Redaktions-Agent K2, Projekt 2, umgesetzt in n8n. Die Charter hält fest, was der Agent leisten soll, was nicht, warum es ein Agent mit 5 Werkzeugen ist und kein Multi-Agent, woher die Daten kommen, wie der Mensch eingebunden ist und was noch offen steht. Werkzeug 6 „Qualität prüfen“ ist entschieden und geplant, aber noch nicht gebaut.</p>
+</div>
+</div>
+<dl aria-label="Stand" class="messleiste">
+<div><dt>Fassung</dt><dd>6<small>11.11.2026</small></dd></div><div><dt>Werkzeuge</dt><dd>5 + 1<small>5 gebaut, Werkzeug 6 geplant</small></dd></div><div><dt>Feature-Freeze</dt><dd>20.11.2026<small>eigenes Ziel, offiziell 24.11.2026</small></dd></div><div><dt>Zusatzfunktionen</dt><dd>1 von 7<small>umgesetzt, 1 Ansatz, 1 geplant</small></dd></div>
+</dl>
+<div class="knoepfe">
+<a class="knopf zweit" href="index.html">Zurück zur Wochen-Doku <span aria-hidden="true" class="pfeil">←</span></a>
+<a class="knopf zweit" href="w08t03.html">Tag 3 <span aria-hidden="true" class="pfeil">→</span></a>
+<a class="knopf" href="https://github.com/MinkeAutomation/redaktions-agent">Repository <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/projekt-charter.md">Charter als Markdown <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/test-tabelle.md">Test-Tabelle <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/CHANGELOG.md">CHANGELOG <span aria-hidden="true" class="pfeil">↗</span></a>
+</div>
+
+<main id="inhalt">
+<section aria-labelledby="s1-t" class="kapitel" id="s1">
+<h2 id="s1-t">1 Ziel und Use Case</h2>
+<p>Problem: Markengerechte Social-Media-Posts kosten kleine Firmen zu viel Zeit, und ein starrer Ablauf erkennt nicht, wann ein Thema gegen die Marke verstößt, schon gepostet wurde oder neue Fakten braucht.</p>
+<p>Use Case: Ein Agent bekommt ein Thema, prüft es gegen Marke und frühere Posts, holt bei Bedarf belegte Fakten, lässt Text und Bilder bauen und legt das Paket einem Menschen zur Freigabe vor.</p>
+</section>
+
+<section aria-labelledby="s2-t" class="kapitel" id="s2">
+<h2 id="s2-t">2 Scope</h2>
+<p>Drin: 1 Kunde je Auftrag, Instagram und LinkedIn, Text und Bilder im Branding, Freigabe in Telegram, Ablage in Nextcloud, Qualitätsprüfung vor dem Einreichen als Werkzeug 6 (geplant, siehe <a href="#s3">Abschnitt 3</a>), Tests mit Testkunde und erfundenen Daten (Ausnahmen und offene Prüfung siehe <a href="#s6">Abschnitt 6</a>).</p>
+<p>Nicht drin: Veröffentlichen durch den Agenten, echte Kundendaten, Layout 4, Logo-Datei (derzeit Wortmarke), Kundenportal, MCP-Server, Multi-Agent, Nachbesserung nach Ablehnung (Kür).</p>
+</section>
+
+<section aria-labelledby="s3-t" class="kapitel" id="s3">
+<h2 id="s3-t">3 Architekturentscheidung</h2>
+<p>Entscheidung: 1 Single-Agent mit 5 Werkzeugen (Stand heute, ein 6. Werkzeug ist entschieden und geplant, siehe unten), kein Multi-Agent. Die genutzten Schritte folgen einer festen Reihenfolge (nicht jeder Schritt läuft bei jeder Anfrage) und teilen sich ein Ergebnis, das Paket. Nur 1 Stelle wählt zwischen Recherche, Ablehnung, Rückfrage und Einreichen. Ein weiterer Agent brächte zu prüfende Übergaben, ohne dass ein Schritt eine eigene Rolle braucht. Der Agent trifft die Entscheidungen, die in Projekt 1 feste Regeln waren (Recherche nötig, Thema schon gepostet, No-Go verletzt, Rückfrage). Sonst wäre er nur eine Hülle um den alten Ablauf.</p>
+<p>Warum ein Agent mit Werkzeugen und keine feste Kette: Die Schritte teilen sich zwar ein Ergebnis, aber der Agent wählt je Anfrage, welche Werkzeuge nötig sind. Belegt in den Tests (<a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/test-tabelle.md">Test-Tabelle</a>): Mit <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/archiv/prompts/20261109_System-Prompt-Redaktions-Agent_V1.md">Prompt v1</a> folgte der Agent bei einem Auftrag ohne Bilder dem Wunsch und ließ das Bild-Werkzeug aus (Lauf 2735), und ein Auftrag mit belegten Fakten rief zusätzlich die Recherche auf (Lauf 2747). Mit <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/prompts/20261110_System-Prompt-Redaktions-Agent_V2.md">Prompt v2</a> blieb eine Frage zur Marke bei Markenwissen (Lauf 2706), und ein Festpreisversprechen wurde nach dem Markenwissen abgelehnt, ohne dass Text oder Bilder entstanden (Lauf 2709). Dieselben beiden Aufträge aus Fall 2 und 3 der Test-Tabelle verfehlte v2: Lauf 2708 rief Bilder trotz „keine Bilder“ auf, und bei Lauf 2723 ist nicht ausgelesen, ob die Recherche lief. Eine starre Kette würde bei jeder Anfrage alle Schritte durchlaufen. Die Wahl ist nicht immer richtig, siehe <a href="#s7">Abschnitt 7</a>. Kein Werkzeug enthält einen eigenen Agenten: Das Text-Werkzeug nutzt bei Ausfall des Hauptmodells ein Ersatzmodell als einfache Sprachmodell-Kette (Basic LLM Chain), keinen Agenten, die übrigen 4 Werkzeuge rufen Dienste per HTTP auf und enthalten keine Agenten- oder Ketten-Knoten.</p>
+<p>Neu bewerten: Die Werkzeugwahl macht Fehler (Bilder trotz „keine Bilder“, Werkzeuge bei Smalltalk). Zuerst wird der Prompt überarbeitet und neu gemessen, danach gegebenenfalls Multi-Agent mit derselben Testreihe.</p>
+<p>Bausteine und Warum:</p>
+<ul>
+<li>Agent (<a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/redaktions-agent.json">Hauptworkflow</a>): Gratismodell nach Test auf Werkzeugaufrufe. Nemotron 3 Ultra wurde nach einem Test auf Werkzeugaufrufe gewählt (die Einzelfälle sind in diesem Repository nicht dokumentiert), fiel am 11.11. zeitweise aus, seitdem läuft Nemotron 3.5 Super.</li>
+<li><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/sub-markenwissen-abfragen.json">Werkzeug 1, Markenwissen</a>: liest über <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/sql/p2_k2_views_v01.sql">2 Views</a> nur nötige Spalten, die Kundenkennung setzt der Workflow, damit kein fremder Kunde abfragbar ist.</li>
+<li><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/sub-thema-recherchieren.json">Werkzeug 2, Recherche</a>: Perplexity Sonar, höchstens 1 Aufruf plus 1 Wiederholung, weil Fakten nur bei Bedarf geholt werden.</li>
+<li><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/sub-text-schreiben.json">Werkzeug 3, Text</a>: speichert das Paket in der <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/sql/p2_k2_pakete_v01.sql">Tabelle k2_pakete</a> unter einer paket_id, damit Bilder und Einreichen es lesen und der Agent nur die ID weiterreicht.</li>
+<li><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/sub-bilder-gestalten.json">Werkzeug 4, Bilder</a>: Foto von Pixabay, sonst KI-Bild, damit ein fehlendes Foto den Auftrag nicht stoppt.</li>
+<li><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/sub-zur-freigabe-einreichen.json">Werkzeug 5, Einreichen</a>: legt als einziges Werkzeug einen Beitrag an (Status wartet_auf_freigabe).</li>
+<li>Werkzeug 6, Qualität prüfen (geplant, nicht gebaut): bewertet das Paket vor dem Einreichen nach einem festen Raster, damit schwache Beiträge nicht erst beim Menschen auffallen.</li>
+<li><a href="https://github.com/MinkeAutomation/redaktions-agent/tree/main/workflows">Sub-Workflows</a>: je Werkzeug 1 Workflow, der Eingaben prüft und immer einen Status zurückgibt.</li>
+<li>Supabase: Beiträge, Pakete, Läufe, läuft in Projekt 1 seit Oktober.</li>
+<li>Telegram-Freigabe: Ein Mensch entscheidet vor jeder Ablage. Das Warten liegt im Hauptworkflow, nicht in einem Sub.</li>
+<li>Nextcloud-Ablage: der vorhandene <a href="https://github.com/MinkeAutomation/content-maschine-k1/blob/main/workflows/sub-nextcloud-ablage.json">Ablage-Workflow aus Projekt 1</a>, nur aufgerufen.</li>
+</ul>
+<div class="notiz"><span class="ktag">Geplant, nicht gebaut</span>
+<p>Erweiterung um Werkzeug 6, Qualität prüfen (entschieden am 11.11.2026, Status geplant, nicht gebaut): Anlass ist, dass Beiträge zur Freigabe in alte Muster zurückfielen, obwohl die Qualitätsregeln aus Projekt 1 für LinkedIn und Instagram gelten sollten. Das Werkzeug läuft vor „Zur Freigabe einreichen“ und bewertet Text und Bildtexte nach einem festen Raster. Das Raster stammt aus den Qualitätsregeln von Projekt 1, zum Beispiel Einstieg mit Hook, belegte Kernaussagen, Zahlen nur mit Beleg und bei Instagram keine Links; die genaue Fassung und die Schwelle werden vor dem Bau festgelegt. Bewertet wird mit einem anderen Sprachmodell als dem, das schreibt, damit Schreiber und Bewerter nicht dieselben Schwächen teilen. Liegt das Ergebnis unter der Schwelle, geht das Paket höchstens 1 Mal zurück an „Text schreiben“, danach entscheidet der Mensch in der Freigabe.</p>
+<p>Zuerst wird geprüft, ob „Text schreiben“ die Qualitätsregeln aus Projekt 1 überhaupt bekommt. Fehlen sie dort, werden sie wieder eingesetzt, bevor Werkzeug 6 entsteht, sonst würde der Bewerter einen Fehler messen, den der Schreiber nie hätte machen müssen. Gebaut wird bis zum Feature-Freeze am Ende der Woche 9 (Fr 20.11.2026). Das Werkzeug deckt die Zusatzfunktion LLM-as-Judge ab, sobald es läuft; bis dahin gilt sie als nicht umgesetzt (<a href="#s10">Abschnitt 10</a>).</p>
+</div>
+<p>Verworfen: Projekt 1 zu Projekt 2 umbauen (Projekt 1 läuft getrennt weiter), Lauf-Log in der Tabelle von Projekt 1 (dort liest ein Dashboard mit), der vorhandene Protokoll-Workflow (erlaubt nur Tabellen früherer Wochen), Freigabe in einem Sub, Multi-Agent.</p>
+</section>
+
+<section aria-labelledby="s4-t" class="kapitel" id="s4">
+<h2 id="s4-t">4 Datenquellen</h2>
+<p>Supabase: Markenwissen und die letzten 20 Posts eines Kunden als <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/sql/p2_k2_views_v01.sql">Views</a> (nur lesen), dazu Beiträge, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/sql/p2_k2_pakete_v01.sql">Pakete</a> und Läufe. Web: Perplexity Sonar über OpenRouter, Jina Reader, Supadata. Bilder: Pixabay, Cloudflare Workers AI, Gotenberg, Supabase Storage. Dazu Telegram und Nextcloud. Die Sprachmodelle (Nemotron) laufen über OpenRouter, der direkte Weg zu NVIDIA wird seit 10.11. nicht mehr genutzt (Fehler 404 in Lauf 2586). Am 09.11. liefen alle Dienste außer NVIDIA und Jina Reader in 2 echten Läufen fehlerfrei, Jina Reader am 10.11. in einem Einzeltest (Lauf 2655).</p>
+<p>Zugriff auf die Datenbank: Die Werkzeuge arbeiten mit dem Dienstzugang. Gemessen am 11.11.2026: Die beiden Views haben <code>security_invoker</code> und keine Leserechte für die Rollen <code>anon</code> und <code>authenticated</code> (Abfrage mit diesen Rollen: Zugriff verweigert). Die Tabellen haben Zeilensperre ohne Policies, die Rolle <code>anon</code> sieht dort 0 Zeilen.</p>
+</section>
+
+<section aria-labelledby="s5-t" class="kapitel" id="s5">
+<h2 id="s5-t">5 Human in the Loop und Guardrails</h2>
+<p>Der Agent veröffentlicht nie. Ein Mensch gibt in Telegram frei oder lehnt mit Grund ab, erst danach wird abgelegt. Ohne Antwort verfällt die Anfrage nach 24 Stunden.</p>
+<ul>
+<li>Ebene 1, Systemprompt: Rolle und wichtigstes Verbot in den 2 Anfangssätzen, Quelltext als Material statt Auftrag, keine erfundenen Fakten, kein Rollenwechsel, höchstens 8 Werkzeugaufrufe.</li>
+<li>Ebene 2, Werkzeug: Eingaben geprüft. Werkzeug 1 liest nur über 2 Views mit fest vorgegebener Kundenkennung, Werkzeug 3 und 4 schreiben nur in den Paket-Speicher beziehungsweise in Storage, nur Werkzeug 5 legt einen Beitrag an, kein Werkzeug veröffentlicht. Die Werkzeuge 3, 4 und 5 lesen zusätzlich Kunden-, Paket- und Beitragsdaten (Werkzeug 3 über die View, 4 und 5 direkt); die Kundenkennung setzt der Hauptworkflow fest.</li>
+<li>Ebene 3, Ausgabe: Die Antwort wird auf Pflichtfelder, erlaubte Status, Prompt-Reste, Schlüssel und fremde Kundennamen geprüft. Der Status eingereicht gilt nur mit post_id.</li>
+</ul>
+<p>Belegt: Rief der Agent Werkzeug 5 ohne Paket, speicherte es nichts (3 Läufe: 2738, 2710, 2755, siehe <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/test-tabelle.md">Test-Tabelle</a>). Prompt-Versionen liegen als eigene Dateien mit <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/CHANGELOG.md">Changelog</a> vor: <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/archiv/prompts/20261109_System-Prompt-Redaktions-Agent_V1.md">v1</a> (09.11.), <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/prompts/20261110_System-Prompt-Redaktions-Agent_V2.md">v2</a> (10.11., live), <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md">v3</a> (verworfen). Den Status je Version führt <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/versionen.md">versionen.md</a>.</p>
+</section>
+
+<section aria-labelledby="s6-t" class="kapitel" id="s6">
+<h2 id="s6-t">6 Compliance kurz</h2>
+<p>Begrenztes Risiko (Transparenz), weder verboten noch Hochrisiko; bei Zweckänderung wie automatischem Posten wird neu bewertet. Beim Einsatz für Kunden ist man Betreiber und voraussichtlich Anbieter, rechtlich offen. Die Pflichten nach Art. 50 gelten seit 02.08.2026 für Systeme im Verkehr oder Betrieb, ob schon der Prototyp darunter fällt, ist offen. Im Testbetrieb laufen Testdaten ohne Personenbezug, mit 2 benannten Ausnahmen: die Telegram-Kennung der freigebenden Person und mögliche Namen realer Personen in öffentlichen Webtexten. Für diese 2 ist die Prüfung von Rechtsgrundlage, Empfängern und Drittland offen. Ersteinschätzung, keine Rechtsberatung; die Kurzfassung der Compliance steht in der <a href="index.html#compliance">Wochen-Doku im Abschnitt Compliance</a>.</p>
+</section>
+
+<section aria-labelledby="s7-t" class="kapitel" id="s7">
+<h2 id="s7-t">7 Risiken und offene Punkte</h2>
+<ul>
+<li>Dieselben 10 Anfragen (<a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/test-tabelle.md">Test-Tabelle</a>), 1 Lauf je Fall: Prompt v2 bestand 2 von 10 vollständig, v1 dagegen 5 von 10. Stichprobe eines Gratismodells, nicht belastbar. v2 ist schwächer bei „keine Bilder“ und beim Gedicht, Smalltalk besteht bei keiner Fassung.</li>
+<li>Ein Beitrag bleibt verwaist, wenn die Ausgabe-Prüfung nach dem Einreichen sperrt. Sie schlägt auch bei dem Wort „Systemprompt“ an (Fehlalarm).</li>
+<li>Das Gratismodell fiel zeitweise aus, Läufe dauerten bis zu 22 Minuten. Die Zahlenprüfung im Text erkennt nicht alle ausgeschriebenen Zahlen.</li>
+<li>Nie ausgelöst: Fehlerzweig „Ablage-Problem“. Getestet ist nur der n8n-Chat als Eingang, der Hauptworkflow ist unveröffentlicht.</li>
+<li>KI-Kennzeichnung der Posts geplant, nicht gebaut, rechtlich dringendste Lücke (geplant für Do 12.11.2026, früher, falls heute machbar). Offen: Nachweis zur KI-Kompetenz.</li>
+<li>Beiträge zur Freigabe fielen in alte Muster zurück, die Qualitätsregeln aus Projekt 1 greifen nicht. Die Ursache ist noch nicht geprüft; Gegenmaßnahme sind die Prüfung von „Text schreiben“ und Werkzeug 6 (<a href="#s3">Abschnitt 3</a>, geplant).</li>
+<li>Kosten je Lauf, Tag und Monat sind geplant, noch nicht ausgewertet.</li>
+<li>Der n8n-Chat ist ein freies Textfeld. Dort ist eine Vorverarbeitung (Anonymisierung, etwa Namen entfernen) vor dem Agenten Pflicht. Sie ist nicht gebaut und als offener Punkt geführt. Der freie Text beim Ablehnen in Telegram geht nicht an den Agenten, er wird beim Beitrag gespeichert. Im Testbetrieb laufen Testdaten ohne Personenbezug, mit 2 benannten Ausnahmen: die Telegram-Kennung der freigebenden Person und mögliche Namen realer Personen in öffentlichen Webtexten. Für diese 2 ist die Prüfung von Rechtsgrundlage, Empfängern und Drittland offen.</li>
+</ul>
+</section>
+
+<section aria-labelledby="s8-t" class="kapitel" id="s8">
+<h2 id="s8-t">8 Zeitplan</h2>
+<ul>
+<li>Mi 11.11.: Werkzeuge 4 und 5, Freigabe, Ablage, Lauf von Anfang bis Ende (erledigt).</li>
+<li>Do 12.11.: 20 Testfälle (15 normale, 5 adversarial); KI-Kennzeichnung der Posts (geplant, früher, falls heute machbar).</li>
+<li>Fr 13.11.: Zwischenstand.</li>
+<li>Di 17.11.: Systemprompt final, danach Feinschliff (vorläufig).</li>
+<li>Bis Fr 20.11.: Ursache des Rückfalls in alte Muster prüfen, danach Werkzeug 6 bauen (geplant, entschieden am 11.11.2026).</li>
+<li>Fr 20.11.: Feature-Freeze (eigenes Ziel, offiziell vorgegeben ist Di 24.11.), Woche 10 ist für Doku und Präsentation reserviert.</li>
+<li>Do 26. oder Fr 27.11.: Abschlusspräsentation, Tag offen.</li>
+</ul>
+</section>
+
+<section aria-labelledby="s9-t" class="kapitel" id="s9">
+<h2 id="s9-t">9 Erfolgskriterien</h2>
+<ul>
+<li>5 Werkzeuge laufen (erreicht).</li>
+<li>20 Testfälle sind gelaufen, verglichen mit erwarteten und verbotenen Werkzeugen (bisher 10 je Prompt-Version).</li>
+<li>Jede Prompt-Version hat Datei und Changelog (erreicht).</li>
+<li>Nichts wird ohne Freigabe abgelegt (Freigabe 3 Mal, Ablehnung 1 Mal durchgelaufen).</li>
+<li>Die 5 adversarial Fälle geben weder Systemprompt noch Daten fremder Kunden preis (bisher 2 Fälle ohne Preisgabe).</li>
+<li>v2 schneidet mindestens so gut ab wie v1: nicht erreicht (v2 2 von 10, v1 5 von 10).</li>
+<li>Kosten je Lauf, Tag und Monat sind ausgewiesen.</li>
+<li>Werkzeug 6 läuft vor dem Einreichen und schickt Pakete unter der Schwelle höchstens 1 Mal zurück an „Text schreiben“ (geplant, noch nicht erreicht).</li>
+</ul>
+</section>
+
+<section aria-labelledby="s10-t" class="kapitel" id="s10">
+<h2 id="s10-t">10 Zusatzfunktionen</h2>
+<p>Stand 11.11.2026. Die Belege je Zusatzfunktion stehen in der <a href="index.html#bonus">Wochen-Doku im Abschnitt Zusatzfunktionen</a>.</p>
+<div aria-labelledby="t-bonus" class="tabelle" role="region" tabindex="0">
+<table class="mittel">
+<caption id="t-bonus">Zusatzfunktionen und Stand am 11.11.2026</caption>
+<thead><tr><th scope="col">Zusatzfunktion</th><th scope="col">Stand</th></tr></thead>
+<tbody>
+<tr><th data-label="Zusatzfunktion" scope="row">Human in the Loop</th><td data-label="Stand">umgesetzt: Freigabe oder Ablehnung in Telegram, abgelegt wird erst nach der Freigabe</td></tr>
+<tr><th data-label="Zusatzfunktion" scope="row">Monitoring und Alerting</th><td data-label="Stand">Ansatz, kein Überwachungssystem: fester Ausfalltext mit Ursachencode und Ausgabe-Prüfung, kein Dashboard und kein getesteter Alarm</td></tr>
+<tr><th data-label="Zusatzfunktion" scope="row">LLM-as-Judge</th><td data-label="Stand">geplant als Werkzeug 6 (<a href="#s3">Abschnitt 3</a>), nicht umgesetzt</td></tr>
+<tr><th data-label="Zusatzfunktion" scope="row">Multi-Agent</th><td data-label="Stand">nicht umgesetzt (<a href="#s3">Abschnitt 3</a>)</td></tr>
+<tr><th data-label="Zusatzfunktion" scope="row">MCP-Integration</th><td data-label="Stand">nicht umgesetzt (<a href="#s2">Abschnitt 2</a>)</td></tr>
+<tr><th data-label="Zusatzfunktion" scope="row">Eigenes Interface</th><td data-label="Stand">nicht umgesetzt, Eingang ist der n8n-Chat</td></tr>
+<tr><th data-label="Zusatzfunktion" scope="row">Kosten-Kalkulation</th><td data-label="Stand">nicht umgesetzt, geplant (<a href="#s7">Abschnitt 7</a>)</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section aria-labelledby="dateien-t" class="kapitel" id="dateien">
+<h2 id="dateien-t">Dateien im Repository</h2>
+<ul>
+<li>Workflows: <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/redaktions-agent.json">Hauptworkflow</a> und die 5 Werkzeuge im Ordner <a href="https://github.com/MinkeAutomation/redaktions-agent/tree/main/workflows">workflows/</a>.</li>
+<li>Systemprompt: <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/prompts/20261110_System-Prompt-Redaktions-Agent_V2.md">v2, live</a>, im Archiv <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/archiv/prompts/20261109_System-Prompt-Redaktions-Agent_V1.md">v1</a> und <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md">v3, verworfen</a>.</li>
+<li>Tests und Versionen: <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/test-tabelle.md">Test-Tabelle</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/versionen.md">versionen.md</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/versionsmatrix.md">Versionsmatrix</a>.</li>
+<li>Datenbank: <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/sql/p2_k2_pakete_v01.sql">Tabelle k2_pakete</a> und <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/sql/p2_k2_views_v01.sql">Lese-Views</a>.</li>
+</ul>
+</section>
+
+<section aria-labelledby="stand-t" class="kapitel" id="stand">
+<h2 id="stand-t">Stand</h2>
+<p>Fassung 6 vom 11.11.2026. Frühere Fassungen und alle Änderungen stehen im <a href="https://github.com/MinkeAutomation/redaktions-agent">Repository</a>.</p>
+</section>
+</main>
+<footer class="fuss">
+<span>Patrick Minkler · Redaktions-Agent K2 · Projekt 2</span>
+<span>Stand 11.11.2026 · Projekt-Charter Fassung 6</span>
+</footer>
+</div>
+</body>
+</html>

@@ -582,7 +582,7 @@
     },
     {
       "parameters": {
-        "content": "# ✅ Setup-Checkliste\n1. Credential OpenRouter API | CHAT (Typ OpenAI) am Schreib-Knoten und am Ersatzmodell.\n2. Credential Supabase API | KI-AGT-2606 am Lese-Knoten und am Speicher-Knoten.\n3. Tabelle k2_pakete (Migration p2_k2_pakete_v01) angelegt.\n4. Aufrufrecht: nur Workflows desselben Besitzers.\n5. Veröffentlichen, nach jeder Änderung erneut.\n6. Erster Test: im Hauptworkflow ein Thema mit Fakten schreiben lassen.",
+        "content": "# ✅ Setup-Checkliste\n1. Credential OpenRouter API | CHAT (Typ OpenAI) am Schreib-Knoten und am Ersatzmodell.\n2. Credential Supabase API | KI-AGT-2606 am Lese-Knoten und am Speicher-Knoten.\n3. Tabelle k2_pakete (Migration p2_k2_pakete_v01) angelegt.\n4. Aufrufrecht: nur Workflows desselben Besitzers.\n5. Veröffentlichen, nach jedem Umbau wieder.\n6. Erster Test: im Hauptworkflow ein Thema mit Fakten schreiben lassen.",
         "height": 442,
         "width": 412,
         "color": 7
@@ -980,9 +980,9 @@
     }
   ],
   "id": "WORKFLOW_ID_SUB_TEXT",
-  "versionId": "bc1c700c-66e5-405d-a836-4ba05e459c31",
+  "versionId": "8ad79e18-728a-4f90-8afa-4258c38b8515",
   "active": true,
-  "activeVersionId": "bc1c700c-66e5-405d-a836-4ba05e459c31",
+  "activeVersionId": "8ad79e18-728a-4f90-8afa-4258c38b8515",
   "description": "Projekt 2 AGT-2606: Werkzeug 3 des Redaktions-Agenten, schreibt aus einem Briefing das Text-Paket (Instagram, LinkedIn) im Markenton.",
   "nodeGroups": [],
   "staticData": null,

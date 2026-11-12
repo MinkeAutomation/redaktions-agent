@@ -8,12 +8,12 @@ Status heißt hier Live (geltender Stand), In Test (Testkopie, wird nicht Live),
 
 | Bestandteil | Version | Status | Datei |
 |---|---|---|---|
-| Hauptworkflow Redaktions-Agent | v16 | Live (in n8n nicht veröffentlicht) | [workflows/redaktions-agent.json](workflows/redaktions-agent.json) |
-| Werkzeug 1 Markenwissen abfragen | v03.1 | Live | [workflows/sub-markenwissen-abfragen.json](workflows/sub-markenwissen-abfragen.json) |
-| Werkzeug 2 Thema recherchieren | v03.1 | Live | [workflows/sub-thema-recherchieren.json](workflows/sub-thema-recherchieren.json) |
-| Werkzeug 3 Text schreiben | v07 | Live | [workflows/sub-text-schreiben.json](workflows/sub-text-schreiben.json) |
-| Werkzeug 4 Bilder gestalten | v01 | Live | [workflows/sub-bilder-gestalten.json](workflows/sub-bilder-gestalten.json) |
-| Werkzeug 5 Zur Freigabe einreichen | v01 | Live | [workflows/sub-zur-freigabe-einreichen.json](workflows/sub-zur-freigabe-einreichen.json) |
+| Hauptworkflow Redaktions-Agent | v16.2 | Live (in n8n nicht veröffentlicht) | [workflows/redaktions-agent.json](workflows/redaktions-agent.json) |
+| Werkzeug 1 Markenwissen abfragen | v03.3 | Live | [workflows/sub-markenwissen-abfragen.json](workflows/sub-markenwissen-abfragen.json) |
+| Werkzeug 2 Thema recherchieren | v03.2 | Live | [workflows/sub-thema-recherchieren.json](workflows/sub-thema-recherchieren.json) |
+| Werkzeug 3 Text schreiben | v07.1 | Live | [workflows/sub-text-schreiben.json](workflows/sub-text-schreiben.json) |
+| Werkzeug 4 Bilder gestalten | v01.2 | Live | [workflows/sub-bilder-gestalten.json](workflows/sub-bilder-gestalten.json) |
+| Werkzeug 5 Zur Freigabe einreichen | v01.2 | Live | [workflows/sub-zur-freigabe-einreichen.json](workflows/sub-zur-freigabe-einreichen.json) |
 | Systemprompt | V2 | Live | [prompts/20261110_System-Prompt-Redaktions-Agent_V2.md](prompts/20261110_System-Prompt-Redaktions-Agent_V2.md) |
 | Systemprompt | V1 | Archiviert | [archiv/prompts/20261109_System-Prompt-Redaktions-Agent_V1.md](archiv/prompts/20261109_System-Prompt-Redaktions-Agent_V1.md) |
 | Systemprompt | V3 | Verworfen (live bleibt V2) | [archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md](archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md) |
@@ -31,7 +31,7 @@ Status heißt hier Live (geltender Stand), In Test (Testkopie, wird nicht Live),
 - Agent-Modell: Nemotron 3.5 Super free (Gratis). Der Endpunkt von Nemotron 3 Ultra free war am 11.11.2026 zeitweise ausgefallen.
 - Systemprompt: V2 live; V1 archiviert, V3 verworfen. Vergleich V1 gegen V2 mit 10 Anfragen in der [Test-Tabelle](docs/test-tabelle.md).
 - Grenzen: Zahlenprüfung im Text-Werkzeug erkennt nicht alle Zahlwörter (ein Viertel, halb, null, Ordnungszahlen); Bildwahl nur über Schlagwörter; Wortmarke statt Logo-Datei; die Freigabe braucht einen Klick in Telegram.
-- Die Exporte in [workflows/](workflows/) und die älteren Stände in [archiv/workflows/](archiv/workflows/) sind für die Veröffentlichung bereinigt: Credential-IDs, Workflow-IDs (auch die Verweise der Werkzeug-Knoten), Tag- und Ordner-Kennungen, Adresse der Datenbank, Adresse der n8n-Instanz, Fehler-Workflow, Webhook-IDs und Hosts des Bild-Dienstes sind durch Platzhalter ersetzt, interne Verweise in Code-Kommentaren entfernt. Die Funktion ist gleich, der Export weicht deshalb im Text von der laufenden Instanz ab.
+- Die Exporte in [workflows/](workflows/) und die älteren Stände in [archiv/workflows/](archiv/workflows/) sind für die Veröffentlichung bereinigt: Credential-IDs, Workflow-IDs (auch die Verweise der Werkzeug-Knoten), Tag- und Ordner-Kennungen, Adresse der Datenbank, Adresse der n8n-Instanz, Fehler-Workflow, Webhook-IDs und Hosts des Bild-Dienstes sind durch Platzhalter ersetzt, interne Verweise in Code-Kommentaren entfernt. Der Name eines Testkunden ist in den Exporten durch `KUNDE_B` ersetzt, live in n8n steht der Originalwert. Die Funktion ist gleich, der Export weicht deshalb im Text von der laufenden Instanz ab.
 
 ## In 5 Minuten
 
@@ -55,6 +55,7 @@ Die Projektdokumentation liegt als Webseite im Ordner [docs/](docs/):
 Dazu gehören:
 
 - [Projekt-Charter mit Architekturentscheidung](docs/projekt-charter.md) (Ziel, Scope, Single-Agent gegen Multi-Agent) und das [Architekturbild](docs/bilder/architektur-redaktions-agent.svg)
+- [Projekt-Charter als Webseite](https://minkeautomation.github.io/redaktions-agent/charter.html): derselbe Inhalt wie die Markdown-Fassung, mit Navigation zur Wochen-Doku
 - [Versionsmatrix](docs/versionsmatrix.md): je Version Plan, Testtabelle, Tages-Doku und Export, Lücken mit Grund
 - [Test-Tabelle](docs/test-tabelle.md): Werkzeug-Tests, Vergleich V1 gegen V2, Freigabe und Ablage
 - [Pläne](docs/plan/): je Tag ein Excalidraw-Plan auf dem Endstand des Tages
@@ -66,7 +67,7 @@ Projekt 2 baut auf der Content-Maschine K1 aus Projekt 1 auf: Der Agent nutzt de
 - Repository: [content-maschine-k1](https://github.com/MinkeAutomation/content-maschine-k1)
 - [Anforderungen und Planung (PDF)](https://github.com/MinkeAutomation/content-maschine-k1/blob/main/abgaben/2026-10-05_W04T01/AGT-2606_W04T01_Projekt1-Planung.pdf)
 - [Architektur](https://github.com/MinkeAutomation/content-maschine-k1/blob/main/docs/architektur.md)
-- [Bekannte Einschränkungen](https://github.com/MinkeAutomation/content-maschine-k1/blob/main/docs/bekannte-einschraenkungen.md)
+- [Grenzen und offene Punkte von Projekt 1](https://github.com/MinkeAutomation/content-maschine-k1/blob/main/docs/bekannte-einschraenkungen.md)
 - [Lessons Learned](https://github.com/MinkeAutomation/content-maschine-k1/blob/main/docs/lessons-learned.md)
 - [Ablage-Workflow `sub-nextcloud-ablage.json`](https://github.com/MinkeAutomation/content-maschine-k1/blob/main/workflows/sub-nextcloud-ablage.json) (von Projekt 2 aufgerufen, nicht in diesem Repo)
 
@@ -83,6 +84,20 @@ Verwandtes Projekt: [k1-support-agent](https://github.com/MinkeAutomation/k1-sup
 | 5 Zur Freigabe einreichen | speichert den Beitrag mit Status `wartet_auf_freigabe`, höchstens 1 je Auftrag | `sub-zur-freigabe-einreichen.json` |
 
 Der Agent reicht nur die `paket_id` weiter, das Paket selbst liegt in der Tabelle `k2_pakete`. Freigabe (Telegram, 2 Knöpfe), Ablage (Nextcloud) und die Bestätigung mit Link zum Kundenordner (Telegram) laufen im Hauptworkflow `redaktions-agent.json`, weil Warten auf einen Menschen nicht in einen Sub gehört. Eine Prüfung der Antwort des Agenten (Guardrail Ebene 3) steht vor der Freigabe.
+
+## Zusatzfunktionen
+
+Zusatzfunktionen über die Grundanforderungen hinaus. Stand 11.11.2026. Die Läufe sind Ausführungsnummern in n8n und stehen in der [Test-Tabelle](docs/test-tabelle.md).
+
+| Zusatzfunktion | Stand | Beleg |
+|---|---|---|
+| Human in the Loop | umgesetzt | Der Agent veröffentlicht nie selbst. Der Beitrag geht als Vorschau mit 2 Knöpfen nach Telegram: Freigeben oder Ablehnen mit Grund (Eingabe über ein Formular). Die Ablage in Nextcloud passiert erst nach der Freigabe. Getestet: 3 Freigaben mit Ablage (Läufe 2768 und 2782 mit Prompt V2, Lauf 2748 mit Prompt V1) und 1 Ablehnung (Lauf 2735: Status abgelehnt, Grund gespeichert, nichts abgelegt), siehe [Test-Tabelle](docs/test-tabelle.md) Abschnitt D. Nicht getestet: das Verfallen der Anfrage nach 24 Stunden ohne Klick. |
+| Monitoring und Alerting | Ansatz, kein Überwachungssystem | Der Fehlerweg am Agenten setzt bei einem Ausfall einen festen Text, die Ursache steht als Code im Lauf (Läufe 2576 und 2579, [Tag 2](docs/w08t02.html)). Die Ausgabe-Prüfung sperrt unzulässige Antworten, etwa einen Statuswert ohne Beitrags-ID (Lauf 2706) oder ungültiges JSON (Lauf 2708); sie schlug auch fälschlich an (Lauf 2719, Wort „Systemprompt“). Im Hauptworkflow ist ein Fehler-Workflow eingetragen (Platzhalter `ERROR_WORKFLOW_ID`); ein Lauf, der ihn ausgelöst hat, ist nicht belegt. Es gibt kein Dashboard, keine Auswertung von Laufzeit oder Kosten und keinen getesteten Alarm an einen Menschen bei Fehlern. Der Zweig „Ablage-Problem senden“ wurde nie ausgelöst. |
+| Multi-Agent | nicht umgesetzt | 1 Agent mit 5 Werkzeugen, begründet in der [Projekt-Charter](docs/projekt-charter.md). |
+| MCP-Integration | nicht umgesetzt | Die Werkzeuge sind n8n-Sub-Workflows, kein MCP-Server; in der Projekt-Charter ausdrücklich nicht im Umfang. |
+| Eigenes Interface | nicht umgesetzt | Eingang ist der n8n-Chat, die Freigabe läuft über Telegram. |
+| Kosten-Kalkulation | nicht umgesetzt | Kosten je Lauf, Tag und Monat sind nicht ausgewertet. |
+| LLM-as-Judge | nicht umgesetzt | Im Workflow bewertet kein Sprachmodell die Antworten. Die Ausgabe-Prüfung ist regelbasiert, die Urteile der Test-Tabelle sind nach der Erwartung je Fall von Hand eingetragen. Geplant als Werkzeug 6 (siehe [Projekt-Charter](docs/projekt-charter.md), Abschnitt 3). |
 
 ## Umgebung
 
@@ -140,7 +155,7 @@ Vorgehen:
    | `WORKFLOW_ID_SUB_BILDER` | Werkzeug 4, `sub-bilder-gestalten.json` |
    | `WORKFLOW_ID_SUB_EINREICHEN` | Werkzeug 5, `sub-zur-freigabe-einreichen.json` |
    | `WORKFLOW_ID_NEXTCLOUD_ABLAGE` | Ablage-Workflow aus Projekt 1 (nicht in diesem Repo, Link oben) |
-   | `WORKFLOW_ID_REDAKTIONS_AGENT` | der Hauptworkflow selbst (`redaktions-agent.json`) |
+   | `WORKFLOW_ID_REDAKTIONS_AGENT` | dieser Workflow, also `redaktions-agent.json` |
    | `WORKFLOW_ID_PROJEKT_1` | Hauptworkflow von Projekt 1, kommt nur in der Sperrliste vor |
    | `TAG_ID_…` und `FOLDER_ID_PROJEKTORDNER` | Kennungen von Tags und Ordner der Ursprungsinstanz; nicht nötig, Tags legst du nach Bedarf selbst an |
    | `WORKFLOW_ID_TEST_…` | die Testkopien in `workflows/test/`; nicht nötig |
@@ -148,4 +163,4 @@ Vorgehen:
    Die Dateien in `konfiguration/` und `archiv/konfiguration/` sind Auszüge der Agent-Konfiguration zur Dokumentation und werden nicht importiert.
 4. Die Dateien in `workflows/test/` sind Testkopien und nicht nötig.
 
-Die LICENSE erlaubt das Lesen der Inhalte zur Bewertung im Kurs und zum Lernen. Die Importhinweise dienen dem Nachvollziehen dieser Arbeit; darüber hinaus gilt die LICENSE unverändert.
+Die LICENSE erlaubt das Lesen der Inhalte zur Durchsicht und zum Lernen. Die Importhinweise dienen dem Nachvollziehen dieser Arbeit; darüber hinaus gilt die LICENSE unverändert.

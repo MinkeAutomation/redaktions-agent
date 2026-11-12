@@ -339,7 +339,7 @@
     },
     {
       "parameters": {
-        "content": "# ✅ Setup-Checkliste\n1. Credential OpenRouter API | KI-AGT-2606 (Schlüssel, Typ OpenAI) am Sonar-Knoten.\n2. Aufrufrecht: nur Workflows desselben Besitzers.\n3. Veröffentlichen, sonst kann der Agent das Werkzeug nicht aufrufen; nach jeder Änderung erneut.\n4. Der Hauptworkflow übergibt trace_id (Ausführungsnummer des Hauptlaufs) fest, der Agent kann sie nicht ändern.\n5. Erster Test: im Hauptworkflow ein Thema mit aktuellen Zahlen schreiben.",
+        "content": "# ✅ Setup-Checkliste\n1. Credential OpenRouter API | KI-AGT-2606 (Schlüssel, Typ OpenAI) am Sonar-Knoten.\n2. Aufrufrecht: nur Workflows desselben Besitzers.\n3. Veröffentlichen, sonst kann der Agent das Werkzeug nicht aufrufen; nach jedem Umbau wieder.\n4. Der Hauptworkflow übergibt trace_id (Ausführungsnummer des Hauptlaufs) fest, der Agent kann sie nicht ändern.\n5. Erster Test: im Hauptworkflow ein Thema mit aktuellen Zahlen schreiben.",
         "height": 358,
         "width": 464,
         "color": 7
@@ -371,7 +371,7 @@
     },
     {
       "parameters": {
-        "content": "# 🩺 Fehlerbehebung\n**FEHLER Grenze erreicht:** je Auftrag höchstens 2 Recherchen, einen neuen Auftrag starten.\n**NICHT_GEFUNDEN:** keine belegten Fakten, das Thema anders fragen.\n**FEHLER nicht erreichbar:** Guthaben und Schlüssel des Kurses bei OpenRouter prüfen.",
+        "content": "# 🩺 Fehlerbehebung\n**FEHLER Grenze erreicht:** je Auftrag höchstens 2 Recherchen, einen neuen Auftrag starten.\n**NICHT_GEFUNDEN:** Sonar hat zu dem Thema nichts Belegtes geliefert, Frage anders stellen.\n**FEHLER nicht erreichbar:** Guthaben und Schlüssel des Kurses bei OpenRouter prüfen.",
         "height": 362,
         "width": 464,
         "color": 7
@@ -482,9 +482,9 @@
     }
   ],
   "id": "WORKFLOW_ID_SUB_RECHERCHE",
-  "versionId": "0ecca784-cf84-4944-8588-7ff4767da2f5",
+  "versionId": "27b8dbc6-9aea-4305-855a-9d250aff8454",
   "active": true,
-  "activeVersionId": "0ecca784-cf84-4944-8588-7ff4767da2f5",
+  "activeVersionId": "27b8dbc6-9aea-4305-855a-9d250aff8454",
   "description": "Projekt 2 AGT-2606: Werkzeug 2 des Redaktions-Agenten, 3 bis 5 belegte Fakten über Perplexity Sonar.",
   "nodeGroups": [],
   "staticData": null,
