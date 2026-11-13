@@ -2,22 +2,23 @@
 
 Projekt 2 im Kurs KI-Automatisierung (AGT-2606): Ein Agent in n8n plant Social-Media-Posts (Instagram und LinkedIn) für einen Kunden, prüft das Thema gegen Markenrichtlinien und frühere Posts, holt bei Bedarf belegte Fakten, schreibt das Text-Paket, baut die Bilder im Branding des Kunden und reicht alles zur Freigabe durch einen Menschen ein. Nach der Freigabe in Telegram wird der Beitrag in Nextcloud abgelegt.
 
-## Stand (11.11.2026)
+## Stand (12.11.2026)
 
 Status heißt hier Live (geltender Stand), In Test (Testkopie, wird nicht Live), Archiviert (abgelöst, Datei unter `archiv/`) oder Verworfen (getestet, nicht übernommen). Der Status je Version steht in [versionen.md](versionen.md), die Datei zu jeder Version in der Spalte Archivdatei.
 
 | Bestandteil | Version | Status | Datei |
 |---|---|---|---|
-| Hauptworkflow Redaktions-Agent | v16.2 | Live (in n8n nicht veröffentlicht) | [workflows/redaktions-agent.json](workflows/redaktions-agent.json) |
+| Hauptworkflow Redaktions-Agent | v19.1 | Live (in n8n nicht veröffentlicht) | [workflows/redaktions-agent.json](workflows/redaktions-agent.json) |
 | Werkzeug 1 Markenwissen abfragen | v03.3 | Live | [workflows/sub-markenwissen-abfragen.json](workflows/sub-markenwissen-abfragen.json) |
 | Werkzeug 2 Thema recherchieren | v03.2 | Live | [workflows/sub-thema-recherchieren.json](workflows/sub-thema-recherchieren.json) |
 | Werkzeug 3 Text schreiben | v07.1 | Live | [workflows/sub-text-schreiben.json](workflows/sub-text-schreiben.json) |
 | Werkzeug 4 Bilder gestalten | v01.2 | Live | [workflows/sub-bilder-gestalten.json](workflows/sub-bilder-gestalten.json) |
 | Werkzeug 5 Zur Freigabe einreichen | v01.2 | Live | [workflows/sub-zur-freigabe-einreichen.json](workflows/sub-zur-freigabe-einreichen.json) |
-| Systemprompt | V2 | Live | [prompts/20261110_System-Prompt-Redaktions-Agent_V2.md](prompts/20261110_System-Prompt-Redaktions-Agent_V2.md) |
+| Systemprompt | V4 | Live | [prompts/20261112_System-Prompt-Redaktions-Agent_V4.md](prompts/20261112_System-Prompt-Redaktions-Agent_V4.md) |
+| Systemprompt | V2 | Archiviert (abgelöst von V4) | [archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V2.md](archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V2.md) |
 | Systemprompt | V1 | Archiviert | [archiv/prompts/20261109_System-Prompt-Redaktions-Agent_V1.md](archiv/prompts/20261109_System-Prompt-Redaktions-Agent_V1.md) |
-| Systemprompt | V3 | Verworfen (live bleibt V2) | [archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md](archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md) |
-| Agent-Konfiguration | V2 | Live | [konfiguration/20261111_Redaktions-Agent_V2_Agent-Konfiguration.json](konfiguration/20261111_Redaktions-Agent_V2_Agent-Konfiguration.json) |
+| Systemprompt | V3 | Verworfen (V2 blieb live, inzwischen von V4 abgelöst) | [archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md](archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md) |
+| Agent-Konfiguration | V2 | Stand 11.11.2026 (der Auszug zu V4 liegt noch nicht vor) | [konfiguration/20261111_Redaktions-Agent_V2_Agent-Konfiguration.json](konfiguration/20261111_Redaktions-Agent_V2_Agent-Konfiguration.json) |
 | Agent-Konfiguration | V1 | Archiviert (bleibt in `konfiguration/`, die Abgabe verweist dorthin) | [konfiguration/20261109_Redaktions-Agent_V1_Agent-Konfiguration.json](konfiguration/20261109_Redaktions-Agent_V1_Agent-Konfiguration.json) |
 | Agent-Konfiguration | V3 | Verworfen (live bleibt V2) | [archiv/konfiguration/20261110_Redaktions-Agent_V3_Agent-Konfiguration.json](archiv/konfiguration/20261110_Redaktions-Agent_V3_Agent-Konfiguration.json) |
 | Testkopie Redaktions-Agent mit 1 Werkzeug | v04 | In Test (Testkopie, wird nicht Live) | [workflows/test/test-redaktions-agent-1-werkzeug.json](workflows/test/test-redaktions-agent-1-werkzeug.json) |
@@ -28,8 +29,9 @@ Status heißt hier Live (geltender Stand), In Test (Testkopie, wird nicht Live),
 | Lese-Views und Spalte `erzeugt_von` | v01 | Live | [sql/p2_k2_views_v01.sql](sql/p2_k2_views_v01.sql) |
 
 - Alle 5 Werkzeuge gebaut, veröffentlicht und angebunden. Getestet mit dem Testkunden `test-p2` im n8n-Chat, der Hauptworkflow bleibt unveröffentlicht.
-- Agent-Modell: Nemotron 3.5 Super free (Gratis). Der Endpunkt von Nemotron 3 Ultra free war am 11.11.2026 zeitweise ausgefallen.
-- Systemprompt: V2 live; V1 archiviert, V3 verworfen. Vergleich V1 gegen V2 mit 10 Anfragen in der [Test-Tabelle](docs/test-tabelle.md).
+- Agent-Modell: Nemotron 3.5 Super free (Gratis), seit v19 (13.11.2026: v19.1) mit 4.000 Ausgabe-Tokens. Der Endpunkt von Nemotron 3 Ultra free war am 11.11.2026 zeitweise ausgefallen.
+- Systemprompt: V4 live (12.11.2026, Guardrails); V1 und V2 archiviert, V3 verworfen. Vergleich V1 gegen V2 mit 10 Anfragen in der [Test-Tabelle](docs/test-tabelle.md). Der Vergleich V2 gegen V4 steht aus.
+- Guardrails (12.11.2026, Hauptworkflow v17 bis v19, gebaut für den Chat-Eingang): Eingangsprüfung vor dem Agenten (schwärzen, Jailbreak, Themenbindung) und Ausgangsprüfung vor der Freigabe (Schlüssel, Links, Personendaten, Anstößiges, mit Sperre). 9 Kernfälle gelaufen: 7 Teilergebnisse bestanden, 2 nicht bestanden, 1 Fehler, siehe [Tag 4](docs/w08t04.html). Offen bis Ende Woche 9: Laufzeile, Eingänge Formular und Telegram, Prüfung der Recherche-Texte, Veröffentlichung, 11 weitere Fälle.
 - Grenzen: Zahlenprüfung im Text-Werkzeug erkennt nicht alle Zahlwörter (ein Viertel, halb, null, Ordnungszahlen); Bildwahl nur über Schlagwörter; Wortmarke statt Logo-Datei; die Freigabe braucht einen Klick in Telegram.
 - Die Exporte in [workflows/](workflows/) und die älteren Stände in [archiv/workflows/](archiv/workflows/) sind für die Veröffentlichung bereinigt: Credential-IDs, Workflow-IDs (auch die Verweise der Werkzeug-Knoten), Tag- und Ordner-Kennungen, Adresse der Datenbank, Adresse der n8n-Instanz, Fehler-Workflow, Webhook-IDs und Hosts des Bild-Dienstes sind durch Platzhalter ersetzt, interne Verweise in Code-Kommentaren entfernt. Der Name eines Testkunden ist in den Exporten durch `KUNDE_B` ersetzt, live in n8n steht der Originalwert. Die Funktion ist gleich, der Export weicht deshalb im Text von der laufenden Instanz ab.
 
@@ -37,7 +39,7 @@ Status heißt hier Live (geltender Stand), In Test (Testkopie, wird nicht Live),
 
 1. Den Ablauf und die Stände liest du in [CHANGELOG.md](CHANGELOG.md): je Version des Systemprompts was geändert wurde, Ergebnis, nächste Idee, Status und die zugehörige Agent-Konfiguration.
 2. Die 5 Werkzeuge und der Hauptworkflow liegen als Export in [workflows/](workflows/), die Testkopien in [workflows/test/](workflows/test/), jede ältere Version in [archiv/](archiv/README.md). Die Liste aller Versionen mit Status, Archivdatei und n8n-Versions-ID steht in [versionen.md](versionen.md), was es je Version an Plan, Test und Doku gibt in [docs/versionsmatrix.md](docs/versionsmatrix.md). Dieses Repo beginnt mit dem Stand vom 11.11.2026 (Hauptworkflow v16) als erstem Commit; die Commit-Spalte in `versionen.md` verweist auf den Verlauf eines privaten Archiv-Repos, nicht auf dieses Repo.
-3. Der geltende Systemprompt liegt als Markdown-Datei in [prompts/](prompts/) (Muster `YYYYMMDD_System-Prompt-Redaktions-Agent_V<Nummer>.md`), die älteren Fassungen V1 und V3 (verworfen), die zeichengleiche Live-Fassung von V2 (`..._V2_vor-V3.md`) und die Testkopie-Prompts in [archiv/prompts/](archiv/prompts/).
+3. Der geltende Systemprompt liegt als Markdown-Datei in [prompts/](prompts/) (Muster `YYYYMMDD_System-Prompt-Redaktions-Agent_V<Nummer>.md`), die älteren Fassungen V1, V2 und V3 (verworfen), die zeichengleiche Live-Fassung von V2 (`..._V2_vor-V3.md`) und die Testkopie-Prompts in [archiv/prompts/](archiv/prompts/).
 4. Die Tests, auch der Vergleich von Prompt v1 gegen v2, stehen in [docs/test-tabelle.md](docs/test-tabelle.md).
 5. Die Tabelle für den Paket-Speicher und die Lese-Views stehen in [sql/](sql/).
 6. Ziel, Scope und die Architekturentscheidung (Single-Agent) stehen in [docs/projekt-charter.md](docs/projekt-charter.md).
@@ -51,6 +53,7 @@ Die Projektdokumentation liegt als Webseite im Ordner [docs/](docs/):
 - [Tag 1 (09.11.2026)](docs/w08t01.html): Use Case, Datenmodell, Systemprompt V1, Werkzeug 1 und 2
 - [Tag 2 (10.11.2026)](docs/w08t02.html): Fehlerweg, Ausgabe-Prüfung, Werkzeug 3, Testreihe mit 1 Werkzeug
 - [Tag 3 (11.11.2026)](docs/w08t03.html): Werkzeug 4 und 5, Freigabe und Ablage, Vergleich V1 gegen V2
+- [Tag 4 (12.11.2026)](docs/w08t04.html): Guardrails an Eingang und Ausgang, Erlaubt und verboten, Übersicht nach den 3 Ebenen, Systemprompt V4, Planbild des Endstands, 9 Kernfälle in 12 Läufen; die Testtabelle mit Eingabe und Antwort im Wortlaut steht in [docs/test-tabelle-w08t04.md](docs/test-tabelle-w08t04.md)
 
 Dazu gehören:
 
@@ -83,7 +86,7 @@ Verwandtes Projekt: [k1-support-agent](https://github.com/MinkeAutomation/k1-sup
 | 4 Bilder gestalten | Foto von Pixabay, sonst KI-Bild, gerendert mit Gotenberg, abgelegt in Supabase Storage (ohne Layout 4) | `sub-bilder-gestalten.json` |
 | 5 Zur Freigabe einreichen | speichert den Beitrag mit Status `wartet_auf_freigabe`, höchstens 1 je Auftrag | `sub-zur-freigabe-einreichen.json` |
 
-Der Agent reicht nur die `paket_id` weiter, das Paket selbst liegt in der Tabelle `k2_pakete`. Freigabe (Telegram, 2 Knöpfe), Ablage (Nextcloud) und die Bestätigung mit Link zum Kundenordner (Telegram) laufen im Hauptworkflow `redaktions-agent.json`, weil Warten auf einen Menschen nicht in einen Sub gehört. Eine Prüfung der Antwort des Agenten (Guardrail Ebene 3) steht vor der Freigabe.
+Der Agent reicht nur die `paket_id` weiter, das Paket selbst liegt in der Tabelle `k2_pakete`. Freigabe (Telegram, 2 Knöpfe), Ablage (Nextcloud) und die Bestätigung mit Link zum Kundenordner (Telegram) laufen im Hauptworkflow `redaktions-agent.json`, weil Warten auf einen Menschen nicht in einen Sub gehört. Eine Prüfung der Antwort des Agenten (Guardrail Ebene 3) steht vor der Freigabe. Seit v17 und v18 kommen eine Eingangsprüfung vor dem Agenten und eine Ausgangsprüfung des Beitragstextes vor der Freigabe dazu (Guardrails-Knoten, siehe [Tag 4](docs/w08t04.html)).
 
 ## Zusatzfunktionen
 
@@ -92,7 +95,7 @@ Zusatzfunktionen über die Grundanforderungen hinaus. Stand 11.11.2026. Die Läu
 | Zusatzfunktion | Stand | Beleg |
 |---|---|---|
 | Human in the Loop | umgesetzt | Der Agent veröffentlicht nie selbst. Der Beitrag geht als Vorschau mit 2 Knöpfen nach Telegram: Freigeben oder Ablehnen mit Grund (Eingabe über ein Formular). Die Ablage in Nextcloud passiert erst nach der Freigabe. Getestet: 3 Freigaben mit Ablage (Läufe 2768 und 2782 mit Prompt V2, Lauf 2748 mit Prompt V1) und 1 Ablehnung (Lauf 2735: Status abgelehnt, Grund gespeichert, nichts abgelegt), siehe [Test-Tabelle](docs/test-tabelle.md) Abschnitt D. Nicht getestet: das Verfallen der Anfrage nach 24 Stunden ohne Klick. |
-| Monitoring und Alerting | Ansatz, kein Überwachungssystem | Der Fehlerweg am Agenten setzt bei einem Ausfall einen festen Text, die Ursache steht als Code im Lauf (Läufe 2576 und 2579, [Tag 2](docs/w08t02.html)). Die Ausgabe-Prüfung sperrt unzulässige Antworten, etwa einen Statuswert ohne Beitrags-ID (Lauf 2706) oder ungültiges JSON (Lauf 2708); sie schlug auch fälschlich an (Lauf 2719, Wort „Systemprompt“). Im Hauptworkflow ist ein Fehler-Workflow eingetragen (Platzhalter `ERROR_WORKFLOW_ID`); ein Lauf, der ihn ausgelöst hat, ist nicht belegt. Es gibt kein Dashboard, keine Auswertung von Laufzeit oder Kosten und keinen getesteten Alarm an einen Menschen bei Fehlern. Der Zweig „Ablage-Problem senden“ wurde nie ausgelöst. |
+| Monitoring und Alerting | Ansatz, kein Überwachungssystem (seit 12.11.2026 mit Eingangs- und Ausgangsprüfung) | Der Fehlerweg am Agenten setzt bei einem Ausfall einen festen Text, die Ursache steht als Code im Lauf (Läufe 2576 und 2579, [Tag 2](docs/w08t02.html)). Die Ausgabe-Prüfung sperrt unzulässige Antworten, etwa einen Statuswert ohne Beitrags-ID (Lauf 2706) oder ungültiges JSON (Lauf 2708); sie schlug auch fälschlich an (Lauf 2719, Wort „Systemprompt“). Im Hauptworkflow ist ein Fehler-Workflow eingetragen (Platzhalter `ERROR_WORKFLOW_ID`); ein Lauf, der ihn ausgelöst hat, ist nicht belegt. Es gibt kein Dashboard, keine Auswertung von Laufzeit oder Kosten und keinen getesteten Alarm an einen Menschen bei Fehlern. Der Zweig „Ablage-Problem senden“ wurde nie ausgelöst. |
 | Multi-Agent | nicht umgesetzt | 1 Agent mit 5 Werkzeugen, begründet in der [Projekt-Charter](docs/projekt-charter.md). |
 | MCP-Integration | nicht umgesetzt | Die Werkzeuge sind n8n-Sub-Workflows, kein MCP-Server; in der Projekt-Charter ausdrücklich nicht im Umfang. |
 | Eigenes Interface | nicht umgesetzt | Eingang ist der n8n-Chat, die Freigabe läuft über Telegram. |

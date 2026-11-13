@@ -103,6 +103,18 @@ Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V2 steht 
 
 ---
 
+## Arbeitsschritte 12.11. und 13.11.2026 (Tag 4: Guardrails)
+
+Je Arbeitsschritt eine Zeile (Zeit lokal). Die Stände, versionIds und Commits stehen in [versionen.md](versionen.md), die Testfälle mit Eingabe und Antwort im Wortlaut in der [Testtabelle Tag 4](docs/test-tabelle-w08t04.md).
+
+| Zeit | Schritt | Ergebnis |
+|---|---|---|
+| 12.11. 16:30 | Eingangsprüfung gebaut (Hauptworkflow v17): Eingang vereinheitlichen, schwärzen, Schwärzung prüfen, Jailbreak und Themenbindung, fester Ablehnungs- und Ausfallsatz; der Agent bekommt nur den geschwärzten Text | Läufe 2819, 2821, 2824: Ablehnung am Eingang; 2826 und 2842, 2844: Prüfung ausgefallen, fester Ausfallsatz |
+| 12.11. 16:53 | Ausgangsprüfung gebaut (v18): Beitrag prüfen mit Sperre und Meldung, Freigabefelder erhalten; Systemprompt V4 (Auftrag zwischen Markierungen, keine Werkzeuge oder Abläufe nennen) | Sperr-Zweig in keinem Lauf ausgelöst; Lauf 2857: Fehlalarm der Antwortprüfung beim Wort „Systemprompt“ |
+| 12.11. 17:41 | Reparaturrunde (v19): 4.000 statt 2.000 Ausgabe-Tokens am Agenten-Modell, Absatz zum Antwortformat im Systemprompt V4 | Lauf 2870: gültiges JSON, Beitrag prüfen bestanden, Freigabe und Ablage; die Läufe 2846 und 2853 davor scheiterten mit JSON_UNGUELTIG |
+| 13.11. 12:19 | Anordnung im Editor (v19.1), Export neu gezogen | n8n entfernte Standardwerte aus dem Export, Funktion unverändert |
+| 13.11. | Dokumentation Tag 4: Übersicht nach den 3 Ebenen, Planbild des Endstands, Testtabelle mit Wortlaut, Bewertung und Legende | [Tag 4](docs/w08t04.html), [Testtabelle](docs/test-tabelle-w08t04.md), [Plan v19.1](docs/plan/plan-w08t04-v19.png) |
+
 ## Arbeitsschritte 11.11.2026
 
 Die Prompt-Versionen stehen oben, hier die Arbeitsschritte des Tages (Zeit lokal). Die Stände, versionIds und Commits aller Workflows stehen in [versionen.md](versionen.md).
