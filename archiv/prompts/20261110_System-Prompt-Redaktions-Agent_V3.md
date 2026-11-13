@@ -1,4 +1,4 @@
-> Status: Verworfen, am 10.11.2026 getestet und nicht übernommen, live bleibt V2 (prompts/20261110_System-Prompt-Redaktions-Agent_V2.md).
+> Status: Verworfen, am 10.11.2026 getestet und nicht übernommen, zunächst blieb V2 live (archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V2.md), inzwischen V4.
 
 # Systemprompt Redaktions-Agent, Version v3 (10.11.2026)
 

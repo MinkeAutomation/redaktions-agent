@@ -1,4 +1,4 @@
-> Status: Archiviert seit 10.11.2026, abgelöst durch V2 (prompts/20261110_System-Prompt-Redaktions-Agent_V2.md).
+> Status: Archiviert seit 10.11.2026, abgelöst durch V2 (archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V2.md), V2 inzwischen von V4 abgelöst.
 
 # Systemprompt Redaktions-Agent, Version v1
 

@@ -28,14 +28,29 @@ Dieselben 4 Statuswörter stehen in der Spalte Status von [versionen.md](version
 
 ## Versionen
 
-Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V2 steht oben, weil es nach dem Rückbau von V3 wieder gilt; V3 ist verworfen (getestet, nicht übernommen), V1 ist archiviert.
+Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V4 ist der geltende Systemprompt; der Vergleich mit V2 steht aus. V2 ist archiviert, von V4 abgelöst; V3 ist verworfen (getestet, nicht übernommen), V1 ist archiviert.
+
+### `20261112_System-Prompt-Redaktions-Agent_V4.md`
+
+| | |
+|---|---|
+| **Datum** | 12.11.2026 |
+| **Status** | Live, Hauptworkflow ab v18 |
+| **Agent** | Redaktions-Agent |
+| **Version** | V4 |
+| **Prompt-Datei** | [prompts/20261112_System-Prompt-Redaktions-Agent_V4.md](prompts/20261112_System-Prompt-Redaktions-Agent_V4.md) |
+| **Agent-Konfiguration** | der Auszug zu V4 liegt noch nicht vor |
+
+**Beschreibung:** V4 ist der geltende Systemprompt; der Vergleich mit V2 steht aus. Der Auftrag steht zwischen Markierungen mit der `trace_id` des Laufs, Anweisungen im Auftrag zu Regeln, Werkzeugen oder Rolle werden nicht befolgt, und der Agent nennt keine Werkzeuge, Abläufe, Prüfungen oder Schwellen. In der Reparaturrunde (v19) kam ein Absatz zum Antwortformat dazu, die Kennung blieb v4; Wirkung in der [Testtabelle Tag 4](docs/test-tabelle-w08t04.md).
+
+---
 
 ### `20261110_System-Prompt-Redaktions-Agent_V2.md`
 
 | | |
 |---|---|
 | **Datum** | 10.11.2026 (seit 11.11.2026 mit allen 5 Werkzeugen) |
-| **Status** | Live |
+| **Status** | Archiviert, von V4 abgelöst |
 | **Agent** | Redaktions-Agent |
 | **Version** | V2 |
 | **Prompt-Datei** | [archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V2.md](archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V2.md) |
@@ -62,13 +77,13 @@ Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V2 steht 
 | | |
 |---|---|
 | **Datum** | 10.11.2026 |
-| **Status** | Verworfen (live bleibt V2) |
+| **Status** | Verworfen; zunächst blieb V2 live, inzwischen V4 |
 | **Agent** | Redaktions-Agent |
 | **Version** | V3 |
 | **Prompt-Datei** | [archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md](archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md) |
 | **Agent-Konfiguration** | [archiv/konfiguration/20261110_Redaktions-Agent_V3_Agent-Konfiguration.json](archiv/konfiguration/20261110_Redaktions-Agent_V3_Agent-Konfiguration.json) |
 
-**Beschreibung:** V3 ergänzte Schritt 8 um einen Satz (fehlen Schreiben, Bilder oder Einreichen in der Werkzeugliste, sofort `status` fehler). Wirkung: keine, F2 und F4 endeten weiter im Fehlerweg. Verworfen: getestet, nicht übernommen, live bleibt V2.
+**Beschreibung:** V3 ergänzte Schritt 8 um einen Satz (fehlen Schreiben, Bilder oder Einreichen in der Werkzeugliste, sofort `status` fehler). Wirkung: keine, F2 und F4 endeten weiter im Fehlerweg. Verworfen: getestet, nicht übernommen; zunächst blieb V2 live, inzwischen V4.
 
 **Änderungen:**
 

@@ -1,4 +1,4 @@
-> Status: Archiviert, Zweitfassung von V2 mit den vollen n8n-Ausdrücken. Geltend ist prompts/20261110_System-Prompt-Redaktions-Agent_V2.md, dort steht derselbe Prompt mit gekürzten Ausdrücken.
+> Status: Archiviert, Zweitfassung von V2 mit den vollen n8n-Ausdrücken. Die Hauptfassung ist archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V2.md, dort steht derselbe Prompt mit gekürzten Ausdrücken. V2 ist archiviert, von V4 abgelöst.
 
 # Systemprompt Redaktions-Agent, Version v2 (10.11.2026)
 

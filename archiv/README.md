@@ -38,4 +38,4 @@ Jede Archivdatei ist wie die heutigen Exporte bereinigt: Credential-IDs, Workflo
 | Status | Bedeutung hier |
 |---|---|
 | Archiviert | abgelöst, durch eine spätere Version ersetzt |
-| Verworfen | getestet, nicht übernommen: Systemprompt V3 (Hauptworkflow v06, Testkopie v02) und die Agent-Konfiguration V3; live bleibt V2 |
+| Verworfen | getestet, nicht übernommen: Systemprompt V3 (Hauptworkflow v06, Testkopie v02) und die Agent-Konfiguration V3; zunächst blieb V2 live, inzwischen V4 |

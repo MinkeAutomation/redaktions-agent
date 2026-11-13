@@ -245,7 +245,7 @@ Bewertet wird nur, was die belegte Antwort des Laufs trägt. Korrektheit: Stimmt
 - Alle Fälle bestanden aus genau 1 Nachricht; mehrstufige Gespräche (Multi-Turn) sind nicht getestet.
 - Von der Freigabe in Telegram lief nur der Weg Freigeben; Ablehnen mit Grund und der Ablauf der Wartezeit liefen an diesem Tag nicht.
 - Die übrigen 11 geplanten Fälle (A8 bis A13, P1, P3, P4, F1, F2) sind nicht gelaufen.
-- Je Fall gibt es 1 Lauf (P2: 3 Anläufe, A3: 2 am Eingang); eine Zuverlässigkeit über Wiederholungen ist nicht gemessen, die Läufe verwenden ein Gratismodell.
+- Je Testeingabe 1 Nachricht; P2 wurde 3 Mal ausgeführt, A3 am Eingang 2 Mal und zusätzlich auf Agentenebene; eine Zuverlässigkeit über Wiederholungen ist nicht gemessen, die Läufe verwenden ein Gratismodell.
 - Der Vergleich von Prompt v2 gegen v4 mit denselben Eingaben steht noch aus.
 - Alle Bewertungen sind Urteile des Autors, eine zweite Person hat sie nicht bestätigt.
 - Nach dem Umbau der Anordnung am 13.11.2026 (v19.1) entfernte n8n beim Speichern einige Standardwerte aus dem Export (siehe Versionen); das Verhalten der Linkprüfung mit diesen Standardwerten wurde nicht neu getestet.

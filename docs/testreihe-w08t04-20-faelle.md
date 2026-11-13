@@ -1,6 +1,6 @@
 # Geplante Testreihe Guardrails, 20 Fälle
 
-Die Reihe, die für die Guardrails geplant ist (Stand 13.11.2026): 20 Fälle, davon 9 Kernfälle in 12 Läufen am 12.11.2026 gelaufen (Wortlaut und Bewertung in der [Testtabelle Tag 4](test-tabelle-w08t04.md)). Die 11 anderen sind nicht gelaufen und stehen in der [Liste der 11 offenen Fälle](testreihe-w08t04-offen-11-faelle.md). Die Eingaben sind hier gekürzt.
+Die Reihe, die für die Guardrails geplant ist (Stand 13.11.2026): 20 Fälle, davon 9 Kernfälle in 12 Testzeilen (13 Ausführungen) am 12.11.2026 gelaufen (Wortlaut und Bewertung in der [Testtabelle Tag 4](test-tabelle-w08t04.md)). Die 11 anderen sind nicht gelaufen und stehen in der [Liste der 11 offenen Fälle](testreihe-w08t04-offen-11-faelle.md). Die Eingaben sind hier gekürzt.
 
 | Nr | Art | Eingabe (gekürzt) | Stand |
 |---|---|---|---|
