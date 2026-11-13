@@ -2,7 +2,7 @@
 
 Projekt 2 im Kurs KI-Automatisierung (AGT-2606): Ein Agent in n8n plant Social-Media-Posts (Instagram und LinkedIn) für einen Kunden, prüft das Thema gegen Markenrichtlinien und frühere Posts, holt bei Bedarf belegte Fakten, schreibt das Text-Paket, baut die Bilder im Branding des Kunden und reicht alles zur Freigabe durch einen Menschen ein. Nach der Freigabe in Telegram wird der Beitrag in Nextcloud abgelegt.
 
-## Stand (12.11.2026)
+## Stand (13.11.2026)
 
 Status heißt hier Live (geltender Stand), In Test (Testkopie, wird nicht Live), Archiviert (abgelöst, Datei unter `archiv/`) oder Verworfen (getestet, nicht übernommen). Der Status je Version steht in [versionen.md](versionen.md), die Datei zu jeder Version in der Spalte Archivdatei.
 
@@ -38,7 +38,7 @@ Status heißt hier Live (geltender Stand), In Test (Testkopie, wird nicht Live),
 ## In 5 Minuten
 
 1. Den Ablauf und die Stände liest du in [CHANGELOG.md](CHANGELOG.md): je Version des Systemprompts was geändert wurde, Ergebnis, nächste Idee, Status und die zugehörige Agent-Konfiguration.
-2. Die 5 Werkzeuge und der Hauptworkflow liegen als Export in [workflows/](workflows/), die Testkopien in [workflows/test/](workflows/test/), jede ältere Version in [archiv/](archiv/README.md). Die Liste aller Versionen mit Status, Archivdatei und n8n-Versions-ID steht in [versionen.md](versionen.md), was es je Version an Plan, Test und Doku gibt in [docs/versionsmatrix.md](docs/versionsmatrix.md). Dieses Repo beginnt mit dem Stand vom 11.11.2026 (Hauptworkflow v16) als erstem Commit; die Commit-Spalte in `versionen.md` verweist auf den Verlauf eines privaten Archiv-Repos, nicht auf dieses Repo.
+2. Die 5 Werkzeuge und der Hauptworkflow liegen als Export in [workflows/](workflows/), die Testkopien in [workflows/test/](workflows/test/), jede ältere Version in [archiv/](archiv/README.md). Die Liste aller Versionen mit Status, Archivdatei und n8n-Versions-ID steht in [versionen.md](versionen.md), was es je Version an Plan, Test und Doku gibt in [docs/versionsmatrix.md](docs/versionsmatrix.md). Dieses Repo beginnt mit dem Stand vom 11.11.2026 (Hauptworkflow v16) als erstem Commit; die Commit-Spalte in `versionen.md` verweist bei den älteren Ständen auf den Verlauf eines privaten Archiv-Repos, ab v19.1 (Commits c71efd7 und d234ae5) auf dieses Repo.
 3. Der geltende Systemprompt liegt als Markdown-Datei in [prompts/](prompts/) (Muster `YYYYMMDD_System-Prompt-Redaktions-Agent_V<Nummer>.md`), die älteren Fassungen V1, V2 und V3 (verworfen), die zeichengleiche Live-Fassung von V2 (`..._V2_vor-V3.md`) und die Testkopie-Prompts in [archiv/prompts/](archiv/prompts/).
 4. Die Tests, auch der Vergleich von Prompt v1 gegen v2, stehen in [docs/test-tabelle.md](docs/test-tabelle.md).
 5. Die Tabelle für den Paket-Speicher und die Lese-Views stehen in [sql/](sql/).

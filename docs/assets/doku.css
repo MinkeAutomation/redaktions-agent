@@ -300,3 +300,4 @@ figcaption strong { color: var(--ink); font-weight: 600; }
 /* Kasten "In 1 Minute" am Anfang jeder Tagesseite */
 .einminute ul { margin: 0.55rem 0 0; padding-left: 1.2rem; font-family: var(--body); font-weight: 400; font-size: 0.98rem; line-height: 1.5; }
 .einminute li { margin-bottom: 0.3rem; }
+.einminute p { font-family: var(--body); font-weight: 400; font-size: 0.98rem; line-height: 1.5; margin-top: 0.55rem; }

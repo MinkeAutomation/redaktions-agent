@@ -2,7 +2,7 @@
 
 Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug; M-n, N-n, V3-n und V4-n sind laufende Nummern von Prüfhinweisen aus der Qualitätssicherung der Werkzeuge (je Hinweis ein Fund, der vor der Veröffentlichung der Version behoben wurde). „Prüfung der Knotenpositionen bestanden“ heißt: Die Positionen aller schon vorhandenen Knoten des Workflows sind nach der Änderung unverändert (Angabe „n von n“ = Zahl der geprüften Knoten).
 
-Jede Zeile ist ein Commit im privaten Archiv-Repo (dieses Repo beginnt mit dem Stand v16 vom 11.11.2026, die Commit-Spalte gehört zum Archiv); Datum und Uhrzeit sind die der Version in n8n. Neueste oben.
+Jede Zeile ist ein Commit; bis v19 liegt er im privaten Archiv-Repo (dieses Repo beginnt mit dem Stand v16 vom 11.11.2026), ab v19.1 (Commits c71efd7 und d234ae5) in diesem Repo; Datum und Uhrzeit sind die der Version in n8n. Neueste oben.
 
 ## Status und Archiv
 
