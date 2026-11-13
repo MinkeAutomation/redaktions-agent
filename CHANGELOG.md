@@ -114,7 +114,7 @@ Je Arbeitsschritt eine Zeile (Zeit lokal). Die Stände, versionIds und Commits s
 | 12.11. 17:41 | Reparaturrunde (v19): 4.000 statt 2.000 Ausgabe-Tokens am Agenten-Modell, Absatz zum Antwortformat im Systemprompt V4 | Lauf 2870: gültiges JSON, Beitrag prüfen bestanden, Freigabe und Ablage; die Läufe 2846 und 2853 davor scheiterten mit JSON_UNGUELTIG |
 | 13.11. 12:19 | Anordnung im Editor (v19.1), Export neu gezogen | n8n entfernte Standardwerte aus dem Export, Funktion unverändert. |
 | 13.11. 17:35 | Notiztexte aktualisiert (v19.2) | Nur 2 Sticky-Notizen im Canvas (Version und ③ Redaktions-Agent), Funktion unverändert, n8n-Version `436dee52` |
-| 13.11. | Dokumentation Tag 4: Übersicht nach den 3 Ebenen, Planbild des Endstands, Testtabelle mit Wortlaut, Bewertung und Legende | [Tag 4](docs/w08t04.html), [Testtabelle](docs/test-tabelle-w08t04.md), [Plan v19.1](docs/plan/plan-w08t04-v19.png) |
+| 13.11. | Dokumentation Tag 4: Übersicht nach den 3 Ebenen, Planbild des Endstands, Testtabelle mit Wortlaut, Bewertung und Legende | [Tag 4](docs/w08t04.html), [Testtabelle](docs/test-tabelle-w08t04.md), [Plan v19.2](docs/plan/plan-w08t04-v19.png) |
 
 ## Arbeitsschritte 11.11.2026
 
