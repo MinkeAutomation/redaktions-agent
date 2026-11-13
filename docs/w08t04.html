@@ -30,18 +30,18 @@
 </header>
 <div class="titelkopf">
 <div>
-<p class="oberzeile"><span aria-hidden="true" class="marke"></span>Tages-Doku W08T04 · Do 12.11.2026 · Hauptworkflow v17 bis v19.1</p>
+<p class="oberzeile"><span aria-hidden="true" class="marke"></span>Tages-Doku W08T04 · Do 12.11.2026 · Hauptworkflow v17 bis v19.2</p>
 <h1>Guardrails <span class="leise">an</span> Eingang und Ausgang</h1>
 <p class="untertitel">An Tag 4 bekam der Agent Schutzprüfungen: Vor dem Agenten schwärzt und prüft ein Knoten den Text aus dem Chat, vor der Freigabe prüft ein zweiter Knoten den Beitrag. Dazu kamen eine Liste, was der Agent darf und nicht darf, der Systemprompt v4 und 9 Testfälle. Vier Läufe sind nicht bestanden und einer ist ein Fehler, das steht unten mit Ausführungsnummer, Eingabe und Antwort im Wortlaut.</p>
 </div>
 </div>
 <dl aria-label="Kennzahlen W08T04" class="messleiste">
-<div><dt>Hauptworkflow</dt><dd>v19.1<small>13.11.2026, 12:19 Ortszeit</small></dd></div><div><dt>Kernfälle</dt><dd>9<small>in 12 Läufen</small></dd></div><div><dt>Ergebnis</dt><dd>7 + 4 + 1<small>bestanden (2 davon mit Vermerk), nicht bestanden, Fehler</small></dd></div><div><dt>Systemprompt</dt><dd>V4 live<small>V2 abgelöst</small></dd></div>
+<div><dt>Hauptworkflow</dt><dd>v19.2<small>13.11.2026, 17:35 Ortszeit</small></dd></div><div><dt>Kernfälle</dt><dd>9<small>in 12 Läufen</small></dd></div><div><dt>Ergebnis</dt><dd>7 + 4 + 1<small>bestanden (2 davon mit Vermerk), nicht bestanden, Fehler</small></dd></div><div><dt>Systemprompt</dt><dd>V4 live<small>V2 abgelöst</small></dd></div>
 </dl>
 <div class="knoepfe">
 <a class="knopf zweit" href="w08t03.html">Vorheriger Tag: Tag 3 <span aria-hidden="true" class="pfeil">←</span></a>
 <span class="knopf aus">Tag 5 folgt</span>
-<a class="knopf" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/redaktions-agent.json">Export Hauptworkflow v19.1 <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/redaktions-agent.json">Export Hauptworkflow v19.2 <span aria-hidden="true" class="pfeil">↗</span></a>
 <a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/prompts/20261112_System-Prompt-Redaktions-Agent_V4.md">Systemprompt V4 <span aria-hidden="true" class="pfeil">↗</span></a>
 <a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/versionen.md">Versionen <span aria-hidden="true" class="pfeil">↗</span></a>
 </div>
@@ -141,7 +141,7 @@
 </table>
 </div>
 <p>Die Prüfmodelle laufen mit 2.000 Ausgabe-Tokens, weil sie mit 300 und mit 600 keine Antwort lieferten: Nemotron 3.5 Super verbrauchte das ganze Budget beim Denken und die Prüfung endete mit „Failed to parse output“. Ein Modell- oder Parsefehler endet im Knoten nicht am Fehlerausgang, sondern am Fail-Ausgang. Deshalb unterscheidet <code>Eingang abgelehnt</code> nach dem Feld <code>executionFailed</code>, ob es ein echter Fund oder ein Ausfall war.</p>
-<figure id="plan"><a href="plan/plan-w08t04-v19.png"><img loading="lazy" alt="Plan v19.1: Rahmen Eingang prüfen mit Chat-Eingang, Eingang vereinheitlichen, Eingang schwärzen, Schwärzung ok und Eingang prüfen, Rahmen Agent mit Redaktions-Agent und seinen 5 Werkzeugen, Rahmen Ausgang prüfen und freigeben mit Agent-Antwort prüfen, Beitrag prüfen, Vorschau, Freigabe abwarten, Entscheidung und Ablage; neue Knoten grün, Fehlerausgänge gestrichelt." height="1662" src="bilder/w08t04-plan-v19.png" width="2400"/></a><figcaption>Plan des Endstands (Hauptworkflow v19.1): neue Knoten an Tag 4 grün, bereits vorhandene grau, gestrichelte Pfeile sind Fehlerausgänge. Klick vergrößert.</figcaption></figure>
+<figure id="plan"><a href="plan/plan-w08t04-v19.png"><img loading="lazy" alt="Plan v19.2: Rahmen Eingang prüfen mit Chat-Eingang, Eingang vereinheitlichen, Eingang schwärzen, Schwärzung ok und Eingang prüfen, Rahmen Agent mit Redaktions-Agent und seinen 5 Werkzeugen, Rahmen Ausgang prüfen und freigeben mit Agent-Antwort prüfen, Beitrag prüfen, Vorschau, Freigabe abwarten, Entscheidung und Ablage; neue Knoten grün, Fehlerausgänge gestrichelt." height="1662" src="bilder/w08t04-plan-v19.png" width="2400"/></a><figcaption>Plan des Endstands (Hauptworkflow v19.2): neue Knoten an Tag 4 grün, bereits vorhandene grau, gestrichelte Pfeile sind Fehlerausgänge. Klick vergrößert.</figcaption></figure>
 </section>
 
 <section aria-labelledby="k4-t" class="kapitel" id="k4">
@@ -248,6 +248,7 @@
 <caption id="t-ver">Änderungen am 12.11. und 13.11.2026</caption>
 <thead><tr><th scope="col">Zeit</th><th scope="col">Version</th><th scope="col">Änderung</th></tr></thead>
 <tbody>
+<tr><th data-label="Zeit" scope="row">13.11. 17:35</th><td data-label="Version">v19.2 (n8n-Version <code>436dee52</code>)</td><td data-label="Änderung">Nur die Texte von 2 Sticky-Notizen im Canvas: „Version“ nennt jetzt v19.2 und die Guardrails-Stände, „③ Redaktions-Agent“ nennt Systemprompt V4 statt v2; Knoten, Positionen, Verbindungen, Prompt und Modell unverändert</td></tr>
 <tr><th data-label="Zeit" scope="row">13.11. 12:19</th><td data-label="Version">v19.1 (n8n-Version <code>c91c8f0e</code>)</td><td data-label="Änderung">Anordnung der Knoten im Editor (Rahmen Fehlerweg breiter, Ausfalltext setzen verschoben); n8n entfernte beim Speichern Standardwerte aus dem Export (Parameter <code>operation</code> an den beiden Guardrails-Knoten, <code>includeOtherFields</code> an 3 Edit-Fields-Knoten, <code>allowedSchemes</code>, <code>blockUserinfo</code> und <code>allowSubdomains</code> in der Linkprüfung); keine Änderung an Prompt, Modell oder Ablauf</td></tr>
 <tr><th data-label="Zeit" scope="row">12.11. 17:41</th><td data-label="Version">v19 (n8n-Version <code>f868a849</code>)</td><td data-label="Änderung">Reparaturrunde: 4.000 statt 2.000 Ausgabe-Tokens am Agenten-Modell, Absatz zum Antwortformat im Systemprompt v4 (Kennung bleibt v4)</td></tr>
 <tr><th data-label="Zeit" scope="row">12.11. 16:53</th><td data-label="Version">v18 (<code>f90dce52</code>)</td><td data-label="Änderung">Ausgangsprüfung mit Prüfmodell, Sperre und Meldung, Freigabefelder erhalten, Systemprompt v4. Nach den Tests um 17:22 auf diese Version zurückgebaut (neue n8n-Version <code>95a52cd0</code>, gleicher Inhalt)</td></tr>
@@ -256,7 +257,6 @@
 </table>
 </div>
 <p>Für die Fälle A1b, A3 auf Agentenebene und A7 lief der Workflow kurz in 2 Testzuständen (um 17:11 mit abgeschalteter Eingangsprüfung, um 17:17 zusätzlich mit einem offenen Prompt-Satz). Beide wurden um 17:22 durch den Rückbau auf v18 ersetzt.</p>
-<p>Hinweis: Die Sticky-Notizen im Workflow-Canvas nennen noch einen älteren Stand (Version v16 vom 11.11.2026 und Systemprompt v2); maßgeblich für v19.1 sind der Export, der Systemprompt V4 und diese Dokumentation. Die Texte der Notizen werden bei der nächsten Änderung nachgezogen.</p>
 </section>
 
 <section aria-labelledby="k6-t" class="kapitel" id="k6">
@@ -288,7 +288,7 @@
 <caption id="t-dat">Dateien zu Tag 4</caption>
 <thead><tr><th scope="col">Datei</th><th scope="col">Inhalt</th></tr></thead>
 <tbody>
-<tr><th data-label="Datei" scope="row"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/redaktions-agent.json"><code>workflows/redaktions-agent.json</code></a></th><td data-label="Inhalt">Hauptworkflow v19.1, für die Veröffentlichung bereinigt (Platzhalter statt Kennungen)</td></tr>
+<tr><th data-label="Datei" scope="row"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/redaktions-agent.json"><code>workflows/redaktions-agent.json</code></a></th><td data-label="Inhalt">Hauptworkflow v19.2, für die Veröffentlichung bereinigt (Platzhalter statt Kennungen)</td></tr>
 <tr><th data-label="Datei" scope="row"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/prompts/20261112_System-Prompt-Redaktions-Agent_V4.md"><code>prompts/</code></a></th><td data-label="Inhalt">geltender Systemprompt V4; V2 liegt jetzt in <a href="https://github.com/MinkeAutomation/redaktions-agent/tree/main/archiv/prompts"><code>archiv/prompts/</code></a></td></tr>
 <tr><th data-label="Datei" scope="row"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/projekt-charter.md"><code>docs/projekt-charter.md</code></a>, <a href="charter.html">charter.html</a></th><td data-label="Inhalt">Projekt-Charter Fassung 7 mit dem Abschnitt zu den Guardrails</td></tr>
 <tr><th data-label="Datei" scope="row"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/versionen.md"><code>versionen.md</code></a></th><td data-label="Inhalt">alle Workflow-Stände mit Uhrzeit, jetzt mit v19 und v19.1</td></tr>
@@ -301,7 +301,7 @@
 </main>
 <footer class="fuss">
 <span>Patrick Minkler · Redaktions-Agent K2 · Projekt 2</span>
-<span>Stand 13.11.2026 · Hauptworkflow v19.1</span>
+<span>Stand 13.11.2026 · Hauptworkflow v19.2</span>
 </footer>
 </div>
 </body>

@@ -270,7 +270,7 @@
     },
     {
       "parameters": {
-        "content": "## 🧾 Version\nv16 vom 11.11.2026: Werkzeug 4 Bilder und 5 Einreichen angebunden (v11), Freigabe und Ablage im Hauptworkflow, Telegram-Bestätigung mit Link zum Kundenordner nach der Ablage (v15), Agent-Modell Nemotron 3.5 Super free (der Ultra-Endpunkt war ausgefallen). Davor v05 (Prüfung liest das echte Beobachtungsformat), v04, v03, v02.\nDie Workflow-Stände stehen in versionen.md, die Prompt-Versionen in CHANGELOG.md.",
+        "content": "## 🧾 Version\nv19.2 vom 13.11.2026: Guardrails Block A mit Eingang schwärzen und prüfen (v17), Ausgangsprüfung mit Sperre und Systemprompt V4 (v18), Antwortformat und 4.000 Ausgabe-Tokens (v19), Anordnung (v19.1), Notiztexte aktualisiert (v19.2). Davor v16 vom 11.11.2026: Werkzeug 4 Bilder und 5 Einreichen angebunden, Freigabe und Ablage im Hauptworkflow, Telegram-Bestätigung mit Link zum Kundenordner nach der Ablage, Agent-Modell Nemotron 3.5 Super free (der Ultra-Endpunkt war ausgefallen).\nDie Workflow-Stände stehen in versionen.md, die Prompt-Versionen in CHANGELOG.md.",
         "height": 200,
         "width": 1184,
         "color": 7
@@ -412,7 +412,7 @@
     },
     {
       "parameters": {
-        "content": "## ③ Redaktions-Agent\nSystemprompt v2, höchstens 8 Schritte, Gedächtnis mit 6 Nachrichten, 5 Werkzeuge: Markenwissen, Recherche, Text (speichert das Paket), Bilder, Einreichen; der Agent gibt nur die paket_id weiter. Fällt der Agent aus, übernimmt der Fehlerweg.\n\n### 🟢 Werkzeuge 1 bis 5 angebunden",
+        "content": "## ③ Redaktions-Agent\nSystemprompt v4, höchstens 8 Schritte, Gedächtnis mit 6 Nachrichten, 5 Werkzeuge: Markenwissen, Recherche, Text (speichert das Paket), Bilder, Einreichen; der Agent gibt nur die paket_id weiter. Fällt der Agent aus, übernimmt der Fehlerweg.\n\n### 🟢 Werkzeuge 1 bis 5 angebunden",
         "height": 196,
         "width": 600
       },
@@ -2772,7 +2772,7 @@
     }
   ],
   "id": "WORKFLOW_ID_REDAKTIONS_AGENT",
-  "versionId": "c91c8f0e-24d2-4ae0-99b2-00ee6b25269f",
+  "versionId": "436dee52-8aeb-4d69-91d8-404bac00ddfb",
   "active": false,
   "activeVersionId": null,
   "description": "Projekt 2 AGT-2606: Redaktions-Agent mit Chat Trigger, Nemotron 3.5 Super free, Gesprächsgedächtnis, 5 Werkzeugen (Markenwissen, Recherche, Text, Bilder, Einreichen) und Freigabe mit Ablage nach Telegram-Klick.",
