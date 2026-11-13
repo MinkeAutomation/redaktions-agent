@@ -6,7 +6,7 @@ Hier liegen die abgelösten Stände des Redaktions-Agenten: ältere Fassungen de
 
 | Ordner | Inhalt | Dateien |
 |---|---|---|
-| `workflows/redaktions-agent/` | Hauptworkflow v01 bis v16 (v16.2 ist Live in `workflows/`) | 21 |
+| `workflows/redaktions-agent/` | Hauptworkflow v01 bis v16 (v19.2 ist Live in `workflows/`) | 21 |
 | `workflows/sub-markenwissen-abfragen/` | Werkzeug 1, v01 bis v03.1 (v03.3 ist Live) | 6 |
 | `workflows/sub-thema-recherchieren/` | Werkzeug 2, v01 bis v03.1 (v03.2 ist Live) | 8 |
 | `workflows/sub-text-schreiben/` | Werkzeug 3, v00 bis v07 (v07.1 ist Live) | 16 |
@@ -14,7 +14,7 @@ Hier liegen die abgelösten Stände des Redaktions-Agenten: ältere Fassungen de
 | `workflows/sub-zur-freigabe-einreichen/` | Werkzeug 5, v01 (v01.2 ist Live) | 1 |
 | `workflows/test-redaktions-agent-1-werkzeug/` | ältere Stände der Testkopie mit 1 Werkzeug, v00 bis v03 (v04 liegt in `workflows/test/`) | 4 |
 | `workflows/test-text-schreiben-lesefehler/` | ältere Stände der Testkopie zum Lesefehler von Werkzeug 3, v00 bis v02 (v03 liegt in `workflows/test/`) | 3 |
-| `prompts/` | Systemprompts V1 und V3, die Fassung von V2 mit vollen n8n-Ausdrücken, Prompt der Testkopie | 4 |
+| `prompts/` | Systemprompts V1, V2 und V3, zusätzlich V2 mit vollen n8n-Ausdrücken und der Prompt der Testkopie | 5 |
 | `konfiguration/` | Agent-Konfiguration V3 (verworfen) | 1 |
 | `bilder/` | Bildschirmfoto der Werkzeuge 4 und 5 vom Tag 3 (vor der Anordnung am Abend) | 1 |
 | `plaene/` | Plan des Tages 3 (v16) und seine verkleinerte Fassung vor der Reparatur der Pfeile und der Anbindung der Werkzeuge, jeweils als Bild; Quelle als Excalidraw-Datei | 3 |
