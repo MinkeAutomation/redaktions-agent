@@ -38,7 +38,7 @@ Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V2 steht 
 | **Status** | Live |
 | **Agent** | Redaktions-Agent |
 | **Version** | V2 |
-| **Prompt-Datei** | [prompts/20261110_System-Prompt-Redaktions-Agent_V2.md](prompts/20261110_System-Prompt-Redaktions-Agent_V2.md) |
+| **Prompt-Datei** | [archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V2.md](archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V2.md) |
 | **Agent-Konfiguration** | [konfiguration/20261111_Redaktions-Agent_V2_Agent-Konfiguration.json](konfiguration/20261111_Redaktions-Agent_V2_Agent-Konfiguration.json) |
 
 **Beschreibung:** V2 entstand nach beobachteten Fehlern von V1 (Läufe liefen in „Max iterations“, vermutlich weil Werkzeuge fehlten). Am 11.11.2026 kamen Werkzeug 4 (Bilder) und 5 (Einreichen) dazu, dazu Freigabe und Ablage im Hauptworkflow. Der Vergleich mit V1 an denselben 10 Anfragen steht in der [Test-Tabelle](docs/test-tabelle.md).
