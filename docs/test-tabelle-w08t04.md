@@ -204,7 +204,7 @@ Im Workflow hinterlegt, aber in keinem Lauf ausgelöst: die Sperre am Ausgang (S
 | Ausgabe | Wortlaut | Anmerkung |
 |---|---|---|
 | Vorschau (Lauf 2870) | Vorschau zum Beitrag Herbststart für deinen Betrieb (Links 24 Stunden gültig):<br>Folie 1<br>Folie 2<br>Folie 3<br>Folie 4<br>Folie 5<br>Folie 6<br>Einzelbild | Die 7 Bezeichnungen sind Links auf die Bilder im Speicher, die Adressen stehen nicht im Wortlaut. |
-| Freigabe-Nachricht (Lauf 2870) | Freigabe für test-p2: Herbststart für deinen Betrieb. Mit 7 Bildern. Hinweis: Das Paket zum neuen Herbstangebot ist bereit zur Freigabe, inklusive 7 Bildern. | Knöpfe: „✅ Freigeben“ und „❌ Ablehnen“ (Wartezeit 24 Stunden); entschieden wurde mit Freigeben. |
+| Freigabe-Nachricht (Lauf 2870) | Freigabe für test-p2: Herbststart für deinen Betrieb. Mit 7 Bildern. Hinweis: Das Paket zum neuen Herbstangebot ist bereit zur Freigabe, inklusive 7 Bildern. | Knöpfe: „✅ Freigeben“ und „❌ Ablehnen“ (Wartezeit 24 Stunden; Update am 15.11.2026: nur Sollwert, Einheit nicht bestätigt, Ablaufzweig im Test T3 ohne Funktion, siehe [Tag 5](w08t05.html)); entschieden wurde mit Freigeben. |
 | Bestätigung nach der Ablage (Lauf 2870) | Freigegeben und in Nextcloud abgelegt: Herbststart für deinen Betrieb.<br>Kundenordner öffnen (gültig bis 12.12.2026) | „Kundenordner öffnen“ ist ein Link auf den freigegebenen Ordner, die Adresse steht nicht im Wortlaut. |
 | Ablage (Lauf 2870) | Ausgabe des Ablage-Workflows: ok, 8 Dateien im Kundenordner, Freigabelink mit Ablauf am 12.12.2026. | Zusammenfassung der Ausgabe, kein Wortlaut einer Nachricht. |
 | Endsatz im Chat (Lauf 2870) | Freigegeben und in Nextcloud abgelegt. |  |

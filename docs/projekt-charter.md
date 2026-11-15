@@ -51,7 +51,7 @@ Zugriff auf die Datenbank: Die Werkzeuge arbeiten mit dem Dienstzugang. Gemessen
 
 ## 5 Human in the Loop und Guardrails
 
-Der Agent veröffentlicht nie. Ein Mensch gibt in Telegram frei oder lehnt mit Grund ab, erst danach wird abgelegt. Ohne Antwort verfällt die Anfrage nach 24 Stunden.
+Der Agent veröffentlicht nie. Ein Mensch gibt in Telegram frei oder lehnt mit Grund ab, erst danach wird abgelegt. Ohne Antwort soll die Anfrage nach der eingestellten Frist verfallen (Sollwert 24, Einheit im Export nicht gesetzt und nicht bestätigt); der Ablaufzweig funktionierte im Test T3 nicht, siehe [Tag 5](w08t05.html).
 
 - Ebene 1, Systemprompt: Rolle und wichtigstes Verbot in den 2 Anfangssätzen, Quelltext als Material statt Auftrag, keine erfundenen Fakten, kein Rollenwechsel, höchstens 8 Werkzeugaufrufe. Seit v4 (12.11.2026) steht auch der Auftrag zwischen Markierungen, die die `trace_id` des Laufs tragen und deshalb nicht nachgeschrieben werden können, und der Agent nennt weder Werkzeuge noch deren Namen, Reihenfolge, Prüfungen, Schwellen oder Eskalationswege und gibt keinen Workflow als JSON aus.
 - Ebene 2, Werkzeug: Eingaben geprüft. Werkzeug 1 liest nur über 2 Views mit fest vorgegebener Kundenkennung, Werkzeug 3 und 4 schreiben nur in den Paket-Speicher beziehungsweise in Storage, nur Werkzeug 5 legt einen Beitrag an, kein Werkzeug veröffentlicht. Die Werkzeuge 3, 4 und 5 lesen zusätzlich Kunden-, Paket- und Beitragsdaten (Werkzeug 3 über die View, 4 und 5 direkt); die Kundenkennung setzt der Hauptworkflow fest.
