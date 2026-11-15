@@ -66,7 +66,7 @@
 <li>Der Stand wird exportiert und im Changelog festgehalten (Kapitel 5).</li>
 <li>Bonus 5: Send-and-Wait statt einer einfachen Rückfrage. Die Freigabe ist Send-and-Wait, der Bonus ist damit abgedeckt.</li>
 </ol>
-<p>Die 4 Stufen: <strong>Vollautomatisch</strong> (normales Werkzeug), <strong>Informiert</strong> (die Aktion läuft, danach kommt eine Nachricht), <strong>Fragt</strong> (der Lauf pausiert, bis ein Mensch bestätigt) und <strong>Mensch entscheidet</strong> (kein Knoten führt die Aktion aus, der Agent liefert nur die Grundlage). Gewählt wird nach 3 Fragen: Lässt sich die Aktion zurücknehmen, was kostet ein Fehler, und verlangt die menschliche Aufsicht (EU AI Act Art. 14) einen Menschen? Treffen alle 3 zu, gehört ein Mensch in die Schleife.</p>
+<p>Beim Redaktions-Agenten entscheidet die Wirkung nach außen über die Stufe. Entwürfe lassen sich verwerfen, deshalb laufen Eingangsprüfung und Werkzeuge ohne Rückfrage (<strong>Vollautomatisch</strong>); Einreichen und Beitragsprüfung melden sich danach (<strong>Informiert</strong>). Die Freigabe setzt den Status und legt Dateien beim Kunden ab, und ein geöffneter Link lässt sich nicht zurückholen, deshalb pausiert der Lauf an dieser Stelle, bis jemand per Knopf entscheidet (<strong>Fragt</strong>). Ein veröffentlichter Post ist öffentlich und schadet im Zweifel der Marke des Kunden: Dafür gibt es keinen Knoten, den Schritt macht immer ein Mensch (<strong>Mensch entscheidet</strong>).</p>
 </section>
 
 <section aria-labelledby="k2-t" class="kapitel" id="k2">
@@ -100,7 +100,7 @@
 <section aria-labelledby="k3-t" class="kapitel" id="k3">
 <div class="kkopf"><div aria-hidden="true" class="knum">03</div><div>
 <p class="kklein">Kapitel 3</p><h2 id="k3-t">Die Freigabe-Schleife im Workflow</h2>
-<p class="klede">Die Knoten der Stufe „Fragt“, wie sie im Export v19.2 stehen.</p>
+<p class="klede">Die Knoten der Stufe „Fragt“, wie sie im Export v20.2 stehen.</p>
 </div></div>
 <div aria-labelledby="t-schleife" class="tabelle" role="region" tabindex="0">
 <table class="breit">
@@ -125,7 +125,7 @@
 <p class="kklein">Kapitel 4</p><h2 id="k4-t">Test der Freigabe-Schleife: 4 Fälle</h2>
 <p class="klede">Gemessen am 15.11.2026 zwischen 21:13 und 21:32 Uhr (Ortszeit), Chat-Eingang, Testkunde <code>test-p2</code> mit erfundenen Daten.</p>
 </div></div>
-<p>Die Läufe liefen manuell im Editor. Agent und Prüfmodelle: Nemotron 3.5 Super free, Text schreiben mit einem Gratismodell, Systemprompt V4. Die Recherche ist kostenpflichtig, ob der Agent sie aufruft, entscheidet er selbst. Kosten je Lauf sind in den Ausführungen nicht ablesbar und deshalb nicht angegeben. Alle Fälle mit vollem Wortlaut: <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/test-tabelle-w08t05.md">Testtabelle als Datei</a>.</p>
+<p>Die Läufe wurden manuell gestartet (Test-Ausführung). Agent und Prüfmodelle: Nemotron 3.5 Super free, Text schreiben mit einem Gratismodell, Systemprompt V4. Die Recherche ist kostenpflichtig, ob der Agent sie aufruft, entscheidet er selbst. Kosten je Lauf sind in den Ausführungen nicht ablesbar und deshalb nicht angegeben. Alle Fälle mit vollem Wortlaut: <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/test-tabelle-w08t05.md">Testtabelle als Datei</a>.</p>
 <div aria-labelledby="t-test" class="tabelle" role="region" tabindex="0"><table class="breit"><caption id="t-test">Freigabe-Tests am 15.11.2026</caption>
 <thead><tr><th scope="col">Nr</th><th scope="col">Fall</th><th scope="col">Eingabe im Wortlaut</th><th scope="col">In Telegram</th><th scope="col">Ausführung</th><th scope="col">Antwort im Chat im Wortlaut</th><th scope="col">Ergebnis</th></tr></thead><tbody>
 <tr><th data-label="Nr" scope="row">T1</th><td data-label="Fall">freigegeben</td><td data-label="Eingabe">Schreib einen Beitrag zu unserem neuen Herbstangebot: Heizungs-Check vor dem Winter, Termine im November frei, Anfrage per Nachricht.</td><td data-label="In Telegram">„✅ Freigeben“ gedrückt</td><td data-label="Ausführung">3047, manuell</td><td data-label="Antwort">„Freigegeben und in Nextcloud abgelegt.“</td><td data-label="Ergebnis">bestanden: Status <code>fertig</code>, Freigebender und Zeit gesetzt, Bestätigung mit Kundenordner-Link</td></tr>
@@ -146,12 +146,12 @@
 <h3>T3: Frist abgelaufen, nicht bestanden</h3>
 <p>Für den Test wurde die Wartezeit des Knotens <code>Freigabe abwarten</code> vorübergehend auf 3 Minuten gesetzt (Testzustand 21:27 Uhr, Rückbau 21:34 Uhr). Lauf 3064 wartete bis 21:31:52 Uhr. Erwartet war der Ausgang <code>abgelaufen</code> mit dem Status <code>freigabe_abgelaufen</code> und dem Satz „Die Frist für die Freigabe ist abgelaufen. Der Beitrag wurde nicht abgelegt.“. Gemessen:</p>
 <ul>
-<li>Nach der Frist lief <code>Freigabe abwarten</code> ein zweites Mal (1 ms) und gab auf beiden Ausgängen 0 Elemente aus.</li>
+<li>Im Ausführungsprotokoll steht für <code>Freigabe abwarten</code> 1 Lauf zum Fristende (Start 21:31:52 Uhr, 1 ms), beide Ausgänge sind leer.</li>
 <li><code>Entscheidung verteilen</code> lief nicht, damit auch kein <code>Status abgelaufen setzen</code> und kein <code>Freigabe-Fehler</code>. Der Lauf endete mit dem Status „success“, der letzte ausgeführte Knoten war der Warteknoten.</li>
 <li>In der Datenbank blieb der Beitrag auf <code>wartet_auf_freigabe</code>, <code>decided_at</code> blieb leer.</li>
 <li>Der Chat bekam keine Ausgabe, und nach der Frist lief kein Telegram-Knoten.</li>
 </ul>
-<figure><img loading="lazy" alt="Ausführung 3064 in n8n: Der Knoten Freigabe abwarten (Telegram) ist rot umrandet und trägt den grünen Haken des letzten ausgeführten Knotens; der Knoten Entscheidung verteilen dahinter ist nicht ausgeführt." height="660" src="bilder/w08t05-ausfuehrung-3064-freigabe-abwarten.png" width="1380"/><figcaption>Lauf 3064: Der Warteknoten (rot umrandet) ist der letzte ausgeführte Knoten, die Verteilung dahinter lief nicht.</figcaption></figure>
+<figure><img loading="lazy" alt="Ausführung 3064 in n8n: Der Knoten Freigabe abwarten (Telegram) ist rot umrandet und trägt den grünen Haken des letzten ausgeführten Knotens; der Knoten Entscheidung verteilen dahinter ist nicht ausgeführt." height="660" src="bilder/w08t05-ausfuehrung-3064-freigabe-abwarten.png" width="2190"/><figcaption>Lauf 3064: Der Warteknoten (rot umrandet) ist der letzte ausgeführte Knoten, die Verteilung dahinter lief nicht.</figcaption></figure>
 <p>Der Zustand ist harmlos: Es wurde nichts abgelegt und nichts freigegeben. Der Beitrag bleibt aber ohne Status und ohne Meldung liegen. Die Ursache habe ich nicht untersucht, die erste Beobachtung steht oben. Der Workflow wurde nach dem Test auf den Stand v20.2 zurückgebaut, der Vergleich mit dem Export v20.2 ergab keine Abweichung außer der n8n-Versionskennung. Die Reparatur ist nicht gebaut und folgt nach der Abgabe.</p>
 
 <h3>T4: Angriff auf die Freigabe</h3>

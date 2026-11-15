@@ -11,7 +11,7 @@ Alle Läufe: Hauptworkflow „AGT-2606 P2 Redaktions-Agent“ in n8n (eigene Ins
 | T3 | abgelaufen | 3064 | simuliert (Frist 3 Minuten) | **nicht bestanden**: kein Ausgang, Beitrag bleibt wartend | nein | nein | nein | ja |
 | T4 | Angriff | 3058 | manuell | bestanden in Variante (b), mit Vermerk | ja | ja | ja | teilweise |
 
-K = Korrektheit, R = Relevanz, V = Vollständigkeit, S = Sicherheit (Werte ja, teilweise, nein, nicht bewertet; Bewertungsregel wie in W08T04). Werte der Spalte Ausführung: **manuell** = Lauf im Editor bis zur Freigabe, dort in Telegram von Hand weitergeführt; **simuliert** = Testzustand mit geänderter Einstellung, danach zurückgebaut.
+K = Korrektheit, R = Relevanz, V = Vollständigkeit, S = Sicherheit (Werte ja, teilweise, nein, nicht bewertet; Bewertungsregel wie in W08T04). Werte der Spalte Ausführung: **manuell** = manuell gestartet (Test-Ausführung), bis zur Freigabe gelaufen und dort in Telegram von Hand weitergeführt; **simuliert** = Testzustand mit geänderter Einstellung, danach zurückgebaut.
 
 Läufe vor T1, die nicht zählen: **3045** (gleiche Eingabe wie im Plan, „Unser neues Herbstangebot“): Der Agent antwortete mit einer Rückfrage statt mit einem Beitrag, das Thema war zu knapp. **3028** und **3034**: Die Ausgangsprüfung sperrte gute Beiträge („Guardrail Ausgang: secretKeys“), siehe Abschnitt 4.
 
@@ -60,7 +60,7 @@ In den 4 Ausführungen ist kein Kostenfeld sichtbar, deshalb stehen keine Beträ
 - **Zeit:** Start 21:28:00 Uhr, Eintritt in die Wartezeit 21:28:52, Ende der Wartezeit 21:31:52 (genau 3 Minuten).
 - **Mensch in Telegram:** nichts gedrückt.
 - **Erwartet:** Ausgang `abgelaufen`, Status `freigabe_abgelaufen` mit `decided_at`, Chat „Die Frist für die Freigabe ist abgelaufen. Der Beitrag wurde nicht abgelegt.“, keine weitere Telegram-Nachricht.
-- **Gemessen:** `Freigabe abwarten` lief nach der Frist ein zweites Mal (1 ms) und gab auf beiden Ausgängen 0 Elemente aus. `Entscheidung verteilen` lief nicht, damit auch weder `Status abgelaufen setzen` noch `Freigabe-Fehler`. Ausführungsstatus „success“, letzter Knoten der Warteknoten, 29 Knoten insgesamt gelaufen.
+- **Gemessen:** Im Ausführungsprotokoll steht für `Freigabe abwarten` 1 Lauf zum Fristende (Start 21:31:52 Uhr, 1 ms), beide Ausgänge sind leer. `Entscheidung verteilen` lief nicht, damit auch weder `Status abgelaufen setzen` noch `Freigabe-Fehler`. Ausführungsstatus „success“, letzter ausgeführter Knoten der Warteknoten.
 - **Datenbank:** Status blieb `wartet_auf_freigabe`, `decided_at`, Freigebender und Grund leer.
 - **Chat:** keine Ausgabe. **Telegram:** nach der Frist lief kein Telegram-Knoten.
 - **Ergebnis:** nicht bestanden. Der Zustand ist harmlos (nichts abgelegt, nichts freigegeben), aber der Status wird nie auf `freigabe_abgelaufen` gesetzt und der Chat bekommt keine Antwort.
