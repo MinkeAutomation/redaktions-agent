@@ -94,5 +94,5 @@
   <text x="605" y="575" text-anchor="middle" font-size="14.5" font-weight="700" fill="#16181B">Grund per Formular abfragen</text>
   <text x="605" y="595" text-anchor="middle" font-size="13.5" fill="#16181B">Status abgelehnt, nichts abgelegt</text>
 
-  <text x="20" y="640" font-size="13" fill="#16181B">Pakete und Beiträge liegen in Supabase, der Agent reicht nur die paket_id weiter. Ohne Klick verfällt die Anfrage nach 24 Stunden.</text>
+  <text x="20" y="640" font-size="13" fill="#16181B">Pakete und Beiträge liegen in Supabase, der Agent reicht nur die paket_id weiter. Frist ohne Klick: Sollwert 24, nicht bestätigt.</text>
 </svg>
