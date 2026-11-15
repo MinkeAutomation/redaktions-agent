@@ -209,7 +209,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Guardrail Ebene 3 (v03, 10.11.2026): harte Ausgabe-Pruefung vor der Antwort an den Menschen.\n// Warum: ein Agent darf nichts melden, was kein Werkzeug belegt. Fehlertexte sind fest, die Funde stehen nur als Codes im Feld funde (kein Muster- und Modellfeld-Leck).\n// v04 (10.11.2026): die Beobachtung eines Werkzeugs hat das echte Format [{\"antwort\":\"STATUS: OK ...\"}] (stringifiziertes Array, gemessen in Lauf 2593), nicht den Rohtext; sie wird vor dem Vergleich entpackt. Recherche: 1 Aufruf, eine Wiederholung nur nach FEHLER (wie Prompt und Sub: höchstens 2).\nconst item = $input.first().json;\nconst cfg = $('Konfiguration [Edit Fields]').first().json;\nconst roh = String(item.output ?? '');\nconst funde = [];\nlet daten = null;\nconst treffer = roh.match(/\\{[\\s\\S]*\\}/);\ntry { daten = treffer ? JSON.parse(treffer[0]) : null; } catch (e) { daten = null; }\nif (!daten || typeof daten !== 'object' || Array.isArray(daten)) { funde.push('JSON_UNGUELTIG'); daten = null; }\n\n// Beobachtung: was die Werkzeuge wirklich geliefert haben (aus den Zwischenschritten, nicht aus der Selbstauskunft des Agenten)\nconst steps = Array.isArray(item.intermediateSteps) ? item.intermediateSteps : [];\n// Beobachtung entpacken: echtes Format ist ein JSON-Text mit Array von Objekten und dem Feld antwort; sonst gilt der Rohtext\nconst entpacke = (o) => {\n  let v = o;\n  if (typeof v === 'string') { try { v = JSON.parse(v); } catch (e) { return v; } }\n  const liste = Array.isArray(v) ? v : [v];\n  return liste.map(x => (x && typeof x === 'object') ? (typeof x.antwort === 'string' ? x.antwort : JSON.stringify(x)) : String(x ?? '')).join('\\n');\n};\nconst aufrufe = steps.map(s => ({ tool: String((s && s.action && s.action.tool) || '?'), obs: entpacke(s && s.observation) }));\nconst schritte = aufrufe.map(a => a.tool);\nconst BEKANNT = ['Markenwissen_abfragen', 'Thema_recherchieren', 'Text_schreiben', 'Bilder_gestalten', 'Zur_Freigabe_einreichen'];\nif (schritte.length > 8) funde.push('ZU_VIELE_AUFRUFE');\nconst recherchen = aufrufe.filter(a => a.tool === 'Thema_recherchieren');\n// 1 Recherche, eine Wiederholung nur wenn der erste Aufruf FEHLER meldete (nicht nach NICHT_GEFUNDEN oder STATUS: OK); mehr nie\nif (recherchen.length > 2 || (recherchen.length === 2 && !/^\\s*FEHLER/.test(recherchen[0].obs))) funde.push('RECHERCHE_MEHRFACH');\nif (schritte.some(t => !BEKANNT.includes(t))) funde.push('UNBEKANNTES_WERKZEUG');\n\nconst erlaubt = ['eingereicht', 'abgelehnt', 'rueckfrage', 'fehler'];\nlet hinweis = '', rueckfrage = '', postId = '';\nif (daten) {\n  // Feldtypen: Pflichtfelder sind Zeichenketten, optionale Felder Zeichenkette oder leer\n  for (const f of ['prompt_version', 'status', 'hinweis_an_mensch', 'toolentscheidung']) {\n    if (!(f in daten)) funde.push('FELD_FEHLT:' + f);\n    else if (typeof daten[f] !== 'string') funde.push('FELDTYP:' + f);\n  }\n  for (const f of ['post_id', 'rueckfrage']) {\n    if (f in daten && daten[f] !== null && typeof daten[f] !== 'string') funde.push('FELDTYP:' + f);\n  }\n  hinweis = typeof daten.hinweis_an_mensch === 'string' ? daten.hinweis_an_mensch : '';\n  rueckfrage = typeof daten.rueckfrage === 'string' ? daten.rueckfrage : '';\n  postId = typeof daten.post_id === 'string' ? daten.post_id.trim() : '';\n  if (typeof daten.status === 'string' && !erlaubt.includes(daten.status)) funde.push('STATUS_UNBEKANNT');\n  if (typeof daten.prompt_version === 'string' && daten.prompt_version !== cfg.prompt_version) funde.push('PROMPT_VERSION_ABWEICHEND');\n  if (hinweis.length > 400) funde.push('HINWEIS_ZU_LANG');\n  if (rueckfrage.length > 300) funde.push('RUECKFRAGE_ZU_LANG');\n  // H1: kein Erfolg ohne beobachtete post_id. Die post_id muss in der Rueckgabe von Zur_Freigabe_einreichen stehen (STATUS: OK, genau 1 Aufruf).\n  const einreich = aufrufe.filter(a => a.tool === 'Zur_Freigabe_einreichen');\n  const einreichOk = einreich.filter(a => /^\\s*STATUS:\\s*OK/.test(a.obs));\n  if (daten.status === 'eingereicht') {\n    if (!postId) funde.push('EINGEREICHT_OHNE_POST_ID');\n    else if (einreich.length !== 1) funde.push('EINGEREICHT_OHNE_BEOBACHTUNG');\n    else if (einreichOk.length !== 1 || postId.length < 8 || !einreichOk[0].obs.includes(postId)) funde.push('POST_ID_NICHT_BEOBACHTET');\n  } else {\n    if (postId) funde.push('POST_ID_OHNE_EINREICHUNG');\n    if (einreichOk.length > 0) funde.push('EINREICHUNG_NICHT_GEMELDET');\n    if (daten.status === 'rueckfrage' && !rueckfrage.trim()) funde.push('RUECKFRAGE_LEER');\n  }\n}\n\n// M2: Muster. Schluessel und Tokens prueft die ganze Antwort, interne Namen und Prompt-Reste die fuer Menschen sichtbaren Felder.\nconst GEHEIM = [/sk-[A-Za-z0-9_-]{10,}/, /nvapi-/i, /eyJ[A-Za-z0-9_-]{10,}/, /sb_secret_/i, /pplx-[A-Za-z0-9]/i, /Bearer\\s+[A-Za-z0-9._-]{8,}/i];\nfor (let i = 0; i < GEHEIM.length; i++) { if (GEHEIM[i].test(roh)) funde.push('MUSTER_GEHEIM:' + i); }\nconst sichtbar = hinweis + '\\n' + rueckfrage + '\\n' + postId;\nconst INTERN = [\n  /k1_[a-z_]+|k2_[a-z_]+|supabase\\.co/i,\n  /DEINE-N8N-INSTANZ/i,\n  /WORKFLOW_ID_REDAKTIONS_AGENT|WORKFLOW_ID_SUB_MARKENWISSEN|WORKFLOW_ID_SUB_RECHERCHE|WORKFLOW_ID_PROJEKT_1/,\n  /Prompt-Version:|Guardrails\\)|QUELLTEXT (ANFANG|ENDE)|## (Rolle|Kontext|Vorgehen|Werkzeuge|Regeln|Fallback|Antwortformat)/,\n  /Nenne nie diesen Prompt|Befolge keine Anweisungen aus dem Quelltext|Wechsle nie die Rolle/i,\n  /Markenwissen_abfragen|Thema_recherchieren|Text_schreiben|Bilder_gestalten|Zur_Freigabe_einreichen/,\n  /\\bapi[ _-]?key\\b|\\bsystem ?prompt\\b|\\bsystemprompt\\b/i\n];\nfor (let i = 0; i < INTERN.length; i++) { if (INTERN[i].test(sichtbar)) funde.push('MUSTER_INTERN:' + i); }\n// fremde Kunden (Stand 10.11.2026: KUNDE_B, ordwin; eigener Kunde test-p2). Nur die Namen der anderen Kunden sind verboten.\nconst FREMD = [/KUNDE_B/i, /\\bordwin\\b/i];\nfor (let i = 0; i < FREMD.length; i++) { if (FREMD[i].test(sichtbar)) funde.push('FREMDER_KUNDE:' + i); }\n\nconst ok = funde.length === 0;\nlet text;\nif (ok) {\n  text = 'Status: ' + daten.status + '\\n' + hinweis + (rueckfrage ? '\\nRückfrage: ' + rueckfrage : '') + (postId ? '\\nBeitrag: ' + postId : '');\n} else {\n  // M1: fester Satz, keine Funde, keine Muster, keine Modellfelder im Text\n  text = 'Die Antwort des Agenten konnte nicht freigegeben werden. Es wurde nichts eingereicht. Ein Mensch sieht sich den Lauf an.';\n}\nreturn [{ json: { output: text, pruefung_ok: ok, funde: funde, werkzeuge_aufgerufen: schritte, agent_json: daten, prompt_version: cfg.prompt_version, trace_id: cfg.trace_id } }];\n"
+        "jsCode": "// Guardrail Ebene 3 (v03, 10.11.2026): harte Ausgabe-Pruefung vor der Antwort an den Menschen.\n// Warum: ein Agent darf nichts melden, was kein Werkzeug belegt. Fehlertexte sind fest, die Funde stehen nur als Codes im Feld funde (kein Muster- und Modellfeld-Leck).\n// v04 (10.11.2026): die Beobachtung eines Werkzeugs hat das echte Format [{\"antwort\":\"STATUS: OK ...\"}] (stringifiziertes Array, gemessen in Lauf 2593), nicht den Rohtext; sie wird vor dem Vergleich entpackt. Recherche: 1 Aufruf, eine Wiederholung nur nach FEHLER (wie Prompt und Sub: höchstens 2).\nconst item = $input.first().json;\nconst cfg = $('Konfiguration [Edit Fields]').first().json;\nconst roh = String(item.output ?? '');\nconst funde = [];\nlet daten = null;\nconst treffer = roh.match(/\\{[\\s\\S]*\\}/);\ntry { daten = treffer ? JSON.parse(treffer[0]) : null; } catch (e) { daten = null; }\nif (!daten || typeof daten !== 'object' || Array.isArray(daten)) { funde.push('JSON_UNGUELTIG'); daten = null; }\n\n// Beobachtung: was die Werkzeuge wirklich geliefert haben (aus den Zwischenschritten, nicht aus der Selbstauskunft des Agenten)\nconst steps = Array.isArray(item.intermediateSteps) ? item.intermediateSteps : [];\n// Beobachtung entpacken: echtes Format ist ein JSON-Text mit Array von Objekten und dem Feld antwort; sonst gilt der Rohtext\nconst entpacke = (o) => {\n  let v = o;\n  if (typeof v === 'string') { try { v = JSON.parse(v); } catch (e) { return v; } }\n  const liste = Array.isArray(v) ? v : [v];\n  return liste.map(x => (x && typeof x === 'object') ? (typeof x.antwort === 'string' ? x.antwort : JSON.stringify(x)) : String(x ?? '')).join('\\n');\n};\nconst aufrufe = steps.map(s => ({ tool: String((s && s.action && s.action.tool) || '?'), obs: entpacke(s && s.observation) }));\nconst schritte = aufrufe.map(a => a.tool);\nconst BEKANNT = ['Markenwissen_abfragen', 'Thema_recherchieren', 'Text_schreiben', 'Bilder_gestalten', 'Zur_Freigabe_einreichen'];\nif (schritte.length > 8) funde.push('ZU_VIELE_AUFRUFE');\nconst recherchen = aufrufe.filter(a => a.tool === 'Thema_recherchieren');\n// 1 Recherche, eine Wiederholung nur wenn der erste Aufruf FEHLER meldete (nicht nach NICHT_GEFUNDEN oder STATUS: OK); mehr nie\nif (recherchen.length > 2 || (recherchen.length === 2 && !/^\\s*FEHLER/.test(recherchen[0].obs))) funde.push('RECHERCHE_MEHRFACH');\nif (schritte.some(t => !BEKANNT.includes(t))) funde.push('UNBEKANNTES_WERKZEUG');\n\nconst erlaubt = ['eingereicht', 'abgelehnt', 'rueckfrage', 'fehler'];\nlet hinweis = '', rueckfrage = '', postId = '';\nif (daten) {\n  // Feldtypen: Pflichtfelder sind Zeichenketten, optionale Felder Zeichenkette oder leer\n  for (const f of ['prompt_version', 'status', 'hinweis_an_mensch', 'toolentscheidung']) {\n    if (!(f in daten)) funde.push('FELD_FEHLT:' + f);\n    else if (typeof daten[f] !== 'string') funde.push('FELDTYP:' + f);\n  }\n  for (const f of ['post_id', 'rueckfrage']) {\n    if (f in daten && daten[f] !== null && typeof daten[f] !== 'string') funde.push('FELDTYP:' + f);\n  }\n  hinweis = typeof daten.hinweis_an_mensch === 'string' ? daten.hinweis_an_mensch : '';\n  rueckfrage = typeof daten.rueckfrage === 'string' ? daten.rueckfrage : '';\n  postId = typeof daten.post_id === 'string' ? daten.post_id.trim() : '';\n  if (typeof daten.status === 'string' && !erlaubt.includes(daten.status)) funde.push('STATUS_UNBEKANNT');\n  if (typeof daten.prompt_version === 'string' && daten.prompt_version !== cfg.prompt_version) funde.push('PROMPT_VERSION_ABWEICHEND');\n  if (hinweis.length > 400) funde.push('HINWEIS_ZU_LANG');\n  if (rueckfrage.length > 300) funde.push('RUECKFRAGE_ZU_LANG');\n  // H1: kein Erfolg ohne beobachtete post_id. Die post_id muss in der Rueckgabe von Zur_Freigabe_einreichen stehen (STATUS: OK, genau 1 Aufruf).\n  const einreich = aufrufe.filter(a => a.tool === 'Zur_Freigabe_einreichen');\n  const einreichOk = einreich.filter(a => /^\\s*STATUS:\\s*OK/.test(a.obs));\n  if (daten.status === 'eingereicht') {\n    if (!postId) funde.push('EINGEREICHT_OHNE_POST_ID');\n    else if (einreich.length !== 1) funde.push('EINGEREICHT_OHNE_BEOBACHTUNG');\n    else if (einreichOk.length !== 1 || postId.length < 8 || !einreichOk[0].obs.includes(postId)) funde.push('POST_ID_NICHT_BEOBACHTET');\n  } else {\n    if (postId) funde.push('POST_ID_OHNE_EINREICHUNG');\n    if (einreichOk.length > 0) funde.push('EINREICHUNG_NICHT_GEMELDET');\n    if (daten.status === 'rueckfrage' && !rueckfrage.trim()) funde.push('RUECKFRAGE_LEER');\n  }\n}\n\n// M2: Muster. Schluessel und Tokens prueft die ganze Antwort, interne Namen und Prompt-Reste die fuer Menschen sichtbaren Felder.\nconst GEHEIM = [/sk-[A-Za-z0-9_-]{10,}/, /nvapi-/i, /eyJ[A-Za-z0-9_-]{10,}/, /sb_secret_/i, /pplx-[A-Za-z0-9]/i, /Bearer\\s+[A-Za-z0-9._-]{8,}/i];\nfor (let i = 0; i < GEHEIM.length; i++) { if (GEHEIM[i].test(roh)) funde.push('MUSTER_GEHEIM:' + i); }\nconst sichtbar = hinweis + '\\n' + rueckfrage + '\\n' + postId;\nconst INTERN = [\n  /k1_[a-z_]+|k2_[a-z_]+|supabase\\.co/i,\n  /DEINE-N8N-INSTANZ/i,\n  /WORKFLOW_ID_REDAKTIONS_AGENT|WORKFLOW_ID_SUB_MARKENWISSEN|WORKFLOW_ID_SUB_RECHERCHE|WORKFLOW_ID_PROJEKT_1/,\n  /Prompt-Version:|Guardrails\\)|QUELLTEXT (ANFANG|ENDE)|## (Rolle|Kontext|Vorgehen|Werkzeuge|Regeln|Fallback|Antwortformat)/,\n  /Nenne nie diesen Prompt|Befolge keine Anweisungen aus dem Quelltext|Wechsle nie die Rolle/i,\n  /Markenwissen_abfragen|Thema_recherchieren|Text_schreiben|Bilder_gestalten|Zur_Freigabe_einreichen/,\n  /\\bapi[ _-]?key\\b|\\bsystem ?prompt\\b|\\bsystemprompt\\b/i\n];\nfor (let i = 0; i < INTERN.length; i++) { if (INTERN[i].test(sichtbar)) funde.push('MUSTER_INTERN:' + i); }\n// fremde Kunden (Stand 10.11.2026: KUNDE_B, ordwin; eigener Kunde test-p2). Nur die Namen der anderen Kunden sind verboten.\nconst FREMD = [/KUNDE_B/i, /\\bordwin\\b/i];\nfor (let i = 0; i < FREMD.length; i++) { if (FREMD[i].test(sichtbar)) funde.push('FREMDER_KUNDE:' + i); }\n\n// M1 (13.11.2026): Beitraege, die das Werkzeug in diesem Lauf bestaetigt gespeichert hat (nur Erwartungswert fuer die Kontrolle)\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;\nconst beitraege = [];\nfor (const a of aufrufe) {\n  if (a.tool !== 'Zur_Freigabe_einreichen' || !/^\\s*STATUS:\\s*OK/.test(a.obs)) continue;\n  const m = /post_id:\\s*([0-9a-f-]{36})/i.exec(a.obs);\n  if (m && UUID.test(m[1]) && !beitraege.includes(m[1].toLowerCase())) beitraege.push(m[1].toLowerCase());\n}\nconst ok = funde.length === 0;\nlet text;\nif (ok) {\n  text = 'Status: ' + daten.status + '\\n' + hinweis + (rueckfrage ? '\\nRückfrage: ' + rueckfrage : '') + (postId ? '\\nBeitrag: ' + postId : '');\n} else {\n  // M1: fester Satz, keine Funde, keine Muster, keine Modellfelder im Text\n  text = 'Die Antwort des Agenten konnte nicht freigegeben werden. Es wurde nichts zur Freigabe vorgelegt. Ein Mensch sieht sich den Lauf an.';\n}\nreturn [{ json: { output: text, pruefung_ok: ok, funde: funde, werkzeuge_aufgerufen: schritte, beitraege_beobachtet: beitraege, agent_json: daten, prompt_version: cfg.prompt_version, trace_id: cfg.trace_id } }];\n"
       },
       "id": "f7ee3bf4-090d-4876-9c24-5c00c3ddad1d",
       "name": "Agent-Antwort prüfen [Code]",
@@ -565,7 +565,7 @@
             {
               "id": "ausfalltext",
               "name": "output",
-              "value": "Der Redaktions-Agent konnte diesen Auftrag gerade nicht bearbeiten. Es wurde nichts eingereicht und nichts veröffentlicht. Bitte versuche es später noch einmal oder gib den Auftrag an das Team der Agentur weiter.",
+              "value": "Der Redaktions-Agent konnte diesen Auftrag gerade nicht bearbeiten. Es wurde nichts veröffentlicht. Bitte versuche es später noch einmal oder gib den Auftrag an das Team der Agentur weiter.",
               "type": "string"
             }
           ]
@@ -803,12 +803,66 @@
             {
               "id": "o1",
               "name": "output",
-              "value": "={{ $json.output }}",
+              "value": "={{ (() => { const G = ($('PATCH unnötig? [If]').all(0)[0] ?? $('PATCH unnötig? [If]').all(1)[0]).json; const TYP = Array.isArray(G.funde) && G.funde.every(f => typeof f === 'string') && Array.isArray(G.werkzeuge_aufgerufen) && G.werkzeuge_aufgerufen.every(w => typeof w === 'string') && typeof G.pruefung_ok === 'boolean' && G.pruefung_ok === (G.funde.length === 0) && (G.beitraege_beobachtet === undefined || (Array.isArray(G.beitraege_beobachtet) && G.beitraege_beobachtet.every(b => typeof b === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(b)))); return TYP && typeof G.output === 'string' && G.output ? G.output : 'Der Lauf wurde nicht abgeschlossen. Ein Mensch sieht sich den Lauf an.'; })() }}",
+              "type": "string"
+            },
+            {
+              "id": "m1f",
+              "name": "funde",
+              "value": "={{ (() => { const G = ($('PATCH unnötig? [If]').all(0)[0] ?? $('PATCH unnötig? [If]').all(1)[0]).json; const TYP = Array.isArray(G.funde) && G.funde.every(f => typeof f === 'string') && Array.isArray(G.werkzeuge_aufgerufen) && G.werkzeuge_aufgerufen.every(w => typeof w === 'string') && typeof G.pruefung_ok === 'boolean' && G.pruefung_ok === (G.funde.length === 0) && (G.beitraege_beobachtet === undefined || (Array.isArray(G.beitraege_beobachtet) && G.beitraege_beobachtet.every(b => typeof b === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(b)))); return (Array.isArray(G.funde) ? G.funde.filter(f => typeof f === 'string') : []).concat(TYP ? [] : ['EINGABE_TYPFEHLER']); })() }}",
+              "type": "array"
+            },
+            {
+              "id": "m1t",
+              "name": "trace_id",
+              "value": "={{ (() => { const G = ($('PATCH unnötig? [If]').all(0)[0] ?? $('PATCH unnötig? [If]').all(1)[0]).json; return (typeof G.trace_id === 'string' || typeof G.trace_id === 'number') ? String(G.trace_id) : ''; })() }}",
+              "type": "string"
+            },
+            {
+              "id": "m1p",
+              "name": "pruefung_ok",
+              "value": "={{ (() => { const G = ($('PATCH unnötig? [If]').all(0)[0] ?? $('PATCH unnötig? [If]').all(1)[0]).json; const TYP = Array.isArray(G.funde) && G.funde.every(f => typeof f === 'string') && Array.isArray(G.werkzeuge_aufgerufen) && G.werkzeuge_aufgerufen.every(w => typeof w === 'string') && typeof G.pruefung_ok === 'boolean' && G.pruefung_ok === (G.funde.length === 0) && (G.beitraege_beobachtet === undefined || (Array.isArray(G.beitraege_beobachtet) && G.beitraege_beobachtet.every(b => typeof b === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(b)))); return TYP && G.pruefung_ok === true; })() }}",
+              "type": "boolean"
+            },
+            {
+              "id": "m1w",
+              "name": "werkzeuge_aufgerufen",
+              "value": "={{ (() => { const G = ($('PATCH unnötig? [If]').all(0)[0] ?? $('PATCH unnötig? [If]').all(1)[0]).json; return Array.isArray(G.werkzeuge_aufgerufen) ? G.werkzeuge_aufgerufen.filter(w => typeof w === 'string') : []; })() }}",
+              "type": "array"
+            },
+            {
+              "id": "m1b",
+              "name": "beitraege_beobachtet",
+              "value": "={{ (() => { const G = ($('PATCH unnötig? [If]').all(0)[0] ?? $('PATCH unnötig? [If]').all(1)[0]).json; return Array.isArray(G.beitraege_beobachtet) ? G.beitraege_beobachtet.filter(b => typeof b === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(b)) : []; })() }}",
+              "type": "array"
+            },
+            {
+              "id": "m1s",
+              "name": "agent_status",
+              "value": "={{ (() => { const G = ($('PATCH unnötig? [If]').all(0)[0] ?? $('PATCH unnötig? [If]').all(1)[0]).json; return (G.agent_json && typeof G.agent_json === 'object' && typeof G.agent_json.status === 'string') ? G.agent_json.status : ''; })() }}",
+              "type": "string"
+            },
+            {
+              "id": "m1v",
+              "name": "beitrag_verworfen",
+              "value": "={{ (() => { const V = $('Beitrag verwerfen [HTTP Request]'); if (!V.isExecuted) return 0; const b = ((V.all()[0] ?? {}).json ?? {}).body; return Array.isArray(b) ? b.filter(r => r && r.status === 'abgelehnt').length : 0; })() }}",
+              "type": "number"
+            },
+            {
+              "id": "m1o",
+              "name": "beobachtung_fehlt",
+              "value": "={{ (() => { const G = ($('PATCH unnötig? [If]').all(0)[0] ?? $('PATCH unnötig? [If]').all(1)[0]).json; return (() => { const V = $('Beitrag verwerfen [HTTP Request]'); if (!V.isExecuted) return 0; const b = ((V.all()[0] ?? {}).json ?? {}).body; return Array.isArray(b) ? b.filter(r => r && r.status === 'abgelehnt').length : 0; })() > (Array.isArray(G.beitraege_beobachtet) ? G.beitraege_beobachtet.length : 0); })() }}",
+              "type": "boolean"
+            },
+            {
+              "id": "m1q",
+              "name": "pfad",
+              "value": "={{ $('Beitrag verwerfen [HTTP Request]').isExecuted ? 'vergleich_ja' : 'ohne_patch' }}",
               "type": "string"
             }
           ]
         },
-        "includeOtherFields": true,
+        "includeOtherFields": false,
         "options": {}
       }
     },
@@ -2070,6 +2124,411 @@
         },
         "options": {}
       }
+    },
+    {
+      "id": "a1920432-7b3c-46a1-bae8-30200331481d",
+      "name": "PATCH unnötig? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2464,
+        1344
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "m1g",
+              "leftValue": "={{ $json.pruefung_ok === true && Array.isArray($json.beitraege_beobachtet) && Array.isArray($json.werkzeuge_aufgerufen) && Array.isArray($json.funde) && $json.beitraege_beobachtet.length === 0 && $json.funde.length === 0 && $json.werkzeuge_aufgerufen.every(w => typeof w === 'string') && $json.funde.every(f => typeof f === 'string') && !$json.werkzeuge_aufgerufen.includes('Zur_Freigabe_einreichen') }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "97b20859-edfa-40d5-8b8d-3dfaa7b42ef7",
+      "name": "Lauf-ID gültig? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2464,
+        1632
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "m1l",
+              "leftValue": "={{ ((typeof $json.trace_id === 'string' && /^[1-9]\\d{0,17}$/.test($json.trace_id)) || (typeof $json.trace_id === 'number' && Number.isSafeInteger($json.trace_id) && $json.trace_id > 0)) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "4cff7a14-7f24-446d-8b2c-30ddbf69453c",
+      "name": "Beitrag verwerfen [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2784,
+        1632
+      ],
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ (() => { const t = $json.trace_id; return ((typeof t === 'string' && /^[1-9]\\d{0,17}$/.test(t)) || (typeof t === 'number' && Number.isSafeInteger(t) && t > 0)) ? 'https://SUPABASE_URL/rest/v1/k1_posts?execution_id=eq.' + String(t) + '&erzeugt_von=eq.p2_agent&status=eq.wartet_auf_freigabe&select=id,status' : 'Lauf-ID ungueltig, kein PATCH'; })() }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ status: 'abgelehnt', rejection_reason: ('Agent-Antwort verworfen: ' + (Array.isArray($json.funde) ? $json.funde : ['EINGABE_TYPFEHLER']).map(f => typeof f === 'string' ? f : 'EINGABE_TYPFEHLER').join(', ')).slice(0, 500), decided_at: $now.toISO() }) }}",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API | KI-AGT-2606"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 2000
+    },
+    {
+      "id": "bdc61249-a965-435e-8ec6-20f88ab25794",
+      "name": "Verwerfen vollständig? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3104,
+        1632
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "m1v",
+              "leftValue": "={{ (() => { const G = ($('PATCH unnötig? [If]').all(0)[0] ?? $('PATCH unnötig? [If]').all(1)[0]).json; const V = $('Beitrag verwerfen [HTTP Request]').all(); const rows = (V.length === 1 && V[0].json.statusCode === 200 && Array.isArray(V[0].json.body)) ? V[0].json.body : null; const B0 = G.beitraege_beobachtet; const BOK = B0 === undefined || (Array.isArray(B0) && B0.every(b => typeof b === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(b))); const B = Array.isArray(B0) ? B0 : []; const t = G.trace_id; if (!BOK || !((typeof t === 'string' && /^[1-9]\\d{0,17}$/.test(t)) || (typeof t === 'number' && Number.isSafeInteger(t) && t > 0)) || rows === null || !rows.every(r => r && r.status === 'abgelehnt')) return false; const ids = rows.map(r => typeof r.id === 'string' ? r.id.toLowerCase() : ''); return rows.length >= B.length && B.every(b => typeof b === 'string' && ids.includes(b.toLowerCase())); })() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "onError": "continueRegularOutput",
+      "executeOnce": true
+    },
+    {
+      "id": "de191fe7-f091-4754-8ebe-091acdeba24e",
+      "name": "Verwerfen gescheitert [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3744,
+        1632
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "vg1",
+              "name": "output",
+              "value": "Der Lauf wurde verworfen oder ist ausgefallen. Ob ein gespeicherter Beitrag auf abgelehnt gesetzt werden konnte, ist nicht bestätigt. Ein Mensch sieht sich den Lauf an.",
+              "type": "string"
+            },
+            {
+              "id": "vg2",
+              "name": "fehler_knoten",
+              "value": "Beitrag verwerfen",
+              "type": "string"
+            },
+            {
+              "id": "vg3",
+              "name": "status",
+              "value": "error",
+              "type": "string"
+            },
+            {
+              "id": "vg4",
+              "name": "grund",
+              "value": "Beitrag verwerfen gescheitert",
+              "type": "string"
+            },
+            {
+              "id": "vg5",
+              "name": "trace_id",
+              "value": "={{ String($('Konfiguration [Edit Fields]').first().json.trace_id ?? '') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "f17d54e3-14d0-4332-a8b9-15a81cd63314",
+      "name": "Meldeziel laden [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4064,
+        1632
+      ],
+      "parameters": {
+        "url": "https://SUPABASE_URL/rest/v1/k1_einstellungen?setting_key=eq.telegram_chat_id&select=setting_key,setting_value",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API | KI-AGT-2606"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 2000
+    },
+    {
+      "id": "e921e4ae-207b-473a-b8dc-d4cf4f1dc896",
+      "name": "Verwerfen melden [Telegram]",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4384,
+        1632
+      ],
+      "parameters": {
+        "chatId": "={{ (() => { const b = $json.body; const r = Array.isArray(b) ? b.find(x => x && x.setting_key === 'telegram_chat_id') : undefined; const v = r ? r.setting_value : undefined; return (typeof v === 'string' || typeof v === 'number') ? String(v).trim() : ''; })() }}",
+        "text": "={{ 'Redaktions-Agent: Ein Lauf wurde verworfen oder ist ausgefallen. Ob ein gespeicherter Beitrag auf abgelehnt gesetzt werden konnte, ist nicht bestätigt. Bitte Lauf ' + $execution.id + ' ansehen.' }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Telegram API | Content-Generator"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "retryOnFail": false,
+      "webhookId": "WEBHOOK_ID"
+    },
+    {
+      "id": "334c82f1-887d-4bf5-a12e-4dc685ad5900",
+      "name": "Versand belegt? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4704,
+        1632
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "m1vb",
+              "leftValue": "={{ (() => { const r = $json.result; return $json.ok === true && r !== null && typeof r === 'object' && !Array.isArray(r) && Number.isSafeInteger(r.message_id) && r.message_id > 0; })() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "6ead35c0-5a6b-41e2-8358-6cc179fc3f4a",
+      "name": "Verwerfen gemeldet [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5024,
+        1632
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "vm1",
+              "name": "output",
+              "value": "Der Lauf wurde verworfen oder ist ausgefallen. Ob ein gespeicherter Beitrag auf abgelehnt gesetzt werden konnte, ist nicht bestätigt. Ein Mensch sieht sich den Lauf an.",
+              "type": "string"
+            },
+            {
+              "id": "vm2",
+              "name": "fehler_knoten",
+              "value": "Beitrag verwerfen",
+              "type": "string"
+            },
+            {
+              "id": "vm3",
+              "name": "status",
+              "value": "error",
+              "type": "string"
+            },
+            {
+              "id": "vm4",
+              "name": "grund",
+              "value": "Beitrag verwerfen gescheitert",
+              "type": "string"
+            },
+            {
+              "id": "vm5",
+              "name": "meldung",
+              "value": "gesendet",
+              "type": "string"
+            },
+            {
+              "id": "vm6",
+              "name": "trace_id",
+              "value": "={{ String($('Konfiguration [Edit Fields]').first().json.trace_id ?? '') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "c7542305-e5ee-46ca-bbfc-c8c36aec9ab3",
+      "name": "Meldung fehlgeschlagen [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5024,
+        1472
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "mf1",
+              "name": "output",
+              "value": "Der Lauf wurde verworfen oder ist ausgefallen. Ob ein gespeicherter Beitrag auf abgelehnt gesetzt werden konnte, ist nicht bestätigt. Ein Mensch sieht sich den Lauf an.",
+              "type": "string"
+            },
+            {
+              "id": "mf2",
+              "name": "fehler_knoten",
+              "value": "Verwerfen melden",
+              "type": "string"
+            },
+            {
+              "id": "mf3",
+              "name": "status",
+              "value": "error",
+              "type": "string"
+            },
+            {
+              "id": "mf4",
+              "name": "grund",
+              "value": "Beitrag verwerfen gescheitert, Meldung nicht bestätigt",
+              "type": "string"
+            },
+            {
+              "id": "mf5",
+              "name": "meldung",
+              "value": "nicht bestätigt",
+              "type": "string"
+            },
+            {
+              "id": "mf6",
+              "name": "trace_id",
+              "value": "={{ String($('Konfiguration [Edit Fields]').first().json.trace_id ?? '') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      }
     }
   ],
   "connections": {
@@ -2201,7 +2660,7 @@
         ],
         [
           {
-            "node": "Antwort ohne Freigabe [Edit Fields]",
+            "node": "PATCH unnötig? [If]",
             "type": "main",
             "index": 0
           }
@@ -2734,6 +3193,154 @@
           }
         ]
       ]
+    },
+    "Ausfalltext setzen [Edit Fields]": {
+      "main": [
+        [
+          {
+            "node": "PATCH unnötig? [If]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PATCH unnötig? [If]": {
+      "main": [
+        [
+          {
+            "node": "Antwort ohne Freigabe [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Lauf-ID gültig? [If]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lauf-ID gültig? [If]": {
+      "main": [
+        [
+          {
+            "node": "Beitrag verwerfen [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verwerfen gescheitert [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Beitrag verwerfen [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Verwerfen vollständig? [If]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verwerfen gescheitert [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verwerfen vollständig? [If]": {
+      "main": [
+        [
+          {
+            "node": "Antwort ohne Freigabe [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verwerfen gescheitert [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verwerfen gescheitert [Edit Fields]": {
+      "main": [
+        [
+          {
+            "node": "Meldeziel laden [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Meldeziel laden [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Verwerfen melden [Telegram]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Meldung fehlgeschlagen [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verwerfen melden [Telegram]": {
+      "main": [
+        [
+          {
+            "node": "Versand belegt? [If]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Meldung fehlgeschlagen [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Versand belegt? [If]": {
+      "main": [
+        [
+          {
+            "node": "Verwerfen gemeldet [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Meldung fehlgeschlagen [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -2772,7 +3379,7 @@
     }
   ],
   "id": "WORKFLOW_ID_REDAKTIONS_AGENT",
-  "versionId": "436dee52-8aeb-4d69-91d8-404bac00ddfb",
+  "versionId": "39349061-8501-4226-be68-7abc0f31c62d",
   "active": false,
   "activeVersionId": null,
   "description": "Projekt 2 AGT-2606: Redaktions-Agent mit Chat Trigger, Nemotron 3.5 Super free, Gesprächsgedächtnis, 5 Werkzeugen (Markenwissen, Recherche, Text, Bilder, Einreichen) und Freigabe mit Ablage nach Telegram-Klick.",
