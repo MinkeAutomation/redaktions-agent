@@ -145,7 +145,7 @@
 
 <section aria-labelledby="freigabe-t" class="kapitel" id="freigabe">
 <h2 id="freigabe-t">Freigabe und Ablage</h2>
-<p>Der Agent reicht ein, ein Mensch entscheidet. Die Vorschau kommt in Telegram mit 2 Knöpfen. Freigeben setzt den Status <code>fertig</code>, legt den Beitrag mit Bildern in Nextcloud ab und schickt seit v15 eine Bestätigung mit Link zum Kundenordner. Ablehnen fragt den Grund über ein Formular ab und speichert ihn beim Beitrag, abgelegt wird nichts. Ohne Antwort verfällt die Anfrage nach 24 Stunden. Belegt sind 3 Freigaben (Läufe 2768, 2782, 2748) und 1 Ablehnung (Lauf 2735).</p>
+<p>Der Agent reicht ein, ein Mensch entscheidet. Die Vorschau kommt in Telegram mit 2 Knöpfen. Freigeben setzt den Status <code>fertig</code>, legt den Beitrag mit Bildern in Nextcloud ab und schickt seit v15 eine Bestätigung mit Link zum Kundenordner. Ablehnen fragt den Grund über ein Formular ab und speichert ihn beim Beitrag, abgelegt wird nichts. Ohne Antwort soll die Anfrage nach der eingestellten Frist verfallen (Sollwert 24, Einheit im Export nicht gesetzt und nicht bestätigt); der Ablaufzweig funktioniert laut Test T3 nicht (<a href="w08t05.html#k4">Tag 5</a>). Belegt sind 3 Freigaben (Läufe 2768, 2782, 2748) und 1 Ablehnung (Lauf 2735).</p>
 <p><strong>Guardrails auf 3 Ebenen:</strong> Systemprompt (Rolle und wichtigstes Verbot vorn, keine erfundenen Fakten, kein Rollenwechsel, höchstens 8 Werkzeugaufrufe), Werkzeug (Eingaben geprüft, feste Kundenkennung, nur Werkzeug 5 legt einen Beitrag an), Ausgabe (Pflichtfelder, erlaubte Status, Prompt-Reste, Schlüssel, fremde Kundennamen; ohne Beitrags-ID kein Erfolg).</p>
 </section>
 
