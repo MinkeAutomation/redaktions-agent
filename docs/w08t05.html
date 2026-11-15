@@ -151,6 +151,7 @@
 <li>In der Datenbank blieb der Beitrag auf <code>wartet_auf_freigabe</code>, <code>decided_at</code> blieb leer.</li>
 <li>Der Chat bekam keine Ausgabe, und nach der Frist lief kein Telegram-Knoten.</li>
 </ul>
+<figure><img loading="lazy" alt="Ausführung 3064 in n8n: Der Knoten Freigabe abwarten (Telegram) ist rot umrandet und trägt den grünen Haken des letzten ausgeführten Knotens; der Knoten Entscheidung verteilen dahinter ist nicht ausgeführt." height="660" src="bilder/w08t05-ausfuehrung-3064-freigabe-abwarten.png" width="1380"/><figcaption>Lauf 3064: Der Warteknoten (rot umrandet) ist der letzte ausgeführte Knoten, die Verteilung dahinter lief nicht.</figcaption></figure>
 <p>Der Zustand ist harmlos: Es wurde nichts abgelegt und nichts freigegeben. Der Beitrag bleibt aber ohne Status und ohne Meldung liegen. Die Ursache habe ich nicht untersucht, die erste Beobachtung steht oben. Der Workflow wurde nach dem Test auf den Stand v20.2 zurückgebaut, der Vergleich mit dem Export v20.2 ergab keine Abweichung außer der n8n-Versionskennung. Die Reparatur ist nicht gebaut und folgt nach der Abgabe.</p>
 
 <h3>T4: Angriff auf die Freigabe</h3>
