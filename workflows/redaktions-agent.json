@@ -270,7 +270,7 @@
     },
     {
       "parameters": {
-        "content": "## 🧾 Version\nv19.2 vom 13.11.2026: Guardrails Block A mit Eingang schwärzen und prüfen (v17), Ausgangsprüfung mit Sperre und Systemprompt V4 (v18), Antwortformat und 4.000 Ausgabe-Tokens (v19), Anordnung (v19.1), Notiztexte aktualisiert (v19.2). Davor v16 vom 11.11.2026: Werkzeug 4 Bilder und 5 Einreichen angebunden, Freigabe und Ablage im Hauptworkflow, Telegram-Bestätigung mit Link zum Kundenordner nach der Ablage, Agent-Modell Nemotron 3.5 Super free (der Ultra-Endpunkt war ausgefallen).\nDie Workflow-Stände stehen in versionen.md, die Prompt-Versionen in CHANGELOG.md.",
+        "content": "## 🧾 Version\nv20 vom 15.11.2026: M1, eine verworfene Agentenantwort oder ein Ausfall des Agenten setzt den vom Werkzeug gespeicherten Beitrag auf abgelehnt (Gate, Lauf-ID-Prüfung, PATCH mit Kontrolle, bei einem Fehler eine Telegram-Meldung mit Versandbeleg); Notizkarten auf Stand (v20.1). Davor v19.2 vom 13.11.2026: Guardrails Block A mit Eingang schwärzen und prüfen (v17), Ausgangsprüfung mit Sperre und Systemprompt V4 (v18), Antwortformat und 4.000 Ausgabe-Tokens (v19), Anordnung (v19.1), Notiztexte aktualisiert (v19.2). Früher v16 vom 11.11.2026: Werkzeug 4 Bilder und 5 Einreichen angebunden, Freigabe und Ablage im Hauptworkflow, Telegram-Bestätigung mit Link zum Kundenordner nach der Ablage, Agent-Modell Nemotron 3.5 Super free (der Ultra-Endpunkt war ausgefallen).\nDie Workflow-Stände stehen in versionen.md, die Prompt-Versionen in CHANGELOG.md.",
         "height": 200,
         "width": 1184,
         "color": 7
@@ -318,7 +318,7 @@
     },
     {
       "parameters": {
-        "content": "## Status\n🟢 Werkzeuge 1 bis 5 angebunden\n🟢 Fehlerweg und Ausgabe-Prüfung stehen\n🟡 Freigabe: der Klick in Telegram liegt beim Menschen\n🔴 Testkunde test-p2 fest eingestellt\n🔵 Modell nemotron-3.5-super free",
+        "content": "## Status\n🟢 Werkzeuge 1 bis 5 angebunden\n🟢 Fehlerweg und Ausgabe-Prüfung stehen\n🟢 Verworfene Antwort oder Ausfall setzt den gespeicherten Beitrag auf abgelehnt (v20)\n🟡 Freigabe: der Klick in Telegram liegt beim Menschen\n🔴 Testkunde test-p2 fest eingestellt\n🔵 Modell nemotron-3.5-super free",
         "height": 200,
         "width": 580,
         "color": 2
@@ -698,14 +698,6 @@
       ]
     },
     {
-      "id": "fc6933e2-c211-4394-82b0-c91721c8be85",
-      "name": "Bilder_gestalten",
-      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
-      "typeVersion": 2.2,
-      "position": [
-        1728,
-        1264
-      ],
       "parameters": {
         "description": "Bilder_gestalten: baut zum gespeicherten Text-Paket die Bilder im Branding des Kunden (Bild je Folie und 1 Einzelbild; Foto von Pixabay, sonst KI-Bild). Erst aufrufen, nachdem Text_schreiben STATUS: OK mit einer paket_id geliefert hat, nur 1 Mal je Paket. Eingabe: paket_id, genau die paket_id aus der Antwort von Text_schreiben. Rückgabe: Text, der mit STATUS: OK beginnt und Anzahl, Bildquelle und ki_bild nennt; NICHT_GEFUNDEN, wenn Paket oder Branding fehlt (dann reicht der Agent nur die Texte ein); FEHLER, wenn die Bilder nicht erstellt werden konnten. Ändert keine Texte und erstellt keine Bilder echter Personen.",
         "workflowId": {
@@ -752,17 +744,17 @@
             }
           ]
         }
-      }
-    },
-    {
-      "id": "5c9646b3-ede3-4d7a-b421-61ed9a361c81",
-      "name": "Zur Freigabe? [If]",
-      "type": "n8n-nodes-base.if",
+      },
+      "id": "fc6933e2-c211-4394-82b0-c91721c8be85",
+      "name": "Bilder_gestalten",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        2464,
-        1056
-      ],
+        1728,
+        1264
+      ]
+    },
+    {
       "parameters": {
         "conditions": {
           "options": {
@@ -786,17 +778,17 @@
           "combinator": "and"
         },
         "options": {}
-      }
+      },
+      "id": "5c9646b3-ede3-4d7a-b421-61ed9a361c81",
+      "name": "Zur Freigabe? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2464,
+        1056
+      ]
     },
     {
-      "id": "f825d9e3-48ee-4ec4-847b-cff5d0a15875",
-      "name": "Antwort ohne Freigabe [Edit Fields]",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        2784,
-        1344
-      ],
       "parameters": {
         "assignments": {
           "assignments": [
@@ -864,17 +856,17 @@
         },
         "includeOtherFields": false,
         "options": {}
-      }
-    },
-    {
-      "id": "4ef90f39-04e9-418b-9275-923dbce0dcdb",
-      "name": "Beitrag laden [HTTP Request]",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      },
+      "id": "f825d9e3-48ee-4ec4-847b-cff5d0a15875",
+      "name": "Antwort ohne Freigabe [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
       "position": [
         2784,
-        1056
-      ],
+        1344
+      ]
+    },
+    {
       "parameters": {
         "url": "=https://SUPABASE_URL/rest/v1/k1_posts?id=eq.{{ $json.agent_json.post_id }}&select=*",
         "authentication": "predefinedCredentialType",
@@ -883,6 +875,14 @@
           "timeout": 30000
         }
       },
+      "id": "4ef90f39-04e9-418b-9275-923dbce0dcdb",
+      "name": "Beitrag laden [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2784,
+        1056
+      ],
       "credentials": {
         "supabaseApi": {
           "id": "CREDENTIAL_ID",
@@ -892,14 +892,6 @@
       "onError": "continueErrorOutput"
     },
     {
-      "id": "c984c0bb-8e34-4921-8f6f-8342ce1c2077",
-      "name": "Einstellungen laden [HTTP Request]",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        3104,
-        1056
-      ],
       "parameters": {
         "url": "https://SUPABASE_URL/rest/v1/k1_einstellungen?select=setting_key,setting_value",
         "authentication": "predefinedCredentialType",
@@ -913,6 +905,14 @@
           "timeout": 30000
         }
       },
+      "id": "c984c0bb-8e34-4921-8f6f-8342ce1c2077",
+      "name": "Einstellungen laden [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3104,
+        1056
+      ],
       "credentials": {
         "supabaseApi": {
           "id": "CREDENTIAL_ID",
@@ -922,6 +922,9 @@
       "onError": "continueErrorOutput"
     },
     {
+      "parameters": {
+        "jsCode": "// Zweck: die Freigabe aus der Datenbank vorbereiten, nicht aus dem Text des Agenten. Hier endet jede Abweichung als Fehler (Freigabe-Fehler).\nconst pr = $('Agent-Antwort prüfen [Code]').first().json;\nconst post = $('Beitrag laden [HTTP Request]').first().json || {};\nconst set = Array.isArray($input.first().json.body) ? $input.first().json.body : [];\nconst hole = k => String((set.find(r => r.setting_key === k) || {}).setting_value || '');\nconst chat = hole('telegram_chat_id'), nutzer = hole('telegram_freigabe_nutzer_id');\nconst cfg = $('Konfiguration [Edit Fields]').first().json;\nif (!post.id || post.id !== pr.agent_json.post_id || post.status !== 'wartet_auf_freigabe' || post.erzeugt_von !== 'p2_agent') throw new Error('Freigabe: Der Beitrag in der Datenbank passt nicht zur Antwort des Agenten.');\nif (String(post.execution_id) !== String(cfg.trace_id)) throw new Error('Freigabe: Der Beitrag gehört nicht zu diesem Lauf.');\nif (!chat || !nutzer) throw new Error('Freigabe: Der Telegram-Zugang fehlt in den Einstellungen.');\nconst pfade = (Array.isArray(post.slide_urls) ? post.slide_urls : []).concat(post.single_image_url ? [post.single_image_url] : []).map(String);\nconst hinweis = String(pr.agent_json.hinweis_an_mensch || '').slice(0, 300);\nconst quelle = pfade.length ? 'Mit ' + pfade.length + ' Bildern.' : 'Ohne Bilder.';\nconst nachricht = ('Freigabe für ' + cfg.kunde_kuerzel + ': ' + String(post.topic || '').slice(0, 200) + '. ' + quelle + (hinweis ? ' Hinweis: ' + hinweis : '')).slice(0, 900).replace(/_/g, '-').replace(/\\*/g, 'x').replace(/`/g, \"'\").replace(/\\[/g, '(').replace(/\\]/g, ')');\nreturn [{ json: { post_id: post.id, topic: String(post.topic || ''), kuerzel: cfg.kunde_kuerzel, trace_id: String(cfg.trace_id), chat_id: chat, nutzer_id: nutzer, pfade: pfade, bilder: pfade.length > 0, nachricht: nachricht } }];\n"
+      },
       "id": "71077ac6-55ac-4704-838c-28658593d4f9",
       "name": "Freigabe vorbereiten [Code]",
       "type": "n8n-nodes-base.code",
@@ -930,20 +933,9 @@
         3424,
         1056
       ],
-      "parameters": {
-        "jsCode": "// Zweck: die Freigabe aus der Datenbank vorbereiten, nicht aus dem Text des Agenten. Hier endet jede Abweichung als Fehler (Freigabe-Fehler).\nconst pr = $('Agent-Antwort prüfen [Code]').first().json;\nconst post = $('Beitrag laden [HTTP Request]').first().json || {};\nconst set = Array.isArray($input.first().json.body) ? $input.first().json.body : [];\nconst hole = k => String((set.find(r => r.setting_key === k) || {}).setting_value || '');\nconst chat = hole('telegram_chat_id'), nutzer = hole('telegram_freigabe_nutzer_id');\nconst cfg = $('Konfiguration [Edit Fields]').first().json;\nif (!post.id || post.id !== pr.agent_json.post_id || post.status !== 'wartet_auf_freigabe' || post.erzeugt_von !== 'p2_agent') throw new Error('Freigabe: Der Beitrag in der Datenbank passt nicht zur Antwort des Agenten.');\nif (String(post.execution_id) !== String(cfg.trace_id)) throw new Error('Freigabe: Der Beitrag gehört nicht zu diesem Lauf.');\nif (!chat || !nutzer) throw new Error('Freigabe: Der Telegram-Zugang fehlt in den Einstellungen.');\nconst pfade = (Array.isArray(post.slide_urls) ? post.slide_urls : []).concat(post.single_image_url ? [post.single_image_url] : []).map(String);\nconst hinweis = String(pr.agent_json.hinweis_an_mensch || '').slice(0, 300);\nconst quelle = pfade.length ? 'Mit ' + pfade.length + ' Bildern.' : 'Ohne Bilder.';\nconst nachricht = ('Freigabe für ' + cfg.kunde_kuerzel + ': ' + String(post.topic || '').slice(0, 200) + '. ' + quelle + (hinweis ? ' Hinweis: ' + hinweis : '')).slice(0, 900).replace(/_/g, '-').replace(/\\*/g, 'x').replace(/`/g, \"'\").replace(/\\[/g, '(').replace(/\\]/g, ')');\nreturn [{ json: { post_id: post.id, topic: String(post.topic || ''), kuerzel: cfg.kunde_kuerzel, trace_id: String(cfg.trace_id), chat_id: chat, nutzer_id: nutzer, pfade: pfade, bilder: pfade.length > 0, nachricht: nachricht } }];\n"
-      },
       "onError": "continueErrorOutput"
     },
     {
-      "id": "72da191a-4a70-43c3-8f3c-00dcab780f5e",
-      "name": "Bilder vorhanden? [If]",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        3744,
-        1056
-      ],
       "parameters": {
         "conditions": {
           "options": {
@@ -967,17 +959,17 @@
           "combinator": "and"
         },
         "options": {}
-      }
+      },
+      "id": "72da191a-4a70-43c3-8f3c-00dcab780f5e",
+      "name": "Bilder vorhanden? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3744,
+        1056
+      ]
     },
     {
-      "id": "9774b317-8262-4491-a5cf-22cd2672fa9b",
-      "name": "Vorschau-Adressen holen [HTTP Request]",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        4064,
-        1056
-      ],
       "parameters": {
         "method": "POST",
         "url": "https://SUPABASE_URL/storage/v1/object/sign/k1-medien",
@@ -995,6 +987,14 @@
           "timeout": 30000
         }
       },
+      "id": "9774b317-8262-4491-a5cf-22cd2672fa9b",
+      "name": "Vorschau-Adressen holen [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4064,
+        1056
+      ],
       "credentials": {
         "supabaseApi": {
           "id": "CREDENTIAL_ID",
@@ -1004,14 +1004,6 @@
       "onError": "continueErrorOutput"
     },
     {
-      "id": "d96c0d7d-cceb-4a3c-857b-b30bb650235e",
-      "name": "Vorschau senden [Telegram]",
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        4384,
-        1056
-      ],
       "parameters": {
         "chatId": "={{ $('Freigabe vorbereiten [Code]').first().json.chat_id }}",
         "text": "={{ (function () { const v = $('Freigabe vorbereiten [Code]').first().json; const base = 'https://SUPABASE_URL/storage/v1'; const l = (($json.body) || []).filter(x => x && x.signedURL && x.path); const nr = x => { const m = String(x.path).split('/').pop().match(/^folie-(\\d+)\\.png$/); return m ? parseInt(m[1], 10) : 1000; }; l.sort((a, b) => nr(a) - nr(b)); const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;'); const zeilen = l.map(x => { const n = nr(x); return '<a href=\"' + esc(base + x.signedURL) + '\">' + (n === 1000 ? 'Einzelbild' : 'Folie ' + n) + '</a>'; }); return 'Vorschau zum Beitrag ' + esc(v.topic) + ' (Links 24 Stunden gültig):\\n' + zeilen.join('\\n'); })() }}",
@@ -1021,16 +1013,27 @@
           "parse_mode": "HTML"
         }
       },
+      "id": "d96c0d7d-cceb-4a3c-857b-b30bb650235e",
+      "name": "Vorschau senden [Telegram]",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4384,
+        1056
+      ],
+      "webhookId": "WEBHOOK_ID",
       "credentials": {
         "telegramApi": {
           "id": "CREDENTIAL_ID",
           "name": "Telegram API | Content-Generator"
         }
       },
-      "onError": "continueErrorOutput",
-      "webhookId": "WEBHOOK_ID"
+      "onError": "continueErrorOutput"
     },
     {
+      "parameters": {
+        "jsCode": "// Warum ein Element je Bild: der Ablage-Sub bekommt jedes Bild als eigene Datei. Soll gegen Ist: jeder Pfad braucht eine signierte Adresse, sonst Fehler statt einer unvollständigen Ablage.\nconst v = $('Freigabe vorbereiten [Code]').first().json;\nconst base = 'https://SUPABASE_URL/storage/v1';\nconst antwort = $('Vorschau-Adressen holen [HTTP Request]').first().json;\nconst liste = Array.isArray(antwort.body) ? antwort.body.filter(x => x && x.signedURL && x.path) : [];\nconst soll = v.pfade.slice().sort();\nif (liste.length !== soll.length || liste.map(x => x.path).sort().some((p, i) => p !== soll[i])) throw new Error('Freigabe: Nicht für jedes Bild gibt es eine Vorschau-Adresse.');\nconst nr = x => { const m = String(x.path).split('/').pop().match(/^folie-(\\d+)\\.png$/); return m ? parseInt(m[1], 10) : 1000; };\nliste.sort((a, b) => nr(a) - nr(b) || String(a.path).localeCompare(String(b.path)));\nreturn liste.map(x => ({ json: { url: base + x.signedURL, file_name: String(x.path).split('/').pop(), path: x.path } }));\n"
+      },
       "id": "3fd19bcc-b2ae-4671-a6d6-f7bf63b07cb4",
       "name": "Bilder einzeln [Code]",
       "type": "n8n-nodes-base.code",
@@ -1039,20 +1042,9 @@
         4704,
         1056
       ],
-      "parameters": {
-        "jsCode": "// Warum ein Element je Bild: der Ablage-Sub bekommt jedes Bild als eigene Datei. Soll gegen Ist: jeder Pfad braucht eine signierte Adresse, sonst Fehler statt einer unvollständigen Ablage.\nconst v = $('Freigabe vorbereiten [Code]').first().json;\nconst base = 'https://SUPABASE_URL/storage/v1';\nconst antwort = $('Vorschau-Adressen holen [HTTP Request]').first().json;\nconst liste = Array.isArray(antwort.body) ? antwort.body.filter(x => x && x.signedURL && x.path) : [];\nconst soll = v.pfade.slice().sort();\nif (liste.length !== soll.length || liste.map(x => x.path).sort().some((p, i) => p !== soll[i])) throw new Error('Freigabe: Nicht für jedes Bild gibt es eine Vorschau-Adresse.');\nconst nr = x => { const m = String(x.path).split('/').pop().match(/^folie-(\\d+)\\.png$/); return m ? parseInt(m[1], 10) : 1000; };\nliste.sort((a, b) => nr(a) - nr(b) || String(a.path).localeCompare(String(b.path)));\nreturn liste.map(x => ({ json: { url: base + x.signedURL, file_name: String(x.path).split('/').pop(), path: x.path } }));\n"
-      },
       "onError": "continueErrorOutput"
     },
     {
-      "id": "731a17f1-8572-40d0-8af5-afec9a3f0de1",
-      "name": "Bild laden [HTTP Request]",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        5024,
-        1056
-      ],
       "parameters": {
         "url": "={{ $json.url }}",
         "options": {
@@ -1064,9 +1056,20 @@
           "timeout": 30000
         }
       },
+      "id": "731a17f1-8572-40d0-8af5-afec9a3f0de1",
+      "name": "Bild laden [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5024,
+        1056
+      ],
       "onError": "continueErrorOutput"
     },
     {
+      "parameters": {
+        "jsCode": "// Alle geladenen Bilder bleiben im Lauf gespeichert (Bild laden); hier läuft nur noch 1 Element weiter, damit die Freigabe 1 Mal fragt.\nconst soll = $('Bilder einzeln [Code]').all().length;\nconst ist = $input.all().filter(i => i.binary && i.binary.data).length;\nif (ist !== soll) throw new Error('Freigabe: ' + ist + ' von ' + soll + ' Bildern geladen.');\nreturn [{ json: { bilder_geladen: ist } }];\n"
+      },
       "id": "8bad92b2-3ac7-4297-b94d-f9c6c6eddb86",
       "name": "Bilder zusammenfassen [Code]",
       "type": "n8n-nodes-base.code",
@@ -1075,20 +1078,9 @@
         5344,
         1056
       ],
-      "parameters": {
-        "jsCode": "// Alle geladenen Bilder bleiben im Lauf gespeichert (Bild laden); hier läuft nur noch 1 Element weiter, damit die Freigabe 1 Mal fragt.\nconst soll = $('Bilder einzeln [Code]').all().length;\nconst ist = $input.all().filter(i => i.binary && i.binary.data).length;\nif (ist !== soll) throw new Error('Freigabe: ' + ist + ' von ' + soll + ' Bildern geladen.');\nreturn [{ json: { bilder_geladen: ist } }];\n"
-      },
       "onError": "continueErrorOutput"
     },
     {
-      "id": "eae7480c-6e6f-45fa-8f49-5ff604bdf8d6",
-      "name": "Freigabe abwarten [Telegram]",
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        5664,
-        1056
-      ],
       "parameters": {
         "operation": "sendAndWait",
         "chatId": "={{ $('Freigabe vorbereiten [Code]').first().json.chat_id }}",
@@ -1111,24 +1103,24 @@
           "appendAttribution": false
         }
       },
+      "id": "eae7480c-6e6f-45fa-8f49-5ff604bdf8d6",
+      "name": "Freigabe abwarten [Telegram]",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        5664,
+        1056
+      ],
+      "webhookId": "WEBHOOK_ID",
       "credentials": {
         "telegramApi": {
           "id": "CREDENTIAL_ID",
           "name": "Telegram API | Content-Generator"
         }
       },
-      "onError": "continueErrorOutput",
-      "webhookId": "WEBHOOK_ID"
+      "onError": "continueErrorOutput"
     },
     {
-      "id": "df11012f-a0c0-4036-9121-0537ef6ec2c3",
-      "name": "Entscheidung verteilen [Switch]",
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3.2,
-      "position": [
-        5984,
-        1056
-      ],
       "parameters": {
         "rules": {
           "values": [
@@ -1186,17 +1178,17 @@
           "fallbackOutput": "extra",
           "renameFallbackOutput": "abgelaufen"
         }
-      }
+      },
+      "id": "df11012f-a0c0-4036-9121-0537ef6ec2c3",
+      "name": "Entscheidung verteilen [Switch]",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        5984,
+        1056
+      ]
     },
     {
-      "id": "ddc9fc28-6248-4d85-ad9a-b9062f8b2d8f",
-      "name": "Status fertig setzen [HTTP Request]",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        6304,
-        1056
-      ],
       "parameters": {
         "method": "PATCH",
         "url": "=https://SUPABASE_URL/rest/v1/k1_posts?id=eq.{{ $('Freigabe vorbereiten [Code]').first().json.post_id }}",
@@ -1218,6 +1210,14 @@
           "timeout": 30000
         }
       },
+      "id": "ddc9fc28-6248-4d85-ad9a-b9062f8b2d8f",
+      "name": "Status fertig setzen [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        6304,
+        1056
+      ],
       "credentials": {
         "supabaseApi": {
           "id": "CREDENTIAL_ID",
@@ -1227,6 +1227,9 @@
       "onError": "continueErrorOutput"
     },
     {
+      "parameters": {
+        "jsCode": "// Zweck: nach der Freigabe die Bild-Elemente samt Beitragsdaten für den Sub 'AGT-2606 P1 SUB Nextcloud-Ablage' zusammenstellen (wie in Projekt 1, Elemente aus Bild laden).\n// Warum Gate: nur bei status fertig wird abgelegt, sonst kein Element und damit kein Aufruf.\nconst row = $input.first() ? $input.first().json : {};\nif (!row || row.status !== 'fertig') return [];\nconst v = $('Freigabe vorbereiten [Code]').first().json;\nconst meta = { customer_code: String(v.kuerzel), post_id: String(row.id), topic: String(row.topic || ''), trace_id: String(v.trace_id), caption_instagram: String(row.caption_instagram || ''), hashtags: Array.isArray(row.hashtags) ? row.hashtags : [], linkedin_post: String(row.linkedin_post || '') };\nlet namen = [], geladen = [];\ntry { namen = $('Bilder einzeln [Code]').all().map(i => i.json.file_name); geladen = $('Bild laden [HTTP Request]').all(); } catch (e) { namen = []; geladen = []; }\nconst out = [];\ngeladen.forEach((it, i) => { if (it.binary && it.binary.data && namen[i]) out.push({ json: Object.assign({}, meta, { file_name: namen[i] }), binary: { data: it.binary.data } }); });\nif (!out.length) out.push({ json: Object.assign({}, meta, { file_name: '' }) });\nreturn out;\n"
+      },
       "id": "20120f4e-3437-4f81-8a3e-8890babc4538",
       "name": "Ablage-Elemente bauen [Code]",
       "type": "n8n-nodes-base.code",
@@ -1235,20 +1238,9 @@
         6624,
         1056
       ],
-      "parameters": {
-        "jsCode": "// Zweck: nach der Freigabe die Bild-Elemente samt Beitragsdaten für den Sub 'AGT-2606 P1 SUB Nextcloud-Ablage' zusammenstellen (wie in Projekt 1, Elemente aus Bild laden).\n// Warum Gate: nur bei status fertig wird abgelegt, sonst kein Element und damit kein Aufruf.\nconst row = $input.first() ? $input.first().json : {};\nif (!row || row.status !== 'fertig') return [];\nconst v = $('Freigabe vorbereiten [Code]').first().json;\nconst meta = { customer_code: String(v.kuerzel), post_id: String(row.id), topic: String(row.topic || ''), trace_id: String(v.trace_id), caption_instagram: String(row.caption_instagram || ''), hashtags: Array.isArray(row.hashtags) ? row.hashtags : [], linkedin_post: String(row.linkedin_post || '') };\nlet namen = [], geladen = [];\ntry { namen = $('Bilder einzeln [Code]').all().map(i => i.json.file_name); geladen = $('Bild laden [HTTP Request]').all(); } catch (e) { namen = []; geladen = []; }\nconst out = [];\ngeladen.forEach((it, i) => { if (it.binary && it.binary.data && namen[i]) out.push({ json: Object.assign({}, meta, { file_name: namen[i] }), binary: { data: it.binary.data } }); });\nif (!out.length) out.push({ json: Object.assign({}, meta, { file_name: '' }) });\nreturn out;\n"
-      },
       "onError": "continueErrorOutput"
     },
     {
-      "id": "e98bdd27-d83c-4131-9ff4-ef03e8de6de7",
-      "name": "In Nextcloud ablegen [Execute Workflow]",
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.4,
-      "position": [
-        6944,
-        1056
-      ],
       "parameters": {
         "workflowId": {
           "__rl": true,
@@ -1348,17 +1340,17 @@
           "waitForSubWorkflow": true
         }
       },
+      "id": "e98bdd27-d83c-4131-9ff4-ef03e8de6de7",
+      "name": "In Nextcloud ablegen [Execute Workflow]",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        6944,
+        1056
+      ],
       "onError": "continueErrorOutput"
     },
     {
-      "id": "fa732f3a-3e18-49e3-ae46-1b837af93df5",
-      "name": "Ergebnis Ablage [Edit Fields]",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        7264,
-        1056
-      ],
       "parameters": {
         "assignments": {
           "assignments": [
@@ -1371,17 +1363,17 @@
           ]
         },
         "options": {}
-      }
+      },
+      "id": "fa732f3a-3e18-49e3-ae46-1b837af93df5",
+      "name": "Ergebnis Ablage [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        7264,
+        1056
+      ]
     },
     {
-      "id": "3117f177-c52a-4a1a-8de2-a38a93ca1192",
-      "name": "Grund abfragen [Telegram]",
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        6304,
-        1344
-      ],
       "parameters": {
         "operation": "sendAndWait",
         "chatId": "={{ $('Freigabe vorbereiten [Code]').first().json.chat_id }}",
@@ -1396,24 +1388,24 @@
           "appendAttribution": false
         }
       },
+      "id": "3117f177-c52a-4a1a-8de2-a38a93ca1192",
+      "name": "Grund abfragen [Telegram]",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        6304,
+        1344
+      ],
+      "webhookId": "WEBHOOK_ID",
       "credentials": {
         "telegramApi": {
           "id": "CREDENTIAL_ID",
           "name": "Telegram API | Content-Generator"
         }
       },
-      "onError": "continueErrorOutput",
-      "webhookId": "WEBHOOK_ID"
+      "onError": "continueErrorOutput"
     },
     {
-      "id": "c888d64c-33ad-4feb-a234-d0d407aa2954",
-      "name": "Status abgelehnt setzen [HTTP Request]",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        6624,
-        1344
-      ],
       "parameters": {
         "method": "PATCH",
         "url": "=https://SUPABASE_URL/rest/v1/k1_posts?id=eq.{{ $('Freigabe vorbereiten [Code]').first().json.post_id }}",
@@ -1435,6 +1427,14 @@
           "timeout": 30000
         }
       },
+      "id": "c888d64c-33ad-4feb-a234-d0d407aa2954",
+      "name": "Status abgelehnt setzen [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        6624,
+        1344
+      ],
       "credentials": {
         "supabaseApi": {
           "id": "CREDENTIAL_ID",
@@ -1444,14 +1444,6 @@
       "onError": "continueErrorOutput"
     },
     {
-      "id": "d8240c77-5dc9-4686-a11d-4b8050b05a9d",
-      "name": "Status abgelaufen setzen [HTTP Request]",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        6304,
-        1632
-      ],
       "parameters": {
         "method": "PATCH",
         "url": "=https://SUPABASE_URL/rest/v1/k1_posts?id=eq.{{ $('Freigabe vorbereiten [Code]').first().json.post_id }}",
@@ -1473,6 +1465,14 @@
           "timeout": 30000
         }
       },
+      "id": "d8240c77-5dc9-4686-a11d-4b8050b05a9d",
+      "name": "Status abgelaufen setzen [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        6304,
+        1632
+      ],
       "credentials": {
         "supabaseApi": {
           "id": "CREDENTIAL_ID",
@@ -1482,14 +1482,6 @@
       "onError": "continueErrorOutput"
     },
     {
-      "id": "8df8ac56-d1df-4e64-94a2-d1c8ab544493",
-      "name": "Ergebnis Entscheidung [Edit Fields]",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        6944,
-        1344
-      ],
       "parameters": {
         "assignments": {
           "assignments": [
@@ -1502,17 +1494,17 @@
           ]
         },
         "options": {}
-      }
-    },
-    {
-      "id": "d703c5cc-e6e8-4682-ba3b-4a030615bb61",
-      "name": "Freigabe-Fehler [Edit Fields]",
+      },
+      "id": "8df8ac56-d1df-4e64-94a2-d1c8ab544493",
+      "name": "Ergebnis Entscheidung [Edit Fields]",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        3104,
+        6944,
         1344
-      ],
+      ]
+    },
+    {
       "parameters": {
         "assignments": {
           "assignments": [
@@ -1525,9 +1517,23 @@
           ]
         },
         "options": {}
-      }
+      },
+      "id": "d703c5cc-e6e8-4682-ba3b-4a030615bb61",
+      "name": "Freigabe-Fehler [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3104,
+        1344
+      ]
     },
     {
+      "parameters": {
+        "content": "# 05 · Freigabe und Ablage\nEin Mensch gibt frei, erst danach wird abgelegt. Beitrag und Einstellungen kommen aus der Datenbank.",
+        "height": 1242,
+        "width": 5096,
+        "color": 4
+      },
       "id": "54631a1b-410f-46e6-90b2-1396a70ec21f",
       "name": "Rahmen Freigabe und Ablage",
       "type": "n8n-nodes-base.stickyNote",
@@ -1535,15 +1541,14 @@
       "position": [
         2384,
         656
-      ],
-      "parameters": {
-        "content": "# 05 · Freigabe und Ablage\nEin Mensch gibt frei, erst danach wird abgelegt. Beitrag und Einstellungen kommen aus der Datenbank.",
-        "height": 1242,
-        "width": 5096,
-        "color": 4
-      }
+      ]
     },
     {
+      "parameters": {
+        "content": "## ⑥ Freigabe vorbereiten\nNur geprüfte, eingereichte Beiträge gehen weiter. Beitrag und Telegram-Einstellungen aus der Datenbank, nie aus dem Text des Agenten; der Beitrag muss zu diesem Lauf gehören.\n\n### 🟢 Prüfung steht",
+        "height": 196,
+        "width": 1096
+      },
       "id": "bf0cb9a5-d996-44ec-88f0-ace98a780d67",
       "name": "Karte Freigabe vorbereiten",
       "type": "n8n-nodes-base.stickyNote",
@@ -1551,14 +1556,14 @@
       "position": [
         2448,
         832
-      ],
-      "parameters": {
-        "content": "## ⑥ Freigabe vorbereiten\nNur geprüfte, eingereichte Beiträge gehen weiter. Beitrag und Telegram-Einstellungen aus der Datenbank, nie aus dem Text des Agenten; der Beitrag muss zu diesem Lauf gehören.\n\n### 🟢 Prüfung steht",
-        "height": 196,
-        "width": 1096
-      }
+      ]
     },
     {
+      "parameters": {
+        "content": "## ⑦ Vorschau und Freigabe\nVorschau-Links per Telegram (24 Stunden gültig), Bilder für die Ablage laden, dann fragt Telegram mit zwei Knöpfen, Frist 24 Stunden.\n\n### 🟡 Der Klick liegt beim Menschen",
+        "height": 196,
+        "width": 1432
+      },
       "id": "cdc8e6c3-4370-4aa4-8dad-1d8c51495893",
       "name": "Karte Vorschau und Freigabe",
       "type": "n8n-nodes-base.stickyNote",
@@ -1566,14 +1571,14 @@
       "position": [
         3712,
         832
-      ],
-      "parameters": {
-        "content": "## ⑦ Vorschau und Freigabe\nVorschau-Links per Telegram (24 Stunden gültig), Bilder für die Ablage laden, dann fragt Telegram mit zwei Knöpfen, Frist 24 Stunden.\n\n### 🟡 Der Klick liegt beim Menschen",
-        "height": 196,
-        "width": 1432
-      }
+      ]
     },
     {
+      "parameters": {
+        "content": "## ⑧ Entscheidung und Ablage\nFreigegeben: Status fertig, Ablage in Nextcloud über den vorhandenen Sub, danach Bestätigung mit dem Link zum Kundenordner per Telegram (bei einem Problem eine Meldung mit Grund). Abgelehnt: Grund abfragen, Status abgelehnt. Abgelaufen: Status freigabe_abgelaufen. Fehler: fester Satz, der Beitrag bleibt gespeichert.\n\n### 🟡 Ablage nutzt den Sub aus Projekt 1",
+        "height": 196,
+        "width": 1732
+      },
       "id": "e20642b3-ac5c-48e4-9f7c-96910a3b6e4d",
       "name": "Karte Entscheidung und Ablage",
       "type": "n8n-nodes-base.stickyNote",
@@ -1581,22 +1586,9 @@
       "position": [
         5648,
         832
-      ],
-      "parameters": {
-        "content": "## ⑧ Entscheidung und Ablage\nFreigegeben: Status fertig, Ablage in Nextcloud über den vorhandenen Sub, danach Bestätigung mit dem Link zum Kundenordner per Telegram (bei einem Problem eine Meldung mit Grund). Abgelehnt: Grund abfragen, Status abgelehnt. Abgelaufen: Status freigabe_abgelaufen. Fehler: fester Satz, der Beitrag bleibt gespeichert.\n\n### 🟡 Ablage nutzt den Sub aus Projekt 1",
-        "height": 196,
-        "width": 1732
-      }
+      ]
     },
     {
-      "id": "9e2ab933-07d9-458a-802c-db668bece03a",
-      "name": "Zur_Freigabe_einreichen",
-      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
-      "typeVersion": 2.2,
-      "position": [
-        1888,
-        1264
-      ],
       "parameters": {
         "description": "Zur_Freigabe_einreichen: speichert das Paket mit den Bildern als Beitrag mit Status wartet_auf_freigabe und legt ihn einem Menschen zur Freigabe vor. Erst aufrufen, wenn Text_schreiben STATUS: OK mit einer paket_id geliefert hat und Bilder_gestalten STATUS: OK geliefert hat oder NICHT_GEFUNDEN meldete (dann geht der Beitrag ohne Bilder raus). Nur 1 Mal je Auftrag. Eingaben: paket_id (genau die aus der Antwort von Text_schreiben), hinweis_an_mensch (1 Satz für den Menschen, was er beachten soll, zum Beispiel ein ähnliches Thema in den letzten 30 Tagen, sonst kurz den Inhalt). Rückgabe: Text, der mit STATUS: OK beginnt und die post_id nennt; NICHT_GEFUNDEN, wenn Paket oder Kundenprofil fehlt; FEHLER, wenn nichts eingereicht werden konnte. Veröffentlicht nichts und legt nichts ab, das entscheidet danach ein Mensch.",
         "workflowId": {
@@ -1653,17 +1645,17 @@
             }
           ]
         }
-      }
-    },
-    {
-      "id": "7e9fd6db-31a8-4625-a876-2b298e9fea83",
-      "name": "Freigabelink vorhanden? [If]",
-      "type": "n8n-nodes-base.if",
+      },
+      "id": "9e2ab933-07d9-458a-802c-db668bece03a",
+      "name": "Zur_Freigabe_einreichen",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        7264,
-        1344
-      ],
+        1888,
+        1264
+      ]
+    },
+    {
       "parameters": {
         "conditions": {
           "options": {
@@ -1687,17 +1679,17 @@
           "combinator": "and"
         },
         "options": {}
-      }
-    },
-    {
-      "id": "7ea927de-a105-4ac5-b633-3e6be97a6d2b",
-      "name": "Freigabe-Bestätigung senden [Telegram]",
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
+      },
+      "id": "7e9fd6db-31a8-4625-a876-2b298e9fea83",
+      "name": "Freigabelink vorhanden? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
       "position": [
         7264,
-        1632
-      ],
+        1344
+      ]
+    },
+    {
       "parameters": {
         "chatId": "={{ $('Freigabe vorbereiten [Code]').first().json.chat_id }}",
         "text": "={{ (function () { const j = $json; const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;'); const ablauf = j.freigabe_ablauf ? String(j.freigabe_ablauf).split('-').reverse().join('.') : 'unbekannt'; const topic = $('Ablage-Elemente bauen [Code]').first().json.topic || ''; return 'Freigegeben und in Nextcloud abgelegt' + (topic ? ': ' + esc(topic) : '') + '.\\n<a href=\"' + esc(j.freigabe_link) + '\">Kundenordner öffnen</a> (gültig bis ' + esc(ablauf) + ')'; })() }}",
@@ -1707,24 +1699,24 @@
           "parse_mode": "HTML"
         }
       },
+      "id": "7ea927de-a105-4ac5-b633-3e6be97a6d2b",
+      "name": "Freigabe-Bestätigung senden [Telegram]",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        7264,
+        1632
+      ],
+      "webhookId": "WEBHOOK_ID",
       "credentials": {
         "telegramApi": {
           "id": "CREDENTIAL_ID",
           "name": "Telegram API | Content-Generator"
         }
       },
-      "onError": "continueRegularOutput",
-      "webhookId": "WEBHOOK_ID"
+      "onError": "continueRegularOutput"
     },
     {
-      "id": "e52771d1-c00f-4d4d-8334-9268d461c934",
-      "name": "Ablage-Problem senden [Telegram]",
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        6944,
-        1632
-      ],
       "parameters": {
         "chatId": "={{ $('Freigabe vorbereiten [Code]').first().json.chat_id }}",
         "text": "={{ (function () { const j = $json; const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;'); const grund = j.grund || j.grund_link || 'kein Grund gemeldet'; const pid = $('Ablage-Elemente bauen [Code]').first().json.post_id || ''; const kopf = (j.ok === false) ? 'Freigegeben, aber die Ablage in Nextcloud meldet ein Problem' : 'Freigegeben und abgelegt, aber ohne Freigabelink'; return (kopf + ' (Beitrag ' + esc(pid) + ', Lauf ' + $execution.id + '): ' + esc(grund)).slice(0, 4000); })() }}",
@@ -1734,16 +1726,30 @@
           "parse_mode": "HTML"
         }
       },
+      "id": "e52771d1-c00f-4d4d-8334-9268d461c934",
+      "name": "Ablage-Problem senden [Telegram]",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        6944,
+        1632
+      ],
+      "webhookId": "WEBHOOK_ID",
       "credentials": {
         "telegramApi": {
           "id": "CREDENTIAL_ID",
           "name": "Telegram API | Content-Generator"
         }
       },
-      "onError": "continueRegularOutput",
-      "webhookId": "WEBHOOK_ID"
+      "onError": "continueRegularOutput"
     },
     {
+      "parameters": {
+        "content": "# 01b · Eingänge und Eingangsprüfung\nAlles, was von außen kommt, wird zuerst geschwärzt und dann geprüft. Erst danach sieht der Agent den Auftrag.",
+        "height": 800,
+        "width": 1400,
+        "color": 4
+      },
       "id": "659dab11-63f5-40c8-8797-1731397fa98f",
       "name": "Rahmen 01b",
       "type": "n8n-nodes-base.stickyNote",
@@ -1751,15 +1757,12 @@
       "position": [
         0,
         1456
-      ],
-      "parameters": {
-        "content": "# 01b · Eingänge und Eingangsprüfung\nAlles, was von außen kommt, wird zuerst geschwärzt und dann geprüft. Erst danach sieht der Agent den Auftrag.",
-        "width": 1400,
-        "height": 800,
-        "color": 4
-      }
+      ]
     },
     {
+      "parameters": {
+        "jsCode": "// Zweck: alle Eingänge liefern dieselben Felder, damit Schwärzen und Prüfen nur einmal gebaut werden.\n// Heute hängt nur der Chat-Eingang daran. Formular und Telegram (Block B) kommen an dieselbe Stelle.\nconst j = $input.first().json;\nconst text = String(j.chatInput ?? j.text ?? '');\nreturn [{ json: { text: text, eingang: 'chat', quellenart: 'Thema', session_id: String(j.sessionId ?? ('chat-' + $execution.id)), telegram_chat_id: '' } }];"
+      },
       "id": "7772941d-5614-452a-bbff-9ba08ef3dcb1",
       "name": "Eingang vereinheitlichen [Code]",
       "type": "n8n-nodes-base.code",
@@ -1767,20 +1770,9 @@
       "position": [
         416,
         1664
-      ],
-      "parameters": {
-        "jsCode": "// Zweck: alle Eingänge liefern dieselben Felder, damit Schwärzen und Prüfen nur einmal gebaut werden.\n// Heute hängt nur der Chat-Eingang daran. Formular und Telegram (Block B) kommen an dieselbe Stelle.\nconst j = $input.first().json;\nconst text = String(j.chatInput ?? j.text ?? '');\nreturn [{ json: { text: text, eingang: 'chat', quellenart: 'Thema', session_id: String(j.sessionId ?? ('chat-' + $execution.id)), telegram_chat_id: '' } }];"
-      }
+      ]
     },
     {
-      "id": "0d417a1e-b142-455e-aee0-70ab7e823447",
-      "name": "Eingang schwärzen [Guardrails]",
-      "type": "@n8n/n8n-nodes-langchain.guardrails",
-      "typeVersion": 2,
-      "position": [
-        736,
-        1664
-      ],
       "parameters": {
         "operation": "sanitize",
         "text": "={{ $json.text }}",
@@ -1821,18 +1813,18 @@
           }
         }
       },
-      "onError": "continueRegularOutput",
-      "alwaysOutputData": true
-    },
-    {
-      "id": "49c279c9-61a1-465a-9e23-ff9752f0afcb",
-      "name": "Schwärzung ok? [If]",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
+      "id": "0d417a1e-b142-455e-aee0-70ab7e823447",
+      "name": "Eingang schwärzen [Guardrails]",
+      "type": "@n8n/n8n-nodes-langchain.guardrails",
+      "typeVersion": 2,
       "position": [
         736,
-        1856
+        1664
       ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
       "parameters": {
         "conditions": {
           "options": {
@@ -1856,17 +1848,17 @@
           "combinator": "and"
         },
         "options": {}
-      }
+      },
+      "id": "49c279c9-61a1-465a-9e23-ff9752f0afcb",
+      "name": "Schwärzung ok? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        1856
+      ]
     },
     {
-      "id": "5ac0dd07-7053-4588-a96b-cdbbe06f531d",
-      "name": "Eingang prüfen [Guardrails]",
-      "type": "@n8n/n8n-nodes-langchain.guardrails",
-      "typeVersion": 2,
-      "position": [
-        1056,
-        1664
-      ],
       "parameters": {
         "text": "={{ $json.guardrailsInput }}",
         "guardrails": {
@@ -1883,17 +1875,17 @@
           }
         }
       },
+      "id": "5ac0dd07-7053-4588-a96b-cdbbe06f531d",
+      "name": "Eingang prüfen [Guardrails]",
+      "type": "@n8n/n8n-nodes-langchain.guardrails",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        1664
+      ],
       "onError": "continueErrorOutput"
     },
     {
-      "id": "69c7033b-b76a-4469-b77c-2d2f8f67d8f3",
-      "name": "Prüfmodell Eingang [OpenAI Chat Model]",
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.3,
-      "position": [
-        1056,
-        1856
-      ],
       "parameters": {
         "model": {
           "__rl": true,
@@ -1908,6 +1900,14 @@
           "maxRetries": 1
         }
       },
+      "id": "69c7033b-b76a-4469-b77c-2d2f8f67d8f3",
+      "name": "Prüfmodell Eingang [OpenAI Chat Model]",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1056,
+        1856
+      ],
       "credentials": {
         "openAiApi": {
           "id": "CREDENTIAL_ID",
@@ -1916,14 +1916,6 @@
       }
     },
     {
-      "id": "bb3b8705-9596-496f-a70c-dbf34ad622a7",
-      "name": "Eingang abgelehnt [Edit Fields]",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        416,
-        1856
-      ],
       "parameters": {
         "assignments": {
           "assignments": [
@@ -1936,28 +1928,23 @@
           ]
         },
         "options": {}
-      }
+      },
+      "id": "bb3b8705-9596-496f-a70c-dbf34ad622a7",
+      "name": "Eingang abgelehnt [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        1856
+      ]
     },
     {
-      "id": "f4c36c63-c7aa-407f-9575-481777bd2af2",
-      "name": "Beitrag prüfen [Guardrails]",
-      "type": "@n8n/n8n-nodes-langchain.guardrails",
-      "typeVersion": 2,
-      "position": [
-        3424,
-        1344
-      ],
       "parameters": {
         "text": "={{ (() => { const p = $('Beitrag laden [HTTP Request]').first().json; const s = Array.isArray(p.slides) ? p.slides.map(x => [x.heading, x.text].filter(Boolean).join(' ')).join('\\n') : ''; return [p.topic, s, p.caption_instagram, p.linkedin_post, (Array.isArray(p.hashtags) ? p.hashtags.join(' ') : '')].filter(Boolean).join('\\n\\n'); })() }}",
         "guardrails": {
-          "secretKeys": {
+          "nsfw": {
             "value": {
-              "permissiveness": "balanced"
-            }
-          },
-          "urls": {
-            "value": {
-              "allowedUrls": ""
+              "threshold": 0.7
             }
           },
           "pii": {
@@ -1972,24 +1959,29 @@
               ]
             }
           },
-          "nsfw": {
+          "secretKeys": {
             "value": {
-              "threshold": 0.7
+              "permissiveness": "balanced"
+            }
+          },
+          "urls": {
+            "value": {
+              "allowedUrls": ""
             }
           }
         }
       },
+      "id": "f4c36c63-c7aa-407f-9575-481777bd2af2",
+      "name": "Beitrag prüfen [Guardrails]",
+      "type": "@n8n/n8n-nodes-langchain.guardrails",
+      "typeVersion": 2,
+      "position": [
+        3424,
+        1344
+      ],
       "onError": "continueErrorOutput"
     },
     {
-      "id": "f3194d1c-9fe5-4b40-aff1-4ee676fd7cc7",
-      "name": "Prüfmodell Ausgang [OpenAI Chat Model]",
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.3,
-      "position": [
-        3424,
-        1552
-      ],
       "parameters": {
         "model": {
           "__rl": true,
@@ -2004,6 +1996,14 @@
           "maxRetries": 1
         }
       },
+      "id": "f3194d1c-9fe5-4b40-aff1-4ee676fd7cc7",
+      "name": "Prüfmodell Ausgang [OpenAI Chat Model]",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        3424,
+        1552
+      ],
       "credentials": {
         "openAiApi": {
           "id": "CREDENTIAL_ID",
@@ -2012,14 +2012,6 @@
       }
     },
     {
-      "id": "0d4c974a-c18b-409c-9c67-7fac6feff674",
-      "name": "Freigabefelder erhalten [Edit Fields]",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        3744,
-        1200
-      ],
       "parameters": {
         "assignments": {
           "assignments": [
@@ -2038,17 +2030,17 @@
           ]
         },
         "options": {}
-      }
-    },
-    {
-      "id": "2019ef6a-9d05-4ad5-b92b-806e318e2630",
-      "name": "Beitrag sperren [HTTP Request]",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      },
+      "id": "0d4c974a-c18b-409c-9c67-7fac6feff674",
+      "name": "Freigabefelder erhalten [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
       "position": [
         3744,
-        1344
-      ],
+        1200
+      ]
+    },
+    {
       "parameters": {
         "method": "PATCH",
         "url": "=https://SUPABASE_URL/rest/v1/k1_posts?id=eq.{{ $('Freigabe vorbereiten [Code]').first().json.post_id }}",
@@ -2070,15 +2062,30 @@
           "timeout": 30000
         }
       },
-      "onError": "continueErrorOutput",
+      "id": "2019ef6a-9d05-4ad5-b92b-806e318e2630",
+      "name": "Beitrag sperren [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3744,
+        1344
+      ],
       "credentials": {
         "supabaseApi": {
           "id": "CREDENTIAL_ID",
           "name": "Supabase API | KI-AGT-2606"
         }
-      }
+      },
+      "onError": "continueErrorOutput"
     },
     {
+      "parameters": {
+        "chatId": "={{ $('Freigabe vorbereiten [Code]').first().json.chat_id }}",
+        "text": "={{ (($('Beitrag prüfen [Guardrails]').first().json.checks ?? []).some(x => x.triggered === true && x.executionFailed !== true)) ? 'Der Beitrag wurde nicht zur Freigabe vorgelegt: Die Prüfung hat etwas beanstandet. Der Beitrag ist gesperrt, es wurde nichts veröffentlicht.' : 'Die Prüfung des Beitrags ist ausgefallen, der Beitrag wurde vorsichtshalber gesperrt.' }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
       "id": "d793f5e1-b513-4149-af63-22702d899e44",
       "name": "Sperre melden [Telegram]",
       "type": "n8n-nodes-base.telegram",
@@ -2087,13 +2094,6 @@
         4064,
         1344
       ],
-      "parameters": {
-        "chatId": "={{ $('Freigabe vorbereiten [Code]').first().json.chat_id }}",
-        "text": "={{ (($('Beitrag prüfen [Guardrails]').first().json.checks ?? []).some(x => x.triggered === true && x.executionFailed !== true)) ? 'Der Beitrag wurde nicht zur Freigabe vorgelegt: Die Prüfung hat etwas beanstandet. Der Beitrag ist gesperrt, es wurde nichts veröffentlicht.' : 'Die Prüfung des Beitrags ist ausgefallen, der Beitrag wurde vorsichtshalber gesperrt.' }}",
-        "additionalFields": {
-          "appendAttribution": false
-        }
-      },
       "webhookId": "WEBHOOK_ID",
       "credentials": {
         "telegramApi": {
@@ -2103,14 +2103,6 @@
       }
     },
     {
-      "id": "620d6a88-88d6-4812-9eea-32685fd8f025",
-      "name": "Ergebnis Sperre [Edit Fields]",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        4384,
-        1344
-      ],
       "parameters": {
         "assignments": {
           "assignments": [
@@ -2123,7 +2115,15 @@
           ]
         },
         "options": {}
-      }
+      },
+      "id": "620d6a88-88d6-4812-9eea-32685fd8f025",
+      "name": "Ergebnis Sperre [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4384,
+        1344
+      ]
     },
     {
       "id": "a1920432-7b3c-46a1-bae8-30200331481d",
@@ -3379,7 +3379,7 @@
     }
   ],
   "id": "WORKFLOW_ID_REDAKTIONS_AGENT",
-  "versionId": "39349061-8501-4226-be68-7abc0f31c62d",
+  "versionId": "d41ce2f7-1a47-4126-8b9d-bba25fbaa374",
   "active": false,
   "activeVersionId": null,
   "description": "Projekt 2 AGT-2606: Redaktions-Agent mit Chat Trigger, Nemotron 3.5 Super free, Gesprächsgedächtnis, 5 Werkzeugen (Markenwissen, Recherche, Text, Bilder, Einreichen) und Freigabe mit Ablage nach Telegram-Klick.",
