@@ -2,13 +2,13 @@
 
 Projekt 2 im Kurs KI-Automatisierung (AGT-2606): Ein Agent in n8n plant Social-Media-Posts (Instagram und LinkedIn) für einen Kunden, prüft das Thema gegen Markenrichtlinien und frühere Posts, holt bei Bedarf belegte Fakten, schreibt das Text-Paket, baut die Bilder im Branding des Kunden und reicht alles zur Freigabe durch einen Menschen ein. Nach der Freigabe in Telegram wird der Beitrag in Nextcloud abgelegt.
 
-## Stand (13.11.2026)
+## Stand (15.11.2026)
 
 Status heißt hier Live (geltender Stand), In Test (Testkopie, wird nicht Live), Archiviert (abgelöst, Datei unter `archiv/`) oder Verworfen (getestet, nicht übernommen). Der Status je Version steht in [versionen.md](versionen.md), die Datei zu jeder Version in der Spalte Archivdatei.
 
 | Bestandteil | Version | Status | Datei |
 |---|---|---|---|
-| Hauptworkflow Redaktions-Agent | v19.2 | Live (in n8n nicht veröffentlicht) | [workflows/redaktions-agent.json](workflows/redaktions-agent.json) |
+| Hauptworkflow Redaktions-Agent | v20.2 | Live (in n8n nicht veröffentlicht) | [workflows/redaktions-agent.json](workflows/redaktions-agent.json) |
 | Werkzeug 1 Markenwissen abfragen | v03.3 | Live | [workflows/sub-markenwissen-abfragen.json](workflows/sub-markenwissen-abfragen.json) |
 | Werkzeug 2 Thema recherchieren | v03.2 | Live | [workflows/sub-thema-recherchieren.json](workflows/sub-thema-recherchieren.json) |
 | Werkzeug 3 Text schreiben | v07.1 | Live | [workflows/sub-text-schreiben.json](workflows/sub-text-schreiben.json) |
@@ -29,9 +29,10 @@ Status heißt hier Live (geltender Stand), In Test (Testkopie, wird nicht Live),
 | Lese-Views und Spalte `erzeugt_von` | v01 | Live | [sql/p2_k2_views_v01.sql](sql/p2_k2_views_v01.sql) |
 
 - Alle 5 Werkzeuge gebaut, veröffentlicht und angebunden. Getestet mit dem Testkunden `test-p2` im n8n-Chat, der Hauptworkflow bleibt unveröffentlicht.
-- Agent-Modell: Nemotron 3.5 Super free (Gratis), seit v19 (13.11.2026: v19.2) mit 4.000 Ausgabe-Tokens. Der Endpunkt von Nemotron 3 Ultra free war am 11.11.2026 zeitweise ausgefallen.
+- Agent-Modell: Nemotron 3.5 Super free (Gratis), seit v19 (bis v20.2) mit 4.000 Ausgabe-Tokens. Der Endpunkt von Nemotron 3 Ultra free war am 11.11.2026 zeitweise ausgefallen.
 - Systemprompt: V4 live (12.11.2026, Guardrails); V1 und V2 archiviert, V3 verworfen. Vergleich V1 gegen V2 mit 10 Anfragen in der [Test-Tabelle](docs/test-tabelle.md). Der Vergleich V2 gegen V4 steht aus.
 - Guardrails (12.11.2026, Hauptworkflow v17 bis v19, gebaut für den Chat-Eingang): Eingangsprüfung vor dem Agenten (schwärzen, Jailbreak, Themenbindung) und Ausgangsprüfung vor der Freigabe (Schlüssel, Links, Personendaten, Anstößiges, mit Sperre). 9 Kernfälle in 12 Testzeilen (13 Ausführungen): 7 bestanden, 4 nicht bestanden (A1b, A6, P2 in 2 Anläufen), 1 Fehler (A3 am Eingang), siehe [Tag 4](docs/w08t04.html). Offen bis Ende Woche 9: Laufzeile, Eingänge Formular und Telegram, Prüfung der Recherche-Texte, Veröffentlichung, 11 weitere Fälle.
+- Vertrauensstufen und Freigabe (13. bis 15.11.2026, Hauptworkflow v20 bis v20.2): 12 Aktionen mit Stufe und Rechten, die Freigabe per Knopf in Telegram ist die Stufe „Fragt“. 4 Freigabetests: freigegeben (Lauf 3047), abgelehnt mit Grund (3053) und Angriff (3058) bestanden, Fristablauf (3064) **nicht bestanden**: nach der Frist gibt es keinen Ausgang, der Beitrag bleibt ohne Status und ohne Meldung liegen. Die Reparatur ist nicht gebaut. Siehe [Tag 5](docs/w08t05.html) und die [Testtabelle Tag 5](docs/test-tabelle-w08t05.md). In v20.2 steht die Schlüsselprüfung der Ausgangsprüfung auf „permissive“, weil „balanced“ deutsche Wörter als Schlüssel sperrte.
 - Grenzen: Zahlenprüfung im Text-Werkzeug erkennt nicht alle Zahlwörter (ein Viertel, halb, null, Ordnungszahlen); Bildwahl nur über Schlagwörter; Wortmarke statt Logo-Datei; die Freigabe braucht einen Klick in Telegram.
 - Die Exporte in [workflows/](workflows/) und die älteren Stände in [archiv/workflows/](archiv/workflows/) sind für die Veröffentlichung bereinigt: Credential-IDs, Workflow-IDs (auch die Verweise der Werkzeug-Knoten), Tag- und Ordner-Kennungen, Adresse der Datenbank, Adresse der n8n-Instanz, Fehler-Workflow, Webhook-IDs und Hosts des Bild-Dienstes sind durch Platzhalter ersetzt, interne Verweise in Code-Kommentaren entfernt. Der Name eines Testkunden ist in den Exporten durch `KUNDE_B` ersetzt, live in n8n steht der Originalwert. Die Funktion ist gleich, der Export weicht deshalb im Text von der laufenden Instanz ab.
 
@@ -54,6 +55,7 @@ Die Projektdokumentation liegt als Webseite im Ordner [docs/](docs/):
 - [Tag 2 (10.11.2026)](docs/w08t02.html): Fehlerweg, Ausgabe-Prüfung, Werkzeug 3, Testreihe mit 1 Werkzeug
 - [Tag 3 (11.11.2026)](docs/w08t03.html): Werkzeug 4 und 5, Freigabe und Ablage, Vergleich V1 gegen V2
 - [Tag 4 (12.11.2026)](docs/w08t04.html): Guardrails an Eingang und Ausgang, Erlaubt und verboten, Übersicht nach den 3 Ebenen, Systemprompt V4, Planbild des Endstands, 9 Kernfälle in 12 Testzeilen (13 Ausführungen); die Testtabelle mit Eingabe und Antwort im Wortlaut steht in [docs/test-tabelle-w08t04.md](docs/test-tabelle-w08t04.md)
+- [Tag 5 (13.11.2026, Tests 15.11.2026)](docs/w08t05.html): Vertrauensstufen je Aktion mit Rechten, Freigabe-Schleife per Telegram, 4 Freigabetests mit Ausführungsnummern (3 bestanden, 1 nicht bestanden), Plan v20.2, Export und Changelog
 
 Dazu gehören:
 
@@ -61,6 +63,8 @@ Dazu gehören:
 - [Projekt-Charter als Webseite](https://minkeautomation.github.io/redaktions-agent/charter.html): derselbe Inhalt wie die Markdown-Fassung, mit Navigation zur Wochen-Doku
 - [Versionsmatrix](docs/versionsmatrix.md): je Version Plan, Testtabelle, Tages-Doku und Export, Lücken mit Grund
 - [Test-Tabelle](docs/test-tabelle.md): Werkzeug-Tests, Vergleich V1 gegen V2, Freigabe und Ablage
+- [Testtabelle Tag 4](docs/test-tabelle-w08t04.md): Guardrails, 12 Testzeilen
+- [Testtabelle Tag 5](docs/test-tabelle-w08t05.md): 4 Freigabetests, Fehlalarm der Ausgangsprüfung
 - [Pläne](docs/plan/): je Tag ein Excalidraw-Plan auf dem Endstand des Tages
 
 ## Grundlage aus Projekt 1
