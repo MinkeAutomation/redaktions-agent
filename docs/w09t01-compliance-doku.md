@@ -162,7 +162,7 @@ Im Testbetrieb laufen erfundene Testdaten (Testkunde, erfundenes Markenprofil, T
 - Gratis-Endpunkte und das Modell des Agenten (Claude Haiku 5.5 über OpenRouter): Ob Anfragen von den Modellanbietern protokolliert oder für Training genutzt werden, ist nicht geprüft (OpenRouter leitet an den gewählten Modellanbieter weiter, dessen Umgang die Datenschutzerklärung von OpenRouter dem Anbieter überlässt).
 - Besondere Kategorien (zum Beispiel Gesundheitsdaten) sind im Auftrag nicht vorgesehen; eine eigene Sperre dafür gibt es nicht (Suche im Prompt am 16.11.2026: 0 Treffer für „Gesundheit“ und „besondere“).
 - Das Ausführungsprotokoll von n8n hält Eingaben im Rohzustand auf dem eigenen Server.
-- Der Hauptworkflow und der Ablage-Sub sind für den MCP-Zugriff freigegeben (`availableInMCP: true`). Ausführungsdaten (Rohtext der Aufträge, Telegram-Kennung und Name der freigebenden Person, signierte Vorschau-Adressen) sind darüber für KI-Assistenten lesbar. Das ist die Tatsache der Einstellung, bewertet wird sie hier nicht; für die übrigen Sub-Workflows ist die Einstellung nicht geprüft.
+- Der Hauptworkflow und der Ablage-Sub sind für den MCP-Zugriff freigegeben (`availableInMCP: true`). Ausführungsdaten (Rohtext der Aufträge, Telegram-Kennung und Name der freigebenden Person, signierte Vorschau-Adressen) sind darüber für KI-Assistenten lesbar. Das ist die Tatsache der Einstellung, bewertet wird sie hier nicht. Die Abgabe-Exporte unter `workflows/abgaben/` zeigen `availableInMCP: true` auch für Text-, Bilder- und Einreich-Sub; für die übrigen Sub-Workflows ist die Einstellung nicht geprüft.
 
 ## 4 Datenflüsse im Architekturbild
 

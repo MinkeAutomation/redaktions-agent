@@ -28,7 +28,7 @@ Dieselben 4 Statuswörter stehen in der Spalte Status von [versionen.md](version
 
 ## Versionen
 
-Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V4.1 ist der geltende Systemprompt (seit 18.11.2026); V4 ist archiviert, von V4.1 abgelöst (der Vergleich mit V2 blieb offen). V5 ist verworfen (getestet, nicht übernommen), ebenso V3; V2 ist archiviert, von V4 abgelöst, V1 ist archiviert.
+Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V4.1 ist der geltende Systemprompt (seit 18.11.2026); V4 ist von V4.1 abgelöst und bleibt als Baseline in `prompts/` (der Vergleich mit V2 blieb offen). V5 ist verworfen (getestet, nicht übernommen), ebenso V3; V2 ist archiviert, von V4 abgelöst, V1 ist archiviert.
 
 ### `20261118_System-Prompt-Redaktions-Agent_V4.1.md`
 
@@ -56,7 +56,7 @@ Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V4.1 ist 
 | **Prompt-Datei** | liegt nicht im Repository (Test an einer Hilfskopie des Workflows, nie live) |
 | **Agent-Konfiguration** | liegt nicht im Repository |
 
-**Beschreibung:** V5 (Teil A, Systemprompt) mit Zusatzregeln 11 bis 16 im Text-Werkzeug (Teil B) wurde an einer Hilfskopie gegen V4 gemessen, je 9 Läufe (3 Fälle mit je 3 Läufen). Mittel über alle 9 Merkmale und 9 Beiträge: V4 3,74 (Summe 303 über 81 Bewertungen), v5 4,00 (Summe 324 über 81). Verworfen wurde v5 trotz des höheren Mittels, weil die Längenbewertung um 0,33 fiel und vorab höchstens 0,30 erlaubt waren.
+**Beschreibung:** V5 (Teil A, Systemprompt) mit Zusatzregeln 11 bis 16 im Text-Werkzeug (Teil B) wurde an einer Hilfskopie gegen V4 gemessen, je 9 Läufe (3 Fälle mit je 3 Läufen). Mittel über alle 9 Merkmale und 9 Beiträge: V4 3,74 (Summe 303 über 81 Bewertungen), v5 4,00 (Summe 324 über 81). Verworfen wurde v5 trotz des höheren Mittels, weil die Längenbewertung um 0,33 fiel und vorab höchstens 0,30 erlaubt waren. Die Messreihe liegt nicht in diesem Repository.
 
 ---
 
@@ -65,7 +65,7 @@ Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V4.1 ist 
 | | |
 |---|---|
 | **Datum** | 12.11.2026 |
-| **Status** | Archiviert, von V4.1 abgelöst (18.11.2026) |
+| **Status** | Von V4.1 abgelöst (18.11.2026); bleibt als Baseline für Vergleiche in `prompts/` und liegt deshalb nicht unter `archiv/` |
 | **Agent** | Redaktions-Agent |
 | **Version** | V4 |
 | **Prompt-Datei** | [prompts/20261112_System-Prompt-Redaktions-Agent_V4.md](prompts/20261112_System-Prompt-Redaktions-Agent_V4.md) |

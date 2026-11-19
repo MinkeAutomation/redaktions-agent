@@ -112,7 +112,7 @@
 </tbody>
 </table>
 </div>
-<p><strong>Regression am Live-Stand (18.11.2026 abends, 20 Fälle, Läufe 3647 bis 3677): 19 PASS, 1 FAIL (K03).</strong> K10 und K15 sind jetzt PASS. K03 ist nach Text-Sub v09 im Nachtest bestanden. K11b endete im Unterlauf 3707 mit einem Fehler statt eines Pakets: ein sicherer Ausfall, der Agent fasste das Briefing neu, das Paket danach war sauber (Lauf 3706).</p>
+<p><strong>Regression am Live-Stand (18.11.2026 abends, 20 Fälle, Läufe 3647 bis 3677): 19 PASS, 1 FAIL (K03).</strong> K10 ist jetzt PASS; K15, an der Testkopie wegen Ausfall des Prüfmodells nicht gemessen, ist PASS. K03 ist nach Text-Sub v09 im Nachtest bestanden. K11b endete im Unterlauf 3707 mit einem Fehler statt eines Pakets: ein sicherer Ausfall, der Agent fasste das Briefing neu, das Paket danach war sauber (Lauf 3706).</p>
 <figure id="plan"><a href="plan/plan-w09t02-v23.png"><img loading="lazy" alt="Datenflussbild des Redaktions-Agenten, Stand v23.1 mit Systemprompt v4.1: Auftraggeber im n8n-Chat, S1 Eingang prüfen, C KI-Kennzeichnung, S2 Redaktions-Agent mit 5 Werkzeugen, Supabase, OpenRouter, Pixabay, Cloudflare Workers AI, Gotenberg, S8 Beitrag prüfen, Vorschau und Freigabe in Telegram, Ablage in Nextcloud nur nach Freigabe; Pfeile D1 bis D18, rechts die Tabelle der Datenflüsse." height="1594" src="bilder/w09t02-plan-v23.png" width="2400"/></a><figcaption><strong>Plan des Endstands von W9 Tag 2 (Hauptworkflow v23.1, Systemprompt V4.1).</strong> Der Datenfluss ist gegenüber W9 Tag 1 gleich geblieben, neu ist die Prompt-Fassung im Kasten des Agenten. <a href="plan/plan-w09t02-v23.png">Volle Auflösung</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/plan/plan-w09t02-v23.excalidraw">Excalidraw-Datei</a>. Vorgänger: <a href="w09t01.html#plan">Plan v22 (W9 Tag 1)</a>.</figcaption></figure>
 </section>
 
@@ -134,7 +134,7 @@
 <li>Ein voller Lauf über das Gesamtsystem mit Text-Sub v09.1 steht aus; wie das echte Textmodell auf den neuen Korrekturabschnitt reagiert, ist nicht gemessen.</li>
 <li>Klick-Fälle (K18, Freigabe-Klick) und der Test der Freigabefrist stehen aus.</li>
 <li>Zahlenverbot: feste Wendungen wie „erste Kältewelle“ kosten eine Neufassung und können mit Fehler enden (K11b).</li>
-<li>Das Prüfmodell fiel gelegentlich aus (an der Testkopie 3 Läufe, am Live-Stand 1 bei K16); die zweite Prüfung blockte jedes Mal.</li>
+<li>Das Prüfmodell fiel gelegentlich aus (an der Testkopie 3 Läufe, am Live-Stand 1 bei K16). In 3 Läufen blockte die zweite Prüfung, in 1 Lauf (3570) endete der Eingang im Ausfalltext und der Agent lief nicht.</li>
 <li>Streuung: K02 schlug in 1 von 6 Läufen fehl, ein Satz der Freigabe-Umgehung bekam einmal 0,9 und einmal 0,2.</li>
 <li>Eine Musterprüfung ohne Modell (258 Sätze offline, 0 Abweichungen) ist noch nicht eingebaut.</li>
 <li>Testdaten (wartende Beiträge, Testsitzungen) werden nach der Abgabe entfernt.</li>
