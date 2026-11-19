@@ -107,13 +107,13 @@ Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V4.1 ist 
 | | |
 |---|---|
 | **Datum** | 10.11.2026 |
-| **Status** | Verworfen; zunächst blieb V2 live, inzwischen V4 |
+| **Status** | Verworfen; zunächst blieb V2 live, später V4, heute gilt V4.1 |
 | **Agent** | Redaktions-Agent |
 | **Version** | V3 |
 | **Prompt-Datei** | [archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md](archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md) |
 | **Agent-Konfiguration** | [archiv/konfiguration/20261110_Redaktions-Agent_V3_Agent-Konfiguration.json](archiv/konfiguration/20261110_Redaktions-Agent_V3_Agent-Konfiguration.json) |
 
-**Beschreibung:** V3 ergänzte Schritt 8 um einen Satz (fehlen Schreiben, Bilder oder Einreichen in der Werkzeugliste, sofort `status` fehler). Wirkung: keine, F2 und F4 endeten weiter im Fehlerweg. Verworfen: getestet, nicht übernommen; zunächst blieb V2 live, inzwischen V4.
+**Beschreibung:** V3 ergänzte Schritt 8 um einen Satz (fehlen Schreiben, Bilder oder Einreichen in der Werkzeugliste, sofort `status` fehler). Wirkung: keine, F2 und F4 endeten weiter im Fehlerweg. Verworfen: getestet, nicht übernommen; zunächst blieb V2 live, später V4, heute gilt V4.1.
 
 **Änderungen:**
 
