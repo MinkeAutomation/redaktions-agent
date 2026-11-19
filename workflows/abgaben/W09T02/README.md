@@ -2,6 +2,8 @@
 
 Diese 4 Exporte sind die Workflow-Dateien der Abgabe W09T02, so wie sie abgegeben wurden: Hauptworkflow v23.1 mit Systemprompt v4.1 und Text-Sub v09.1 mit der Prüfung auf das Zahlenverbot (v09.1 prüft die Pflichtangabe mit Einheit und nach der Kürzung; die Versionsnotiz im Workflow nennt ihn „v10“). Testfälle und Messungen stehen in der [Testtabelle W09T02](../../../docs/test-tabelle-w09t02.md) und im [Bau-Protokoll W09T02](../../../docs/w09t02-bau-protokoll.md).
 
+Die Versions-Karte im Hauptworkflow schreibt „19 PASS, 1 Grenzfall“. Gemeint ist 19 PASS und 1 FAIL (K03), siehe [Testtabelle W09T02](../../../docs/test-tabelle-w09t02.md).
+
 | Datei | Workflow | Version | n8n-versionId |
 |---|---|---|---|
 | `AGT-2606_W09T02_Redaktions-Agent_Hauptworkflow_2026-11-18_v23.1.json` | Hauptworkflow Redaktions-Agent | v23.1 | `54dec01b` |

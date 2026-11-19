@@ -6,7 +6,7 @@
 <meta content="#FAFAF8" media="(prefers-color-scheme: light)" name="theme-color"/>
 <meta content="#121416" media="(prefers-color-scheme: dark)" name="theme-color"/>
 <title>W09T02 Evaluation</title>
-<meta content="Tages-Doku W09T02 des Redaktions-Agenten K2: Testtabelle mit 17 Fällen und 5 Varianten, Bewertung nach 4 Dimensionen, behobene Fails mit Regression, Text-Sub v09.1 und finaler Systemprompt V4.1." name="description"/>
+<meta content="Tages-Doku W09T02 des Redaktions-Agenten K2: Testtabelle mit den Fällen K01 bis K17 und 5 Varianten, Bewertung nach 4 Dimensionen, behobene Fails mit Regression, Text-Sub v09.1 und finaler Systemprompt V4.1." name="description"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&amp;display=swap" rel="stylesheet"/>
@@ -37,7 +37,7 @@
 <div>
 <p class="oberzeile"><span aria-hidden="true" class="marke"></span>Tages-Doku W09T02 · Di 17.11.2026 (Stand 19.11.2026) · Hauptworkflow v23.1</p>
 <h1>Evaluation <span class="leise">und</span> Qualitätssicherung</h1>
-<p class="untertitel">An Tag 2 der Woche 9 wächst die Testtabelle auf 17 Fälle plus 5 Varianten, jedes Ergebnis wird nach 4 Dimensionen bewertet, die Fails werden behoben und die Regression wird geprüft. Der Systemprompt ist final: V4.1. Getestet im n8n-Chat mit dem Testkunden <code>test-p2</code> und erfundenen Daten; der Hauptworkflow ist nicht veröffentlicht. In den Testläufen waren Telegram, die Statusänderungen und die Ablage mit festen Testdaten belegt (gepinnt), am 18.11.2026 auch die Recherche; an Dritte ging nichts. Nur K04 lief ohne Pins mit einem Klick von Hand.</p>
+<p class="untertitel">An Tag 2 der Woche 9 wächst die Testtabelle auf die Fälle K01 bis K17 plus 5 Varianten, jedes Ergebnis wird nach 4 Dimensionen bewertet, die Fails werden behoben und die Regression wird geprüft. Der Systemprompt ist final: V4.1. Getestet im n8n-Chat mit dem Testkunden <code>test-p2</code> und erfundenen Daten; der Hauptworkflow ist nicht veröffentlicht. In den Testläufen waren Telegram, die Statusänderungen und die Ablage mit festen Testdaten belegt (gepinnt), am 18.11.2026 auch die Recherche; an Dritte ging nichts. Nur K04 lief ohne Pins mit einem Klick von Hand.</p>
 </div>
 </div>
 <dl aria-label="Kennzahlen W09T02" class="messleiste">
@@ -53,7 +53,7 @@
 <main id="inhalt">
 <div class="merksatz einminute" id="in-1-minute"><span class="ktag">In 1 Minute</span>
 <ul>
-<li><strong>Tests:</strong> 17 Fälle in 5 Kategorien, dazu 5 Varianten ohne Eingangsprüfung, in denen der Agent allein standhalten muss. Am 17.11.2026: 18 PASS, 4 FAIL, 1 offen (braucht einen echten Klick).</li>
+<li><strong>Tests:</strong> die Fälle K01 bis K17 in 5 Kategorien, dazu 5 Varianten ohne Eingangsprüfung, in denen der Agent allein standhalten muss. Am 17.11.2026: 18 PASS, 4 FAIL, 1 offen (braucht einen echten Klick).</li>
 <li><strong>Bewertung:</strong> je Zeile Korrektheit, Relevanz, Vollständigkeit und Sicherheit mit 1 Satz; PASS nur, wenn alle 4 bestanden sind.</li>
 <li><strong>Behoben:</strong> reine Markenauskunft (neuer Status <code>auskunft</code>), Name nach einem Titel in der Schwärzung, Umgehung der Freigabe schon am Eingang, Zahlen im Text über Text-Sub v09 und v09.1.</li>
 <li><strong>Regression:</strong> 20 Fälle am Live-Stand, 19 PASS, 1 FAIL (K03); K03 ist im Nachtest nach Text-Sub v09 bestanden.</li>
@@ -66,7 +66,7 @@
 <p class="klede">Was an diesem Tag zu tun war, in eigener Gliederung.</p>
 </div></div>
 <ol>
-<li>Die Testtabelle auf mindestens 15 Fälle bringen, davon mindestens 5 Angriffe, und jeden Fall wirklich fahren (Kapitel 2).</li>
+<li>Die Testtabelle erweitern (Vorgabe: mindestens 15), davon mindestens 5 Angriffe, und jeden Fall wirklich fahren (Kapitel 2).</li>
 <li>Jedes Ergebnis nach Korrektheit, Relevanz, Vollständigkeit und Sicherheit beurteilen (Kapitel 2).</li>
 <li>Die Fails beheben und danach prüfen, ob dabei etwas anderes kaputtging (Kapitel 3).</li>
 <li>Den Systemprompt abschließen und gegen die Baseline messen (Kapitel 4).</li>
@@ -136,7 +136,7 @@
 <li>Zahlenverbot: feste Wendungen wie „erste Kältewelle“ kosten eine Neufassung und können mit Fehler enden (K11b).</li>
 <li>Das Prüfmodell fiel gelegentlich aus (an der Testkopie 3 Läufe, am Live-Stand 1 bei K16). In 3 Läufen blockte die zweite Prüfung, in 1 Lauf (3570) endete der Eingang im Ausfalltext und der Agent lief nicht.</li>
 <li>Streuung: K02 schlug in 1 von 6 Läufen fehl, ein Satz der Freigabe-Umgehung bekam einmal 0,9 und einmal 0,2.</li>
-<li>Eine Musterprüfung ohne Modell (258 Sätze offline, 0 Abweichungen) ist noch nicht eingebaut.</li>
+<li>Eine Musterprüfung ohne Modell (258 Sätze in n8n-Lauf 3461 ohne Modell, 0 Abweichungen) ist noch nicht eingebaut.</li>
 <li>Testdaten (wartende Beiträge, Testsitzungen) werden nach der Abgabe entfernt.</li>
 </ul>
 <p>Die Exporte dieses Stands liegen so, wie sie abgegeben wurden, bis auf ersetzte Kennungen, Ordnername und Host des Render-Dienstes, unter <a href="https://github.com/MinkeAutomation/redaktions-agent/tree/main/workflows/abgaben/W09T02">workflows/abgaben/W09T02</a>; jede Version mit Grund steht in <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/versionen.md">versionen.md</a>.</p>
