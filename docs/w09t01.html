@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#FAFAF8" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#121416" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<title>W09T01 Compliance</title>
+<meta content="Tages-Doku W09T01 des Redaktions-Agenten K2: Einordnung nach dem EU AI Act, 3 umgesetzte Schutzmaßnahmen mit Läufen, 20 Datenflüsse mit Zieldienst und Standort, Datenflussbild und neue Begründung der Architektur." name="description"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&amp;display=swap" rel="stylesheet"/>
+<link href="assets/doku.css" rel="stylesheet"/>
+</head>
+<body>
+<a class="sprung" href="#inhalt">Zum Inhalt springen</a>
+<div class="huelle">
+<header class="leiste">
+<span>Redaktions-Agent K2 · Woche 8 und 9</span>
+<nav aria-label="Seiten">
+<a href="index.html">Wochen-Doku</a>
+<a href="w08t01.html">W8 Tag 1</a>
+<a href="w08t02.html">W8 Tag 2</a>
+<a href="w08t03.html">W8 Tag 3</a>
+<a href="w08t04.html">W8 Tag 4</a>
+<a href="w08t05.html">W8 Tag 5</a>
+<a aria-current="page" href="w09t01.html">W9 Tag 1</a>
+<a href="w09t02.html">W9 Tag 2</a>
+<span class="aus">W9 Tag 3</span>
+<span class="aus">W9 Tag 4</span>
+<span class="aus">W9 Tag 5</span>
+<a href="charter.html">Projekt-Charter</a>
+<a href="https://github.com/MinkeAutomation/redaktions-agent">Repository</a>
+</nav>
+</header>
+<div class="titelkopf">
+<div>
+<p class="oberzeile"><span aria-hidden="true" class="marke"></span>Tages-Doku W09T01 · Mo 16.11.2026 (Stand 17.11.2026) · Hauptworkflow v22</p>
+<h1>Compliance <span class="leise">nach dem</span> EU AI Act</h1>
+<p class="untertitel">An Tag 1 der Woche 9 wird der Redaktions-Agent nach dem EU AI Act eingeordnet, 3 Schutzmaßnahmen werden gebaut und gemessen, und jeder Datenfluss bekommt Zieldienst, Standort und Speicherdauer. Ergebnis: ein System mit Transparenzpflichten, weder verboten noch Hochrisiko, nach eigener Zuordnung aus dem Einsatzzweck. Keine Rechtsberatung.</p>
+</div>
+</div>
+<dl aria-label="Kennzahlen W09T01" class="messleiste">
+<div><dt>Hauptworkflow</dt><dd>v22<small>17.11.2026, 90 Knoten, nicht veröffentlicht</small></dd></div><div><dt>Einordnung</dt><dd>Transparenz<small>Art. 50, weder verboten noch Hochrisiko</small></dd></div><div><dt>Maßnahmen</dt><dd>3 von 3<small>Aufsicht, Datenschutz, Transparenz gebaut</small></dd></div><div><dt>Datenflüsse</dt><dd>20<small>D1 bis D18, D8 dreigeteilt</small></dd></div>
+</dl>
+<div class="knoepfe">
+<a class="knopf zweit" href="w08t05.html">Vorheriger Tag: W8 Tag 5 <span aria-hidden="true" class="pfeil">←</span></a>
+<a class="knopf" href="w09t02.html">Nächster Tag: W9 Tag 2 <span aria-hidden="true" class="pfeil">→</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/w09t01-compliance-doku.md">Compliance-Doku mit Wortlaut <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/abgaben/W09T01/README.md">Abgabestand W09T01 <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf zweit" href="index.html">Wochen-Doku <span aria-hidden="true" class="pfeil">→</span></a>
+</div>
+<main id="inhalt">
+<div class="merksatz einminute" id="in-1-minute"><span class="ktag">In 1 Minute</span>
+<ul>
+<li><strong>Einordnung:</strong> nicht verboten, kein Anhang-III-Bereich, aber direkter Kontakt mit Menschen und erzeugte Texte und Bilder, deshalb gelten die Transparenzpflichten aus Art. 50. Das ist eine eigene Zuordnung nach dem Zweck, kein Rechtsurteil.</li>
+<li><strong>Maßnahmen:</strong> Freigabe durch einen Menschen in Telegram (A), Schwärzung vor jedem Modellaufruf (B) und seit 17.11.2026 die KI-Kennzeichnung im Chat, in den Texten und in jedem Bild (C). Alle 3 sind eigene Knoten im Workflow.</li>
+<li><strong>Datenflüsse:</strong> 20 Zeilen mit Datenkategorie, Zweck, Zieldienst samt Host, Standort und Speicherdauer. Wo ein Anbieter keinen Standort nennt, steht das so da.</li>
+<li><strong>Architektur:</strong> Die Begründung ist neu gefasst. Die Reihenfolge der Schritte steht im Systemprompt fest, der Agent entscheidet an 6 Stellen selbst: ein Hybrid.</li>
+<li><strong>Offen:</strong> Fristablauf der Freigabe (T3 aus W8 Tag 5), Datenabfluss-Log, Löschfristen, Verträge zur Auftragsverarbeitung und alle Rechtsurteile.</li>
+</ul></div>
+
+<section aria-labelledby="k1-t" class="kapitel" id="k1">
+<div class="kkopf"><div aria-hidden="true" class="knum">01</div><div>
+<p class="kklein">Kapitel 1</p><h2 id="k1-t">Ziele des Tages</h2>
+<p class="klede">Was an diesem Tag zu klären war, in eigener Gliederung.</p>
+</div></div>
+<ol>
+<li>Klären, unter welche Stufe des EU AI Act der Agent fällt, und das schriftlich begründen (Kapitel 2).</li>
+<li>3 Schutzmaßnahmen auswählen, nachdem der Stand des Workflows gemessen ist, sie bauen und testen (Kapitel 3).</li>
+<li>Für jeden Datenfluss festhalten, welche Daten an welchen Dienst gehen und wo sie liegen (Kapitel 4).</li>
+<li>Die Datenflüsse ins Architekturbild eintragen (Kapitel 4).</li>
+<li>Die Rückmeldungen zum Zwischenstand des Projekts berücksichtigen (Kapitel 5).</li>
+</ol>
+<p>Alle Gesetzesstellen stehen im Wortlaut mit Seitenangabe in der <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/w09t01-compliance-doku.md">Compliance-Doku</a>. Bezug ist die deutsche konsolidierte Fassung der Verordnung (EU) 2024/1689 vom 27.07.2026.</p>
+</section>
+
+<section aria-labelledby="k2-t" class="kapitel" id="k2">
+<div class="kkopf"><div aria-hidden="true" class="knum">02</div><div>
+<p class="kklein">Kapitel 2</p><h2 id="k2-t">Einordnung nach dem EU AI Act</h2>
+<p class="klede">4 Prüffragen, je mit Antwort und Begründung.</p>
+</div></div>
+<div aria-labelledby="t-einordnung" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-einordnung">Einordnung des Redaktions-Agenten</caption>
+<thead><tr><th scope="col">Frage</th><th scope="col">Antwort</th><th scope="col">Begründung</th></tr></thead>
+<tbody>
+<tr><th data-label="Frage" scope="row">Verbotene Praktik (Art. 5)?</th><td data-label="Antwort">nein</td><td data-label="Begründung">Marken-Posts für einen Kunden sind keine der dort aufgezählten Praktiken. Offen: Der Systemprompt sperrt politische Werbung und Minderjährige als Zielgruppe nicht ausdrücklich, und ob die KI-Bilder unter die ab 02.12.2026 geltenden Buchstaben ba und bb fallen könnten, ist nicht beurteilt.</td></tr>
+<tr><th data-label="Frage" scope="row">Anhang III (Hochrisiko)?</th><td data-label="Antwort">nein</td><td data-label="Begründung">Keiner der 8 Bereiche passt zum Einsatzzweck. Bei Wahlwerbung wäre Bereich 8 Buchstabe b zu prüfen.</td></tr>
+<tr><th data-label="Frage" scope="row">Direkter Kontakt mit Menschen (Art. 50)?</th><td data-label="Antwort">ja</td><td data-label="Begründung">Chat, erzeugte Texte und KI-Bilder. Art. 50 Abs. 6 lässt diese Pflichten auch neben Hochrisiko-Pflichten bestehen, deshalb wird die Frage immer geprüft.</td></tr>
+<tr><th data-label="Frage" scope="row">Sonst minimal?</th><td data-label="Antwort">nicht anwendbar</td><td data-label="Begründung">Wegen der dritten Frage gilt der Agent als System mit Transparenzpflichten.</td></tr>
+</tbody>
+</table>
+</div>
+<p>Die Begriffe „begrenztes“ und „minimales Risiko“ stehen nicht im deutschen Gesetzestext, sie gliedern nur die Prüfung. Neu bewertet wird, sobald sich der Zweck ändert: automatisches Veröffentlichen, Wahlwerbung, Minderjährige als Zielgruppe oder ein Chat direkt für Kunden. Die Rolle als Anbieter oder Betreiber (Art. 3 Nr. 3 und 4) ist in der Compliance-Doku beschrieben, ein Urteil dazu fälle ich nicht.</p>
+</section>
+
+<section aria-labelledby="k3-t" class="kapitel" id="k3">
+<div class="kkopf"><div aria-hidden="true" class="knum">03</div><div>
+<p class="kklein">Kapitel 3</p><h2 id="k3-t">3 Schutzmaßnahmen, gebaut und gemessen</h2>
+<p class="klede">Gewählt nach der Messung des Workflow-Stands, nicht aus der Planung.</p>
+</div></div>
+<div aria-labelledby="t-massnahmen" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-massnahmen">Maßnahmen, Ort im Workflow und Läufe</caption>
+<thead><tr><th scope="col">Maßnahme</th><th scope="col">Ort im Workflow</th><th scope="col">Test und Ergebnis</th></tr></thead>
+<tbody>
+<tr><th data-label="Maßnahme" scope="row">A Menschliche Aufsicht</th><td data-label="Ort"><code>Freigabe abwarten</code>, <code>Entscheidung verteilen</code>: abgelegt wird nur nach einem Klick, kein Knoten veröffentlicht</td><td data-label="Ergebnis">Freigabe (Lauf 3047) und Ablehnung mit Grund (3053) bestanden; Auftrag „ohne Freigabe veröffentlichen“ (3058) bestanden mit Vermerk, geschützt hat nur die Freigabe; Fristablauf (3064) nicht bestanden. Mit dem neuen Agent-Modell: Freigabe per Klick (3298) bestanden.</td></tr>
+<tr><th data-label="Maßnahme" scope="row">B Datenschutz</th><td data-label="Ort"><code>Eingang schwärzen</code>, <code>Eingang prüfen</code>: erst schwärzen, dann prüfen, dann der Agent</td><td data-label="Ergebnis">Ablehnung am Eingang (2819, 2821, 2824); 3 eigene Muster offline 7 von 7 wie erwartet. Grenzen: Namen ohne Anrede, ausländische IBAN und am Stand v22 ein Name nach „Herr Dr.“ (Lauf 3322). Der Titel ist seit W9 Tag 2 erfasst (Lauf 3654).</td></tr>
+<tr><th data-label="Maßnahme" scope="row">C Transparenz</th><td data-label="Ort"><code>Sitzung prüfen</code> und <code>KI-Hinweis voranstellen</code> (Hinweis in der ersten Antwort), <code>Paket prüfen</code> (KI-Satz am Ende beider Texte), <code>Bild kennzeichnen</code> und <code>Render-Liste bauen</code> (Marker im PNG, Schriftzug „Mit KI erstellt“), <code>Beitrag bauen</code> (kein Beitrag ohne Kennzeichnung)</td><td data-label="Ergebnis">Neue Sitzung mit Hinweis (3282), 2. Nachricht ohne (3284), KI-Satz je Text genau 1 Mal (3289), Durchlauf mit Klick und 7 Bildern bis zur Ablage (3298).</td></tr>
+</tbody>
+</table>
+</div>
+<p>Seit 17.11.2026, 15:34 Uhr läuft der Agent mit Claude Haiku 5.5 über OpenRouter, das Gratismodell bleibt als deaktivierte Reserve im Workflow. Die Tests von A und B bis 15.11.2026 liefen noch mit dem Gratismodell; Ablehnung, Angriff und Fristablauf sind mit dem neuen Modell nicht wiederholt.</p>
+</section>
+
+<section aria-labelledby="k4-t" class="kapitel" id="k4">
+<div class="kkopf"><div aria-hidden="true" class="knum">04</div><div>
+<p class="kklein">Kapitel 4</p><h2 id="k4-t">Wohin die Daten gehen</h2>
+<p class="klede">Überblick je Dienst; die 20 Einzelzeilen stehen in Abschnitt 3 der Compliance-Doku.</p>
+</div></div>
+<div aria-labelledby="t-dienste" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-dienste">Dienste, Daten und Standort laut Anbieter</caption>
+<thead><tr><th scope="col">Dienst</th><th scope="col">Daten</th><th scope="col">Standort laut Anbieter</th></tr></thead>
+<tbody>
+<tr><th data-label="Dienst" scope="row">n8n und Gotenberg, eigene Instanz (Hetzner)</th><td data-label="Daten">Auftragstext im Rohzustand, Folientexte</td><td data-label="Standort">Rechenzentrum nicht geprüft</td></tr>
+<tr><th data-label="Dienst" scope="row">OpenRouter (<code>openrouter.ai</code>)</th><td data-label="Daten">geschwärzter Auftrag, Briefing, Beitragstext zur Prüfung</td><td data-label="Standort">nicht angegeben, Server außerhalb des EWR möglich</td></tr>
+<tr><th data-label="Dienst" scope="row">Supabase</th><td data-label="Daten">Markenprofil, Pakete, Bilder, Beiträge, Entscheidungen, Sitzungskennung</td><td data-label="Standort">Region eu-west-1 laut Projektverwaltung</td></tr>
+<tr><th data-label="Dienst" scope="row">Pixabay (<code>pixabay.com</code>)</th><td data-label="Daten">Schlagwörter zum Thema</td><td data-label="Standort">USA, Australien, Singapur, EU und weitere</td></tr>
+<tr><th data-label="Dienst" scope="row">Cloudflare Workers AI</th><td data-label="Daten">Bild-Prompt</td><td data-label="Standort">nicht angegeben</td></tr>
+<tr><th data-label="Dienst" scope="row">Telegram (<code>api.telegram.org</code>)</th><td data-label="Daten">Vorschau, Freigabefrage, Entscheidung</td><td data-label="Standort">Niederlande für Nutzer aus dem EWR</td></tr>
+<tr><th data-label="Dienst" scope="row">Nextcloud, eigene Instanz (Hostinger)</th><td data-label="Daten">freigegebener Beitrag mit Bildern</td><td data-label="Standort">Frankfurt am Main laut Verwaltungsportal</td></tr>
+</tbody>
+</table>
+</div>
+<p>Abgelegt wird nur nach der Freigabe eines Menschen. Die Modell- und Bilddienste bekommen ihre Daten aber schon vorher. Nicht gebaut sind ein Datenabfluss-Log und eine Löschfrist; die Verträge zur Auftragsverarbeitung sind nicht geprüft.</p>
+<figure id="plan"><a href="plan/plan-w09t01-v22.png"><img loading="lazy" alt="Datenflussbild des Redaktions-Agenten, Stand v22: Auftraggeber im n8n-Chat, S1 Eingang prüfen, C KI-Kennzeichnung, S2 Redaktions-Agent mit 5 Werkzeugen, Supabase, OpenRouter, Pixabay, Cloudflare Workers AI, Gotenberg, S8 Beitrag prüfen, S7 und S9 Vorschau und Freigabe in Telegram, Ablage in Nextcloud nur nach Freigabe, Error Workflow mit Maildienst; jeder Pfeil trägt eine Nummer D1 bis D18, rechts die Tabelle der Datenflüsse." height="1594" src="bilder/w09t01-plan-v22.png" width="2400"/></a><figcaption><strong>Datenflussbild, Endstand von W9 Tag 1 (Hauptworkflow v22).</strong> Alle Pfeile schwarz mit Nummer, die Tabelle rechts nennt die Daten. <a href="plan/plan-w09t01-v22.png">Volle Auflösung</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/plan/plan-w09t01-v22.excalidraw">Excalidraw-Datei</a>. Vorgänger: <a href="w08t05.html#plan">Plan v20.2 (W8 Tag 5)</a>.</figcaption></figure>
+</section>
+
+<section aria-labelledby="k5-t" class="kapitel" id="k5">
+<div class="kkopf"><div aria-hidden="true" class="knum">05</div><div>
+<p class="kklein">Kapitel 5</p><h2 id="k5-t">Rückmeldung zur Architektur</h2>
+<p class="klede">Neue Begründung: Kette, Agent oder beides.</p>
+</div></div>
+<p>Die Rückmeldung zum Zwischenstand lautete sinngemäß: Eine feste Reihenfolge der Schritte spricht eher für eine Kette als für einen frei entscheidenden Agenten. Das stimmt für die Reihenfolge. Der Systemprompt legt sie fest: Markenwissen, Text, Bilder, Einreichen. Der Agent entscheidet aber selbst, ob ein Auftrag wegen eines No-Gos der Marke abzulehnen ist, ob ein schon behandeltes Thema einen anderen Blickwinkel braucht, ob recherchiert wird, ob Bilder entfallen, ob 1 Rückfrage nötig ist und wie er einen ausgefallenen Werkzeugaufruf meldet.</p>
+<p>Ein Agent bleibt es, weil Aufträge als freier Text kommen: Thema, Link, Rückfrage oder Nachbesserung nach einer Ablehnung. Eine feste Kette bräuchte dafür vorab eine Klassifikation und je Variante einen Zweig. Eine Kette wäre vermutlich berechenbarer und leichter zu testen; gemessen ist das nicht, eine Vergleichskopie gibt es nicht. Die Freigabe schützt unabhängig davon (Lauf 3058).</p>
+</section>
+
+<section aria-labelledby="k6-t" class="kapitel" id="k6">
+<div class="kkopf"><div aria-hidden="true" class="knum">06</div><div>
+<p class="kklein">Kapitel 6</p><h2 id="k6-t">Offen nach W9 Tag 1</h2>
+<p class="klede">Was nicht beurteilt, nicht gebaut oder nicht gemessen ist.</p>
+</div></div>
+<ul>
+<li>Rechtsurteile, die ich nicht fälle: Rolle, Geltung für den Prototyp (Art. 2 Abs. 8), „Angelegenheiten von öffentlichem Interesse“ (Art. 50 Abs. 4), Einordnung der KI-Bilder.</li>
+<li>Fristablauf der Freigabe: Reparatur geplant, nicht gebaut.</li>
+<li>Kennzeichnung: ob sie nach dem Einfügen bei LinkedIn oder Instagram erhalten bleibt und ob der Marker in den abgelegten Dateien stimmt, ist nicht geprüft.</li>
+<li>Datenabfluss-Log, Löschfrist, Verträge zur Auftragsverarbeitung, Standort der Modelle: nicht gebaut oder nicht geprüft.</li>
+<li>KI-Kompetenz (Art. 4): kein Nachweis erbracht.</li>
+<li>Nachzug der Projekt-Charter mit der neuen Architekturbegründung steht aus.</li>
+</ul>
+<p>Die Exporte dieses Stands (Hauptworkflow v22, Text-Sub v08, Bilder-Sub, Einreich-Sub v02) liegen so, wie sie abgegeben wurden, bis auf ersetzte Kennungen, Ordnername und Host des Render-Dienstes, unter <a href="https://github.com/MinkeAutomation/redaktions-agent/tree/main/workflows/abgaben/W09T01">workflows/abgaben/W09T01</a>.</p>
+</section>
+</main>
+<footer class="fuss">
+<span>Patrick Minkler · Redaktions-Agent K2 · Projekt 2</span>
+<span>Stand 17.11.2026 · Hauptworkflow v22</span>
+</footer>
+</div>
+</body>
+</html>

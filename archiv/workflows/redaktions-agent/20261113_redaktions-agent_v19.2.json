@@ -2741,9 +2741,7 @@
     "errorWorkflow": "ERROR_WORKFLOW_ID",
     "binaryMode": "separate"
   },
-  "meta": {
-    "builderVariant": "mcp"
-  },
+  "meta": {},
   "pinData": {},
   "tags": [
     {

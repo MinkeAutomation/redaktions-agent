@@ -851,10 +851,7 @@
                      "errorWorkflow":  "ERROR_WORKFLOW_ID",
                      "callerPolicy":  "workflowsFromSameOwner"
                  },
-    "meta":  {
-                 "aiBuilderAssisted":  true,
-                 "builderVariant":  "mcp"
-             },
+    "meta":  {},
     "pinData":  {
 
                 },

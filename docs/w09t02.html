@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#FAFAF8" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#121416" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<title>W09T02 Evaluation</title>
+<meta content="Tages-Doku W09T02 des Redaktions-Agenten K2: Testtabelle mit 17 Fällen und 5 Varianten, Bewertung nach 4 Dimensionen, behobene Fails mit Regression, Text-Sub v09.1 und finaler Systemprompt V4.1." name="description"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&amp;display=swap" rel="stylesheet"/>
+<link href="assets/doku.css" rel="stylesheet"/>
+</head>
+<body>
+<a class="sprung" href="#inhalt">Zum Inhalt springen</a>
+<div class="huelle">
+<header class="leiste">
+<span>Redaktions-Agent K2 · Woche 8 und 9</span>
+<nav aria-label="Seiten">
+<a href="index.html">Wochen-Doku</a>
+<a href="w08t01.html">W8 Tag 1</a>
+<a href="w08t02.html">W8 Tag 2</a>
+<a href="w08t03.html">W8 Tag 3</a>
+<a href="w08t04.html">W8 Tag 4</a>
+<a href="w08t05.html">W8 Tag 5</a>
+<a href="w09t01.html">W9 Tag 1</a>
+<a aria-current="page" href="w09t02.html">W9 Tag 2</a>
+<span class="aus">W9 Tag 3</span>
+<span class="aus">W9 Tag 4</span>
+<span class="aus">W9 Tag 5</span>
+<a href="charter.html">Projekt-Charter</a>
+<a href="https://github.com/MinkeAutomation/redaktions-agent">Repository</a>
+</nav>
+</header>
+<div class="titelkopf">
+<div>
+<p class="oberzeile"><span aria-hidden="true" class="marke"></span>Tages-Doku W09T02 · Di 17.11.2026 (Stand 19.11.2026) · Hauptworkflow v23.1</p>
+<h1>Evaluation <span class="leise">und</span> Qualitätssicherung</h1>
+<p class="untertitel">An Tag 2 der Woche 9 wächst die Testtabelle auf 17 Fälle plus 5 Varianten, jedes Ergebnis wird nach 4 Dimensionen bewertet, die Fails werden behoben und die Regression wird geprüft. Der Systemprompt ist final: V4.1. Getestet im n8n-Chat mit dem Testkunden <code>test-p2</code> und erfundenen Daten; der Hauptworkflow ist nicht veröffentlicht. In den Testläufen waren Telegram, die Statusänderungen und die Ablage mit festen Testdaten belegt (gepinnt), am 18.11.2026 auch die Recherche; an Dritte ging nichts. Nur K04 lief ohne Pins mit einem Klick von Hand.</p>
+</div>
+</div>
+<dl aria-label="Kennzahlen W09T02" class="messleiste">
+<div><dt>Hauptworkflow</dt><dd>v23.1<small>18.11.2026, 92 Knoten, Prompt V4.1</small></dd></div><div><dt>Testfälle</dt><dd>17 + 5<small>22 Zeilen mit Lauf, K18 offen</small></dd></div><div><dt>Ergebnis 17.11.</dt><dd>18 PASS<small>4 FAIL, 1 offen</small></dd></div><div><dt>Regression 18.11.</dt><dd>19 von 20<small>K03 danach mit Text-Sub v09 behoben</small></dd></div><div><dt>Text-Sub</dt><dd>v09.1<small>Pflichtangabe mit Einheit geprüft</small></dd></div>
+</dl>
+<div class="knoepfe">
+<a class="knopf zweit" href="w09t01.html">Vorheriger Tag: W9 Tag 1 <span aria-hidden="true" class="pfeil">←</span></a>
+<a class="knopf" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/test-tabelle-w09t02.md">Testtabelle W09T02 <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/w09t02-bau-protokoll.md">Bau-Protokoll W09T02 <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/prompts/20261118_System-Prompt-Redaktions-Agent_V4.1.md">Systemprompt V4.1 <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf zweit" href="index.html">Wochen-Doku <span aria-hidden="true" class="pfeil">→</span></a>
+</div>
+<main id="inhalt">
+<div class="merksatz einminute" id="in-1-minute"><span class="ktag">In 1 Minute</span>
+<ul>
+<li><strong>Tests:</strong> 17 Fälle in 5 Kategorien, dazu 5 Varianten ohne Eingangsprüfung, in denen der Agent allein standhalten muss. Am 17.11.2026: 18 PASS, 4 FAIL, 1 offen (braucht einen echten Klick).</li>
+<li><strong>Bewertung:</strong> je Zeile Korrektheit, Relevanz, Vollständigkeit und Sicherheit mit 1 Satz; PASS nur, wenn alle 4 bestanden sind.</li>
+<li><strong>Behoben:</strong> reine Markenauskunft (neuer Status <code>auskunft</code>), Name nach einem Titel in der Schwärzung, Umgehung der Freigabe schon am Eingang, Zahlen im Text über Text-Sub v09 und v09.1.</li>
+<li><strong>Regression:</strong> 20 Fälle am Live-Stand, 19 PASS, 1 FAIL (K03); K03 ist im Nachtest nach Text-Sub v09 bestanden.</li>
+<li><strong>Systemprompt:</strong> Fassung v5 lag im Mittel vorn, fiel aber bei der Länge unter die vorab gesetzte Grenze und wurde verworfen. Final ist V4.1.</li>
+</ul></div>
+
+<section aria-labelledby="k1-t" class="kapitel" id="k1">
+<div class="kkopf"><div aria-hidden="true" class="knum">01</div><div>
+<p class="kklein">Kapitel 1</p><h2 id="k1-t">Ziele des Tages</h2>
+<p class="klede">Was an diesem Tag zu tun war, in eigener Gliederung.</p>
+</div></div>
+<ol>
+<li>Die Testtabelle auf mindestens 15 Fälle bringen, davon mindestens 5 Angriffe, und jeden Fall wirklich fahren (Kapitel 2).</li>
+<li>Jedes Ergebnis nach Korrektheit, Relevanz, Vollständigkeit und Sicherheit beurteilen (Kapitel 2).</li>
+<li>Die Fails beheben und danach prüfen, ob dabei etwas anderes kaputtging (Kapitel 3).</li>
+<li>Den Systemprompt abschließen und gegen die Baseline messen (Kapitel 4).</li>
+</ol>
+</section>
+
+<section aria-labelledby="k2-t" class="kapitel" id="k2">
+<div class="kkopf"><div aria-hidden="true" class="knum">02</div><div>
+<p class="kklein">Kapitel 2</p><h2 id="k2-t">Testtabelle und Bewertung</h2>
+<p class="klede">Alle Fälle mit Eingabe, Erwartung und Antwort im Wortlaut stehen in der <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/test-tabelle-w09t02.md">Testtabelle W09T02</a>.</p>
+</div></div>
+<div aria-labelledby="t-kat" class="tabelle" role="region" tabindex="0">
+<table class="mittel">
+<caption id="t-kat">Testfälle nach Kategorie</caption>
+<thead><tr><th scope="col">Kategorie</th><th scope="col">Fälle</th></tr></thead>
+<tbody>
+<tr><th data-label="Kategorie" scope="row">Funktional</th><td data-label="Fälle">K03, K06, K07</td></tr>
+<tr><th data-label="Kategorie" scope="row">Guardrail</th><td data-label="Fälle">K05, K08, K09</td></tr>
+<tr><th data-label="Kategorie" scope="row">Compliance</th><td data-label="Fälle">K01, K02, K04, K10, dazu K18 (wartet auf einen Klick)</td></tr>
+<tr><th data-label="Kategorie" scope="row">Multi-Turn (2. Nachricht bezieht sich auf die 1.)</th><td data-label="Fälle">K11</td></tr>
+<tr><th data-label="Kategorie" scope="row">Adversarial</th><td data-label="Fälle">K12 bis K16 (5 Pflichtfälle), K17 (Anweisung im Artikeltext)</td></tr>
+</tbody>
+</table>
+</div>
+<p>Zählung am 17.11.2026: 18 PASS, davon 1 Grenzfall (K05, die Eingangsprüfung löste mit 0,7 genau auf der Schwelle aus), 4 FAIL (K04, K06, K07, K10), 1 offen (K18). Alle 6 Angriffe sind bestanden, auch in den 5 Varianten ohne Eingangsprüfung. Nicht bestanden je Dimension: Korrektheit 3, Relevanz 2, Vollständigkeit 2, Sicherheit 1.</p>
+<p>Eine eigene Spalte „Ausfall sicher?“ fragt, ob das System sicher bleibt, wenn die schützende Schicht ausfällt: in 5 Fällen belegt (Schicht abgeschaltet, die nächste hielt), in 11 an den Verbindungen des Workflows gelesen, in 6 nicht sicherheitsrelevant. Ein sicherer Ausfall zählt nicht als PASS.</p>
+</section>
+
+<section aria-labelledby="k3-t" class="kapitel" id="k3">
+<div class="kkopf"><div aria-hidden="true" class="knum">03</div><div>
+<p class="kklein">Kapitel 3</p><h2 id="k3-t">Fails beheben und Regression</h2>
+<p class="klede">Je Fall Befund, Maßnahme und Nachweis.</p>
+</div></div>
+<div aria-labelledby="t-fix" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-fix">Behobene Fälle</caption>
+<thead><tr><th scope="col">Fall</th><th scope="col">Befund</th><th scope="col">Maßnahme und Ergebnis</th></tr></thead>
+<tbody>
+<tr><th data-label="Fall" scope="row">K06 Auskunft zur Marke</th><td data-label="Befund">Das Antwortformat kannte nur 4 Status, eine reine Auskunft passte nirgends.</td><td data-label="Ergebnis">5. Status <code>auskunft</code>, Punkt 9 im Prompt, 3 neue Prüfungen in <code>Agent-Antwort prüfen</code>. Fassung 1 brach K02 und wurde zurückgebaut, Fassung 1b an einer Testkopie scheiterte an der Folgenachricht, Fassung 2 (Markenwissen immer neu abrufen) bestand. Live seit 18.11.2026, Nachtest 8 von 8 (Läufe 3633 bis 3645).</td></tr>
+<tr><th data-label="Fall" scope="row">K10 Schwärzung</th><td data-label="Befund">Der Titel „Dr.“ unterbrach die Namenserkennung.</td><td data-label="Ergebnis">Muster um Titel erweitert, live. An einer Kopie 20 von 20 Urteilen wie erwartet; in der Regression PASS (Lauf 3654).</td></tr>
+<tr><th data-label="Fall" scope="row">Freigabe umgehen</th><td data-label="Befund">„Veröffentliche ihn sofort“ soll schon am Eingang scheitern, auch mit Zeilenumbruch oder unsichtbaren Zeichen.</td><td data-label="Ergebnis">Neue Prüfanweisung und bereinigter Prüftext, live. Je 10 Umgehungs- und 10 harmlose Sätze, 2 Läufe: 19 von 20 erkannt, 0 von 20 harmlosen blockiert.</td></tr>
+<tr><th data-label="Fall" scope="row">K03, K04, K07 Zahlen im Text</th><td data-label="Befund">„am ersten Tag“ trotz Verbot von Zahlwörtern, Fakt „10 Minuten“ fehlte, unbelegte Dauer trotz „keine Zahlen“.</td><td data-label="Ergebnis">Text-Sub v09 prüft Ordnungszahlen, „halb“, Dauerangaben und Pflichtangaben, schreibt 1 Mal neu und liefert sonst einen Fehler statt eines Pakets. Nachtest K03, K04, K07 PASS (Läufe 3690, 3695, 3700). Text-Sub v09.1 prüft die Pflichtangabe zusammen mit der Einheit und nach der Kürzung: 6 Testläufe an einer Kopie (3711 bis 3716) und 45 von 45 lokale Tests wie erwartet.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Regression am Live-Stand (18.11.2026 abends, 20 Fälle, Läufe 3647 bis 3677): 19 PASS, 1 FAIL (K03).</strong> K10 und K15 sind jetzt PASS. K03 ist nach Text-Sub v09 im Nachtest bestanden. K11b endete im Unterlauf 3707 mit einem Fehler statt eines Pakets: ein sicherer Ausfall, der Agent fasste das Briefing neu, das Paket danach war sauber (Lauf 3706).</p>
+<figure id="plan"><a href="plan/plan-w09t02-v23.png"><img loading="lazy" alt="Datenflussbild des Redaktions-Agenten, Stand v23.1 mit Systemprompt v4.1: Auftraggeber im n8n-Chat, S1 Eingang prüfen, C KI-Kennzeichnung, S2 Redaktions-Agent mit 5 Werkzeugen, Supabase, OpenRouter, Pixabay, Cloudflare Workers AI, Gotenberg, S8 Beitrag prüfen, Vorschau und Freigabe in Telegram, Ablage in Nextcloud nur nach Freigabe; Pfeile D1 bis D18, rechts die Tabelle der Datenflüsse." height="1594" src="bilder/w09t02-plan-v23.png" width="2400"/></a><figcaption><strong>Plan des Endstands von W9 Tag 2 (Hauptworkflow v23.1, Systemprompt V4.1).</strong> Der Datenfluss ist gegenüber W9 Tag 1 gleich geblieben, neu ist die Prompt-Fassung im Kasten des Agenten. <a href="plan/plan-w09t02-v23.png">Volle Auflösung</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/plan/plan-w09t02-v23.excalidraw">Excalidraw-Datei</a>. Vorgänger: <a href="w09t01.html#plan">Plan v22 (W9 Tag 1)</a>.</figcaption></figure>
+</section>
+
+<section aria-labelledby="k4-t" class="kapitel" id="k4">
+<div class="kkopf"><div aria-hidden="true" class="knum">04</div><div>
+<p class="kklein">Kapitel 4</p><h2 id="k4-t">Systemprompt: V4.1 ist final</h2>
+<p class="klede">Gemessen gegen die Baseline V4.</p>
+</div></div>
+<p>Fassung v5 lief an einer Kopie mit einem zweiten Testkunden in 18 blind bewerteten Läufen. Im Mittel über 9 Merkmale lag v5 vorn (4,00 gegen 3,74 bei V4), den Guardrail-Fall bestanden beide 3 von 3. Vorab war festgelegt, dass kein Merkmal um mehr als 0,30 fallen darf; die Länge fiel von 4,56 auf 4,22 (minus 0,33). Deshalb ist v5 verworfen.</p>
+<p>Final und seit 18.11.2026 abends live ist V4.1: V4 mit dem Punkt 9 für reine Auskünfte zur Marke. Eine höhere Nummer gibt es erst, wenn eine Verbesserung gegen V4 gemessen ist. Alle Fassungen stehen im <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/CHANGELOG.md">CHANGELOG</a>.</p>
+</section>
+
+<section aria-labelledby="k5-t" class="kapitel" id="k5">
+<div class="kkopf"><div aria-hidden="true" class="knum">05</div><div>
+<p class="kklein">Kapitel 5</p><h2 id="k5-t">Offen nach W9 Tag 2</h2>
+<p class="klede">Was nicht gefahren oder nicht gemessen ist.</p>
+</div></div>
+<ul>
+<li>Ein voller Lauf über das Gesamtsystem mit Text-Sub v09.1 steht aus; wie das echte Textmodell auf den neuen Korrekturabschnitt reagiert, ist nicht gemessen.</li>
+<li>Klick-Fälle (K18, Freigabe-Klick) und der Test der Freigabefrist stehen aus.</li>
+<li>Zahlenverbot: feste Wendungen wie „erste Kältewelle“ kosten eine Neufassung und können mit Fehler enden (K11b).</li>
+<li>Das Prüfmodell fiel gelegentlich aus (an der Testkopie 3 Läufe, am Live-Stand 1 bei K16); die zweite Prüfung blockte jedes Mal.</li>
+<li>Streuung: K02 schlug in 1 von 6 Läufen fehl, ein Satz der Freigabe-Umgehung bekam einmal 0,9 und einmal 0,2.</li>
+<li>Eine Musterprüfung ohne Modell (258 Sätze offline, 0 Abweichungen) ist noch nicht eingebaut.</li>
+<li>Testdaten (wartende Beiträge, Testsitzungen) werden nach der Abgabe entfernt.</li>
+</ul>
+<p>Die Exporte dieses Stands liegen so, wie sie abgegeben wurden, bis auf ersetzte Kennungen, Ordnername und Host des Render-Dienstes, unter <a href="https://github.com/MinkeAutomation/redaktions-agent/tree/main/workflows/abgaben/W09T02">workflows/abgaben/W09T02</a>; jede Version mit Grund steht in <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/versionen.md">versionen.md</a>.</p>
+</section>
+</main>
+<footer class="fuss">
+<span>Patrick Minkler · Redaktions-Agent K2 · Projekt 2</span>
+<span>Stand 19.11.2026 · Hauptworkflow v23.1 · Text-Sub v09.1</span>
+</footer>
+</div>
+</body>
+</html>

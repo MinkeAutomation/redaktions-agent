@@ -778,9 +778,7 @@
     "errorWorkflow": "ERROR_WORKFLOW_ID",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "meta": {
-    "builderVariant": "mcp"
-  },
+  "meta": {},
   "pinData": {},
   "tags": [
     {

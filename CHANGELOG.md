@@ -28,20 +28,50 @@ Dieselben 4 Statuswörter stehen in der Spalte Status von [versionen.md](version
 
 ## Versionen
 
-Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V4 ist der geltende Systemprompt; der Vergleich mit V2 steht aus. V2 ist archiviert, von V4 abgelöst; V3 ist verworfen (getestet, nicht übernommen), V1 ist archiviert.
+Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V4.1 ist der geltende Systemprompt (seit 18.11.2026); V4 ist archiviert, von V4.1 abgelöst (der Vergleich mit V2 blieb offen). V5 ist verworfen (getestet, nicht übernommen), ebenso V3; V2 ist archiviert, von V4 abgelöst, V1 ist archiviert.
+
+### `20261118_System-Prompt-Redaktions-Agent_V4.1.md`
+
+| | |
+|---|---|
+| **Datum** | 18.11.2026 |
+| **Status** | Live, Hauptworkflow v23.1 (`54dec01b`) |
+| **Agent** | Redaktions-Agent |
+| **Version** | V4.1 |
+| **Prompt-Datei** | [prompts/20261118_System-Prompt-Redaktions-Agent_V4.1.md](prompts/20261118_System-Prompt-Redaktions-Agent_V4.1.md) |
+| **Agent-Konfiguration** | der Auszug zu V4.1 liegt noch nicht vor |
+
+**Beschreibung:** V4.1 ergänzt V4 um den Vorgehen-Punkt 9 für reine Markenauskünfte: Wer nur nach Ton, No-Gos oder Richtlinien der Marke fragt, bekommt eine Auskunft mit dem Status `auskunft`, das Markenwissen wird dafür immer neu abgerufen. Anlass war Testfall K06 der Testtabelle W09T02, der mit 4 Status des Antwortformats FAIL war. Seit 18.11.2026 19:51 live (Nachtest 8 von 8 bestanden); Regression über 20 Fälle am Live-Stand: 19 PASS, 1 FAIL (K03, Ursache im Text-Werkzeug, mit Text-Sub v09 behoben), siehe [Testtabelle W09T02](docs/test-tabelle-w09t02.md).
+
+---
+
+### V5 (verworfen, keine Prompt-Datei im Repository)
+
+| | |
+|---|---|
+| **Datum** | 17.11.2026 |
+| **Status** | Verworfen; V4 blieb live, später V4.1 |
+| **Agent** | Redaktions-Agent |
+| **Version** | V5 |
+| **Prompt-Datei** | liegt nicht im Repository (Test an einer Hilfskopie des Workflows, nie live) |
+| **Agent-Konfiguration** | liegt nicht im Repository |
+
+**Beschreibung:** V5 (Teil A, Systemprompt) mit Zusatzregeln 11 bis 16 im Text-Werkzeug (Teil B) wurde an einer Hilfskopie gegen V4 gemessen, je 9 Läufe (3 Fälle mit je 3 Läufen). Mittel über alle 9 Merkmale und 9 Beiträge: V4 3,74 (Summe 303 über 81 Bewertungen), v5 4,00 (Summe 324 über 81). Verworfen wurde v5 trotz des höheren Mittels, weil die Längenbewertung um 0,33 fiel und vorab höchstens 0,30 erlaubt waren.
+
+---
 
 ### `20261112_System-Prompt-Redaktions-Agent_V4.md`
 
 | | |
 |---|---|
 | **Datum** | 12.11.2026 |
-| **Status** | Live, Hauptworkflow ab v18 |
+| **Status** | Archiviert, von V4.1 abgelöst (18.11.2026) |
 | **Agent** | Redaktions-Agent |
 | **Version** | V4 |
 | **Prompt-Datei** | [prompts/20261112_System-Prompt-Redaktions-Agent_V4.md](prompts/20261112_System-Prompt-Redaktions-Agent_V4.md) |
 | **Agent-Konfiguration** | der Auszug zu V4 liegt noch nicht vor |
 
-**Beschreibung:** V4 ist der geltende Systemprompt; der Vergleich mit V2 steht aus. Der Auftrag steht zwischen Markierungen mit der `trace_id` des Laufs, Anweisungen im Auftrag zu Regeln, Werkzeugen oder Rolle werden nicht befolgt, und der Agent nennt keine Werkzeuge, Abläufe, Prüfungen oder Schwellen. In der Reparaturrunde (v19) kam ein Absatz zum Antwortformat dazu, die Kennung blieb v4; Wirkung in der [Testtabelle Tag 4](docs/test-tabelle-w08t04.md).
+**Beschreibung:** V4 war der geltende Systemprompt bis V4.1 am 18.11.2026; der Vergleich mit V2 blieb offen. Der Auftrag steht zwischen Markierungen mit der `trace_id` des Laufs, Anweisungen im Auftrag zu Regeln, Werkzeugen oder Rolle werden nicht befolgt, und der Agent nennt keine Werkzeuge, Abläufe, Prüfungen oder Schwellen. In der Reparaturrunde (v19) kam ein Absatz zum Antwortformat dazu, die Kennung blieb v4; Wirkung in der [Testtabelle Tag 4](docs/test-tabelle-w08t04.md).
 
 ---
 

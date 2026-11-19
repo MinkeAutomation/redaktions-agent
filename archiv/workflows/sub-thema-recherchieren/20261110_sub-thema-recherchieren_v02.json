@@ -434,10 +434,7 @@
                      "callerPolicy":  "workflowsFromSameOwner",
                      "binaryMode":  "separate"
                  },
-    "meta":  {
-                 "aiBuilderAssisted":  true,
-                 "builderVariant":  "mcp"
-             },
+    "meta":  {},
     "pinData":  {
 
                 },

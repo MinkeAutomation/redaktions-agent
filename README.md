@@ -2,19 +2,21 @@
 
 Projekt 2 im Kurs KI-Automatisierung (AGT-2606): Ein Agent in n8n plant Social-Media-Posts (Instagram und LinkedIn) für einen Kunden, prüft das Thema gegen Markenrichtlinien und frühere Posts, holt bei Bedarf belegte Fakten, schreibt das Text-Paket, baut die Bilder im Branding des Kunden und reicht alles zur Freigabe durch einen Menschen ein. Nach der Freigabe in Telegram wird der Beitrag in Nextcloud abgelegt.
 
-## Stand (15.11.2026)
+## Stand (19.11.2026)
 
 Status heißt hier Live (geltender Stand), In Test (Testkopie, wird nicht Live), Archiviert (abgelöst, Datei unter `archiv/`) oder Verworfen (getestet, nicht übernommen). Der Status je Version steht in [versionen.md](versionen.md), die Datei zu jeder Version in der Spalte Archivdatei.
 
 | Bestandteil | Version | Status | Datei |
 |---|---|---|---|
-| Hauptworkflow Redaktions-Agent | v20.2 | Live (in n8n nicht veröffentlicht) | [workflows/redaktions-agent.json](workflows/redaktions-agent.json) |
+| Hauptworkflow Redaktions-Agent | v23.1 | Live (in n8n nicht veröffentlicht) | [workflows/redaktions-agent.json](workflows/redaktions-agent.json) |
 | Werkzeug 1 Markenwissen abfragen | v03.3 | Live | [workflows/sub-markenwissen-abfragen.json](workflows/sub-markenwissen-abfragen.json) |
 | Werkzeug 2 Thema recherchieren | v03.2 | Live | [workflows/sub-thema-recherchieren.json](workflows/sub-thema-recherchieren.json) |
-| Werkzeug 3 Text schreiben | v07.1 | Live | [workflows/sub-text-schreiben.json](workflows/sub-text-schreiben.json) |
-| Werkzeug 4 Bilder gestalten | v01.2 | Live | [workflows/sub-bilder-gestalten.json](workflows/sub-bilder-gestalten.json) |
-| Werkzeug 5 Zur Freigabe einreichen | v01.2 | Live | [workflows/sub-zur-freigabe-einreichen.json](workflows/sub-zur-freigabe-einreichen.json) |
-| Systemprompt | V4 | Live | [prompts/20261112_System-Prompt-Redaktions-Agent_V4.md](prompts/20261112_System-Prompt-Redaktions-Agent_V4.md) |
+| Werkzeug 3 Text schreiben | v09.1 (Notiz im Workflow: v10) | Live | [workflows/sub-text-schreiben.json](workflows/sub-text-schreiben.json) |
+| Werkzeug 4 Bilder gestalten | Stand 17.11.2026 (KI-Kennzeichnung) | Live | [workflows/sub-bilder-gestalten.json](workflows/sub-bilder-gestalten.json) |
+| Werkzeug 5 Zur Freigabe einreichen | v02 | Live | [workflows/sub-zur-freigabe-einreichen.json](workflows/sub-zur-freigabe-einreichen.json) |
+| Abgabestände Woche 9 | W09T01, W09T02 | Archiviert (so abgegeben) | [workflows/abgaben/W09T01/](workflows/abgaben/W09T01/README.md), [workflows/abgaben/W09T02/](workflows/abgaben/W09T02/README.md) |
+| Systemprompt | V4.1 | Live | [prompts/20261118_System-Prompt-Redaktions-Agent_V4.1.md](prompts/20261118_System-Prompt-Redaktions-Agent_V4.1.md) |
+| Systemprompt | V4 | von V4.1 abgelöst, Baseline für Vergleiche | [prompts/20261112_System-Prompt-Redaktions-Agent_V4.md](prompts/20261112_System-Prompt-Redaktions-Agent_V4.md) |
 | Systemprompt | V2 | Archiviert (abgelöst von V4) | [archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V2.md](archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V2.md) |
 | Systemprompt | V1 | Archiviert | [archiv/prompts/20261109_System-Prompt-Redaktions-Agent_V1.md](archiv/prompts/20261109_System-Prompt-Redaktions-Agent_V1.md) |
 | Systemprompt | V3 | Verworfen (V2 blieb live, inzwischen von V4 abgelöst) | [archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md](archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md) |
@@ -29,11 +31,11 @@ Status heißt hier Live (geltender Stand), In Test (Testkopie, wird nicht Live),
 | Lese-Views und Spalte `erzeugt_von` | v01 | Live | [sql/p2_k2_views_v01.sql](sql/p2_k2_views_v01.sql) |
 
 - Alle 5 Werkzeuge gebaut, veröffentlicht und angebunden. Getestet mit dem Testkunden `test-p2` im n8n-Chat, der Hauptworkflow bleibt unveröffentlicht.
-- Agent-Modell: Nemotron 3.5 Super free (Gratis), seit v19 (bis v20.2) mit 4.000 Ausgabe-Tokens. Der Endpunkt von Nemotron 3 Ultra free war am 11.11.2026 zeitweise ausgefallen.
-- Systemprompt: V4 live (12.11.2026, Guardrails); V1 und V2 archiviert, V3 verworfen. Vergleich V1 gegen V2 mit 10 Anfragen in der [Test-Tabelle](docs/test-tabelle.md). Der Vergleich V2 gegen V4 steht aus.
+- Agent-Modell (aktueller Stand): `anthropic/claude-haiku-5.5` über den Projektzugang bei OpenRouter, Nemotron 3.5 Super free liegt deaktiviert im Reserve-Kasten. Früherer Stand: Nemotron 3.5 Super free (Gratis) von v19 bis v20.2 mit 4.000 Ausgabe-Tokens; der Endpunkt von Nemotron 3 Ultra free war am 11.11.2026 zeitweise ausgefallen.
+- Systemprompt: V4.1 live (18.11.2026, Status `auskunft`; V4 vom 12.11.2026 mit den Guardrails ist abgelöst); V1 und V2 archiviert, V3 und V5 verworfen. Vergleich V1 gegen V2 mit 10 Anfragen in der [Test-Tabelle](docs/test-tabelle.md). Der Vergleich V2 gegen V4 steht aus.
 - Guardrails (12.11.2026, Hauptworkflow v17 bis v19, gebaut für den Chat-Eingang): Eingangsprüfung vor dem Agenten (schwärzen, Jailbreak, Themenbindung) und Ausgangsprüfung vor der Freigabe (Schlüssel, Links, Personendaten, Anstößiges, mit Sperre). 9 Kernfälle in 12 Testzeilen (13 Ausführungen): 7 bestanden, 4 nicht bestanden (A1b, A6, P2 in 2 Anläufen), 1 Fehler (A3 am Eingang), siehe [Tag 4](docs/w08t04.html). Offen bis Ende Woche 9: Laufzeile, Eingänge Formular und Telegram, Prüfung der Recherche-Texte, Veröffentlichung, 11 weitere Fälle.
 - Vertrauensstufen und Freigabe (13. bis 15.11.2026, Hauptworkflow v20 bis v20.2): 12 Aktionen mit Stufe und Rechten, die Freigabe per Knopf in Telegram ist die Stufe „Fragt“. 4 Freigabetests: freigegeben (Lauf 3047), abgelehnt mit Grund (3053) und Angriff (3058) bestanden, Fristablauf (3064) **nicht bestanden**: nach der Frist gibt es keinen Ausgang, der Beitrag bleibt ohne Status und ohne Meldung liegen. Die Reparatur ist nicht gebaut. Siehe [Tag 5](docs/w08t05.html) und die [Testtabelle Tag 5](docs/test-tabelle-w08t05.md). In v20.2 steht die Schlüsselprüfung der Ausgangsprüfung auf „permissive“, weil „balanced“ deutsche Wörter als Schlüssel sperrte.
-- Grenzen: Zahlenprüfung im Text-Werkzeug erkennt nicht alle Zahlwörter (ein Viertel, halb, null, Ordnungszahlen); Bildwahl nur über Schlagwörter; Wortmarke statt Logo-Datei; die Freigabe braucht einen Klick in Telegram.
+- Grenzen: Die Zahlenprüfung im Text-Werkzeug erkennt seit v09 auch „halb“ und Ordnungszahlen und prüft seit v09.1 die Pflichtangabe mit Einheit und nach der Kürzung (bis v08 waren diese Klassen nicht erkannt); ein voller Lauf über das Gesamtsystem mit v09.1 steht aus. Bildwahl nur über Schlagwörter; Wortmarke statt Logo-Datei; die Freigabe braucht einen Klick in Telegram.
 - Die Exporte in [workflows/](workflows/) und die älteren Stände in [archiv/workflows/](archiv/workflows/) sind für die Veröffentlichung bereinigt: Credential-IDs, Workflow-IDs (auch die Verweise der Werkzeug-Knoten), Tag- und Ordner-Kennungen, Adresse der Datenbank, Adresse der n8n-Instanz, Fehler-Workflow, Webhook-IDs und Hosts des Bild-Dienstes sind durch Platzhalter ersetzt, interne Verweise in Code-Kommentaren entfernt. Der Name eines Testkunden ist in den Exporten durch `KUNDE_B` ersetzt, live in n8n steht der Originalwert. Die Funktion ist gleich, der Export weicht deshalb im Text von der laufenden Instanz ab.
 
 ## In 5 Minuten
@@ -43,7 +45,7 @@ Status heißt hier Live (geltender Stand), In Test (Testkopie, wird nicht Live),
 3. Der geltende Systemprompt liegt als Markdown-Datei in [prompts/](prompts/) (Muster `YYYYMMDD_System-Prompt-Redaktions-Agent_V<Nummer>.md`), die älteren Fassungen V1, V2 und V3 (verworfen), die zeichengleiche Live-Fassung von V2 (`..._V2_vor-V3.md`) und die Testkopie-Prompts in [archiv/prompts/](archiv/prompts/).
 4. Die Tests, auch der Vergleich von Prompt v1 gegen v2, stehen in [docs/test-tabelle.md](docs/test-tabelle.md).
 5. Die Tabelle für den Paket-Speicher und die Lese-Views stehen in [sql/](sql/).
-6. Ziel, Scope und die Architekturentscheidung (Single-Agent) stehen in [docs/projekt-charter.md](docs/projekt-charter.md).
+6. Ziel, Scope und die Architekturentscheidung (Single-Agent) stehen in [docs/projekt-charter.md](docs/projekt-charter.md). Die neuere Begründung als Hybrid (feste Reihenfolge, Entscheidungen des Agenten an 6 Stellen) steht in [W9 Tag 1](docs/w09t01.html#k5) und in der [Compliance-Doku](docs/w09t01-compliance-doku.md).
 7. Welche Zugänge und Adressen du zum Nachbauen brauchst, listet [.env.example](.env.example) (nur Namen, keine Werte).
 
 ## Dokumentation
@@ -56,6 +58,8 @@ Die Projektdokumentation liegt als Webseite im Ordner [docs/](docs/):
 - [Tag 3 (11.11.2026)](docs/w08t03.html): Werkzeug 4 und 5, Freigabe und Ablage, Vergleich V1 gegen V2
 - [Tag 4 (12.11.2026)](docs/w08t04.html): Guardrails an Eingang und Ausgang, Erlaubt und verboten, Übersicht nach den 3 Ebenen, Systemprompt V4, Planbild des Endstands, 9 Kernfälle in 12 Testzeilen (13 Ausführungen); die Testtabelle mit Eingabe und Antwort im Wortlaut steht in [docs/test-tabelle-w08t04.md](docs/test-tabelle-w08t04.md)
 - [Tag 5 (13.11.2026, Tests 15.11.2026)](docs/w08t05.html): Vertrauensstufen je Aktion mit Rechten, Freigabe-Schleife per Telegram, 4 Freigabetests mit Ausführungsnummern (3 bestanden, 1 nicht bestanden), Plan v20.2, Export und Changelog
+- [W9 Tag 1 (16.11.2026, Stand 17.11.2026)](docs/w09t01.html): Einordnung nach dem EU AI Act, 3 Schutzmaßnahmen gebaut und gemessen (Freigabe, Schwärzung, KI-Kennzeichnung), 20 Datenflüsse mit Standort, Datenflussbild Plan v22, Architektur als Hybrid begründet
+- [W9 Tag 2 (17.11.2026, Stand 19.11.2026)](docs/w09t02.html): Testtabelle mit den Fällen K01 bis K18 und Varianten ohne Eingangsprüfung, Bewertung nach 4 Dimensionen, Fails behoben, Regression 19 von 20, Systemprompt V4.1 final, Plan v23.1
 
 Dazu gehören:
 
@@ -65,7 +69,10 @@ Dazu gehören:
 - [Test-Tabelle](docs/test-tabelle.md): Werkzeug-Tests, Vergleich V1 gegen V2, Freigabe und Ablage
 - [Testtabelle Tag 4](docs/test-tabelle-w08t04.md): Guardrails, 12 Testzeilen
 - [Testtabelle Tag 5](docs/test-tabelle-w08t05.md): 4 Freigabetests, Fehlalarm der Ausgangsprüfung
-- [Pläne](docs/plan/): je Tag ein Excalidraw-Plan auf dem Endstand des Tages
+- [Compliance-Doku W9 Tag 1](docs/w09t01-compliance-doku.md): Einordnung mit Gesetzeswortlaut, Maßnahmen mit Läufen, Tabelle der 20 Datenflüsse, neue Begründung der Architektur
+- [Testtabelle W9 Tag 2](docs/test-tabelle-w09t02.md): alle Fälle mit Eingabe, Erwartung, Antwort und Bewertung je Dimension
+- [Bau-Protokoll W9 Tag 2](docs/w09t02-bau-protokoll.md): was am 18.11.2026 am Hauptworkflow und am Text-Werkzeug gebaut und gemessen wurde
+- [Pläne](docs/plan/): je Tag ein Excalidraw-Plan auf dem Endstand des Tages, in Woche 9 als Datenflussbild: [Plan v22](docs/plan/plan-w09t01-v22.excalidraw) (W9 Tag 1) und [Plan v23.1](docs/plan/plan-w09t02-v23.excalidraw) (W9 Tag 2)
 
 ## Grundlage aus Projekt 1
 

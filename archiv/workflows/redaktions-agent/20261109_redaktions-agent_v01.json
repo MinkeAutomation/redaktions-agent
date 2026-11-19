@@ -628,10 +628,7 @@
                      "availableInMCP":  true,
                      "errorWorkflow":  "ERROR_WORKFLOW_ID"
                  },
-    "meta":  {
-                 "aiBuilderAssisted":  true,
-                 "builderVariant":  "mcp"
-             },
+    "meta":  {},
     "pinData":  {
 
                 },

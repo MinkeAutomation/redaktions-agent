@@ -445,9 +445,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "binaryMode": "separate"
   },
-  "meta": {
-    "builderVariant": "mcp"
-  },
+  "meta": {},
   "pinData": {},
   "tags": [
     {

@@ -2104,10 +2104,7 @@
                      "errorWorkflow":  "ERROR_WORKFLOW_ID",
                      "binaryMode":  "separate"
                  },
-    "meta":  {
-                 "aiBuilderAssisted":  true,
-                 "builderVariant":  "mcp"
-             },
+    "meta":  {},
     "pinData":  {
 
                 },

@@ -6,12 +6,12 @@ Hier liegen die abgelösten Stände des Redaktions-Agenten: ältere Fassungen de
 
 | Ordner | Inhalt | Dateien |
 |---|---|---|
-| `workflows/redaktions-agent/` | Hauptworkflow v01 bis v16 (v19.2 ist Live in `workflows/`) | 21 |
+| `workflows/redaktions-agent/` | Hauptworkflow v01 bis v20.1 (v23.1 ist Live in `workflows/`, v22 liegt als Abgabestand unter `workflows/abgaben/W09T01/`) | 24 |
 | `workflows/sub-markenwissen-abfragen/` | Werkzeug 1, v01 bis v03.1 (v03.3 ist Live) | 6 |
 | `workflows/sub-thema-recherchieren/` | Werkzeug 2, v01 bis v03.1 (v03.2 ist Live) | 8 |
-| `workflows/sub-text-schreiben/` | Werkzeug 3, v00 bis v07 (v07.1 ist Live) | 16 |
-| `workflows/sub-bilder-gestalten/` | Werkzeug 4, v01 (v01.2 ist Live) | 1 |
-| `workflows/sub-zur-freigabe-einreichen/` | Werkzeug 5, v01 (v01.2 ist Live) | 1 |
+| `workflows/sub-text-schreiben/` | Werkzeug 3, v00 bis v07.1 (v09.1 ist Live, v08 liegt als Abgabestand unter `workflows/abgaben/W09T01/`) | 17 |
+| `workflows/sub-bilder-gestalten/` | Werkzeug 4, v01 und v01.2 (der Stand vom 17.11.2026 ist Live) | 2 |
+| `workflows/sub-zur-freigabe-einreichen/` | Werkzeug 5, v01 und v01.2 (v02 ist Live) | 2 |
 | `workflows/test-redaktions-agent-1-werkzeug/` | ältere Stände der Testkopie mit 1 Werkzeug, v00 bis v03 (v04 liegt in `workflows/test/`) | 4 |
 | `workflows/test-text-schreiben-lesefehler/` | ältere Stände der Testkopie zum Lesefehler von Werkzeug 3, v00 bis v02 (v03 liegt in `workflows/test/`) | 3 |
 | `prompts/` | Systemprompts V1, V2 und V3, zusätzlich V2 mit vollen n8n-Ausdrücken und der Prompt der Testkopie | 5 |
@@ -21,9 +21,9 @@ Hier liegen die abgelösten Stände des Redaktions-Agenten: ältere Fassungen de
 
 Die Testkopien Jina Reader und Markenwissen-Lesefehler haben nur 1 Stand, er liegt in `workflows/test/`. Die Agent-Konfiguration V1 liegt weiter in `konfiguration/`, weil die Abgabe vom 11.11.2026 dorthin verweist; ihr Status ist Archiviert.
 
-## Alte Stände bleiben unverändert
+## Was sich an alten Ständen ändert
 
-Die Dateien in diesem Ordner bleiben so, wie sie am 11.11.2026 abgelegt wurden. Notizen und Prompts im aktuellen Stand (`workflows/`, `prompts/`) sind danach überarbeitet worden, deshalb zeigen die älteren Stände teils andere Formulierungen in Notizen und Kommentaren; die Funktion ist je Version dieselbe wie in `versionen.md` beschrieben.
+Inhalt und Funktion der Dateien bleiben so, wie sie am 11.11.2026 abgelegt wurden. Am 19.11.2026 wurde in allen Archivdateien das Feld `meta` geleert (Angaben des Editors zur Entstehung, ohne Wirkung auf den Ablauf). Am selben Tag kamen die bis dahin geltenden Live-Exporte Text v07.1, Bilder v01.2 und Freigabe v01.2 dazu; sie entsprechen dem früheren Stand unter `workflows/` bis auf das ebenfalls geleerte Feld `meta`. Notizen und Prompts im aktuellen Stand (`workflows/`, `prompts/`) sind danach überarbeitet worden, deshalb zeigen die älteren Stände teils andere Formulierungen in Notizen und Kommentaren; die Funktion ist je Version dieselbe wie in `versionen.md` beschrieben.
 
 ## Dateinamen
 
@@ -38,4 +38,4 @@ Jede Archivdatei ist wie die heutigen Exporte bereinigt: Credential-IDs, Workflo
 | Status | Bedeutung hier |
 |---|---|
 | Archiviert | abgelöst, durch eine spätere Version ersetzt |
-| Verworfen | getestet, nicht übernommen: Systemprompt V3 (Hauptworkflow v06, Testkopie v02) und die Agent-Konfiguration V3; zunächst blieb V2 live, inzwischen V4 |
+| Verworfen | getestet, nicht übernommen: Systemprompt V3 (Hauptworkflow v06, Testkopie v02) und die Agent-Konfiguration V3; zunächst blieb V2 live, danach V4, seit 18.11.2026 V4.1; dazu der Systemprompt V5 vom 17.11.2026, gegen V4 gemessen und nicht übernommen (ohne eigene Datei, siehe CHANGELOG) |

@@ -25,10 +25,7 @@
                      "executionOrder":  "v1",
                      "availableInMCP":  true
                  },
-    "meta":  {
-                 "aiBuilderAssisted":  true,
-                 "builderVariant":  "mcp"
-             },
+    "meta":  {},
     "pinData":  {
 
                 },

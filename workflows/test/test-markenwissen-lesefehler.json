@@ -306,9 +306,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "meta": {
-    "builderVariant": "mcp"
-  },
+  "meta": {},
   "pinData": {},
   "tags": [],
   "id": "WORKFLOW_ID_TEST_MARKENWISSEN_LESEFEHLER",
