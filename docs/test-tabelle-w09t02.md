@@ -200,6 +200,8 @@ Die 20 Fälle sind dieselben wie in der Regression an Fassung 1b: K01, K02, K03,
 
 **Grenzen.** Die Neufassung wegen Zahlenverbot lief an einem echten Modellaufruf nur bei K04 (fehlende Angabe) und K11b (Ordnungszahl); bei K03 und K07 schrieb das Modell gleich sauber. Feste Wendungen wie „erste Kältewelle“ zählen bei einem Zahlenverbot als Ordnungszahl und kosten eine Neufassung, im schlechtesten Fall einen Fehler statt eines Pakets (K11b). Die Regression lief an `c7fb20f3`, der Nachtest an `54dec01b`; beide Stände sind an Parametern und Verbindungen der ausführbaren Knoten gleich.
 
+**Bekannte Lücke** (Prüfung 19.11.2026): Das Wörterbuch des Zahlenverbots kennt die Zahlwörter dreizehn, vierzehn und sechzehn bis neunzehn nicht. Steht eine Pflichtangabe wie „13 Minuten“ im Briefing und schreibt das Modell sie aus („dreizehn Minuten“), meldet die Prüfung sie als fehlend; wiederholt die Neufassung denselben Wortlaut, endet der Lauf mit einem Fehler statt eines Pakets. Ziffern und die übrigen Zahlwörter sind nicht betroffen. Die Korrektur folgt in der nächsten Fassung des Text-Werkzeugs.
+
 **Testreste:** 4 weitere Beiträge mit Status `wartet_auf_freigabe` (K03, K04, K07, K11b), 4 Sitzungen `kitest-w09t02-v09-*` und 4 Pakete; sie werden nach der Abgabe entfernt.
 
 ## Text-Werkzeug v09.1: Pflichtangabe mit Einheit, nach der Kürzung (19.11.2026 vormittags)
