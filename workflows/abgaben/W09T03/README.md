@@ -1,0 +1,14 @@
+# Abgabestand W09T03 (Interface), Endstand 21.11.2026
+
+Diese 2 Exporte gehören zur Abgabe W09T03: der Hauptworkflow mit Chat-Seite, Anmeldung, Sofortantwort und der Zeile „Werkzeuge genutzt“ sowie der Freigabe-Workflow, den der Hauptworkflow ohne Warten startet. Beide sind seit dem 21.11.2026 um 14:03 in n8n veröffentlicht, zusammen mit dem Text-Werkzeug v09.3. W9 Tag 3 und Tag 4 wurden gebündelt bearbeitet, deshalb ist der Hauptworkflow derselbe Stand wie im [Abgabestand W09T04](../W09T04/README.md). Ablauf, Test von außen und Fehlerfälle stehen in der [Tages-Doku W9 Tag 3](../../../docs/w09t03.html).
+
+| Datei | Workflow | Version | n8n-versionId |
+|---|---|---|---|
+| `AGT-2606_W09T03_Redaktions-Agent_Hauptworkflow_2026-11-21_v26.5.3.json` | Hauptworkflow Redaktions-Agent | v26.5.3, Systemprompt V4.4, 105 Knoten | `c9dba438` |
+| `AGT-2606_W09T03_Redaktions-Agent_Freigabe-Sub_2026-11-21_v02.1.json` | Freigabe abwarten und ablegen | v02.1 mit ausdrücklicher Einheit Sekunden am Wait des Fehlerprotokolls, 55 Knoten | `b35b9792` |
+
+**Bereinigung.** Wie bei den früheren Abgabeständen sind Zugangskennungen (`CREDENTIAL_ID`, auch die Anmeldung der Chat-Seite), die Adresse der Datenbank (`SUPABASE_URL`), die Adresse der n8n-Instanz (`DEINE-N8N-INSTANZ`, auch im Feld der erlaubten Herkunft der Chat-Seite und in der Sperrliste von `Agent-Antwort prüfen`), Workflow-, Tag-, Ordner- und Webhook-Kennungen (`WORKFLOW_ID_…`, `TAG_ID_…`, `FOLDER_ID_PROJEKTORDNER`, `ERROR_WORKFLOW_ID`, `WEBHOOK_ID`) und der Name eines Testkunden (`KUNDE_B`) ersetzt. Neu sind die Platzhalter `WORKFLOW_ID_SUB_FREIGABE` (dieser Freigabe-Workflow) und `WORKFLOW_ID_SUB_QUALITAET` (Werkzeug 6). In Code-Kommentaren und Notizen stehen noch einzelne Verweise auf interne Prüfrunden; sie und die internen Regel-, Fehler- und Entscheidungskennungen des Baus (Regelnummern, Fehlerspeicher-Nummern wie F-241) stehen noch in einzelnen Notizen und Kommentaren, und die Statusnotizen nennen noch den Entwurfsstand vor dem Veröffentlichen. Beides wird mit der Fehlerbehebung bis Mo 23.11.2026 bereinigt. Das Feld `meta` ist leer, es gibt keine Pins. Knoten, Verbindungen und Positionen sind gegenüber dem Export der Instanz unverändert (Blatt-für-Blatt-Vergleich, 0 Abweichungen außer den Ersetzungen). Zum Nachbauen dienen die Live-Exporte und die Anleitung in der [README](../../../README.md).
+
+Bekannte Grenze: Der Knoten `Antwort senden [Chat]` sendet die Antwort und wartet, bis die Chat-Seite sie abholt. War die Seite zu (Handy gesperrt, Lauf 4056) oder lief der Lauf im Editor (Lauf 4047), holt sie niemand ab, und die Ausführung bleibt in n8n im Status „Waiting“ stehen. Einreichung, Freigabe und Ablage sind davon nicht betroffen ([W9 Tag 3, Kapitel 6](../../../docs/w09t03.html)).
+
+Früherer Stand: [Abgabestand W09T02](../W09T02/README.md), geltende Stände unter `workflows/`, alle Versionen in [versionen.md](../../../versionen.md).

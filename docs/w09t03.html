@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#FAFAF8" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#121416" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<title>W09T03 Interface</title>
+<meta content="Tages-Doku W09T03 des Redaktions-Agenten K2: Chat-Seite als Tür zum Agenten, Anmeldung, Sofortantwort, sichtbare Werkzeugaufrufe und Freigabe in einem eigenen Workflow ohne Warten." name="description"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&amp;display=swap" rel="stylesheet"/>
+<link href="assets/doku.css" rel="stylesheet"/>
+</head>
+<body>
+<a class="sprung" href="#inhalt">Zum Inhalt springen</a>
+<div class="huelle">
+<header class="leiste">
+<span>Redaktions-Agent K2 · Woche 8 und 9</span>
+<nav aria-label="Seiten">
+<a href="index.html">Wochen-Doku</a>
+<a href="w08t01.html">W8 Tag 1</a>
+<a href="w08t02.html">W8 Tag 2</a>
+<a href="w08t03.html">W8 Tag 3</a>
+<a href="w08t04.html">W8 Tag 4</a>
+<a href="w08t05.html">W8 Tag 5</a>
+<a href="w09t01.html">W9 Tag 1</a>
+<a href="w09t02.html">W9 Tag 2</a>
+<a aria-current="page" href="w09t03.html">W9 Tag 3</a>
+<a href="w09t04.html">W9 Tag 4</a>
+<a href="charter.html">Projekt-Charter</a>
+<a href="https://github.com/MinkeAutomation/redaktions-agent">Repository</a>
+</nav>
+</header>
+<div class="titelkopf">
+<div>
+<p class="oberzeile"><span aria-hidden="true" class="marke"></span>Tages-Doku W09T03 · Mi 18.11.2026 (Stand 21.11.2026) · Hauptworkflow v26.5.3, veröffentlicht am 21.11.2026</p>
+<h1>Interface: <span class="leise">eine Tür zum</span> Agenten</h1>
+<p class="untertitel">An Tag 3 der Woche 9 bekommt der Redaktions-Agent eine Tür, über die ein Mensch ihn ohne den Workflow-Editor ansprechen kann: die Chat-Seite, die n8n am Chat-Eingang selbst ausliefert, mit Anmeldung. Die Seite antwortet sofort, zeigt die genutzten Werkzeuge und bittet, das Fenster offen zu lassen. Die Freigabe in Telegram läuft danach in einem eigenen Workflow, ohne dass die Chat-Seite darauf wartet. W9 Tag 3 und Tag 4 sind gebündelt bearbeitet und abgegeben.</p>
+</div>
+</div>
+<dl aria-label="Kennzahlen W09T03" class="messleiste">
+<div><dt>Interface</dt><dd>Chat-Seite<small>von n8n ausgeliefert, mit Anmeldung</small></dd></div><div><dt>Antwort</dt><dd>sofort<small>Freigabe läuft danach getrennt</small></dd></div><div><dt>Werkzeuge</dt><dd>sichtbar<small>Name und Status, bis 14 Einträge</small></dd></div><div><dt>Test von außen</dt><dd>bestanden<small>2. Gerät über Mobilfunk, Lauf 4064</small></dd></div>
+</dl>
+<div class="knoepfe">
+<a class="knopf zweit" href="w09t02.html">Vorheriger Tag: W9 Tag 2 <span aria-hidden="true" class="pfeil">←</span></a>
+<a class="knopf" href="w09t04.html">Nächster Tag: W9 Tag 4 <span aria-hidden="true" class="pfeil">→</span></a>
+<a class="knopf zweit" href="index.html">Wochen-Doku <span aria-hidden="true" class="pfeil">→</span></a>
+</div>
+<main id="inhalt">
+<div class="merksatz einminute" id="in-1-minute"><span class="ktag">In 1 Minute</span>
+<ul>
+<li><strong>Entscheidung:</strong> Chat-Seite am vorhandenen Chat-Eingang statt eigener Webseite. Der Eingang ist schon mit allen Testfällen geprüft, die Tür ändert nur den Zugang, nicht den Agenten.</li>
+<li><strong>Schutz:</strong> Anmeldung mit Benutzername und Passwort, fest eingestellter Kunde Ordwin, die Antwort an den Browser enthält nur den Text und die Werkzeugliste.</li>
+<li><strong>Sofortantwort:</strong> Die Chat-Seite antwortet, sobald das Paket eingereicht ist. Die Freigabe in Telegram läuft in einem eigenen Workflow, der ohne Warten gestartet wird.</li>
+<li><strong>Sichtbar:</strong> Welche Werkzeuge der Agent in welcher Reihenfolge aufgerufen hat, mit Status.</li>
+<li><strong>Fehlerfälle:</strong> 7 Fälle am Agenten und an der Chat-Seite gefunden, 6 behoben, 1 als Grenze beschrieben, dazu 5 bekannte Grenzen benannt (Kapitel 5).</li>
+<li><strong>Test von außen:</strong> am 21.11.2026 vom Handy über Mobilfunk bestanden. Ohne Anmeldung weist die Seite ab, mit Anmeldung kam die Antwort mit Werkzeugliste nach 3:27,6 min (Lauf 4064). Grenze: Die Seite muss bis zur Antwort offen und im Vordergrund bleiben (Kapitel 6).</li>
+</ul></div>
+
+<section aria-labelledby="k1-t" class="kapitel" id="k1">
+<div class="kkopf"><div aria-hidden="true" class="knum">01</div><div>
+<p class="kklein">Kapitel 1</p><h2 id="k1-t">Ziele des Tages</h2>
+<p class="klede">Was an diesem Tag zu tun war, in eigener Gliederung.</p>
+</div></div>
+<ol>
+<li>Ein Interface wählen, das zum Use Case passt (Kapitel 2).</li>
+<li>Ein einfaches Interface bauen (Kapitel 3).</li>
+<li>Prüfen, ob jemand anderes den Agenten darüber nutzen kann (Kapitel 4).</li>
+<li>Zusatz: sichtbar machen, welche Werkzeuge der Agent aufruft und wie er entscheidet (Kapitel 3).</li>
+</ol>
+</section>
+
+<section aria-labelledby="k2-t" class="kapitel" id="k2">
+<div class="kkopf"><div aria-hidden="true" class="knum">02</div><div>
+<p class="kklein">Kapitel 2</p><h2 id="k2-t">Welches Interface und warum</h2>
+<p class="klede">Gewählt nach dem Use Case, nicht nach Gestaltungsfreiheit.</p>
+</div></div>
+<div aria-labelledby="t-wahl" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-wahl">Abgewogene Wege</caption>
+<thead><tr><th scope="col">Weg</th><th scope="col">Urteil</th><th scope="col">Grund</th></tr></thead>
+<tbody>
+<tr><th data-label="Weg" scope="row">Chat-Seite am Chat-Eingang</th><td data-label="Urteil">gewählt</td><td data-label="Grund">Der Eingang ist mit der Testtabelle aus <a href="w09t02.html">W9 Tag 2</a> geprüft; die Seite liefert n8n selbst aus, Anmeldung ist eingebaut, kein weiterer Dienst.</td></tr>
+<tr><th data-label="Weg" scope="row">Eigene Webseite mit Webhook</th><td data-label="Urteil">nicht gewählt</td><td data-label="Grund">2. Eingang, der neu gegen alle Fälle getestet und gegen Missbrauch abgesichert werden müsste, dazu ein Hosting-Dienst.</td></tr>
+<tr><th data-label="Weg" scope="row">Bot in einem Messenger</th><td data-label="Urteil">nicht gewählt</td><td data-label="Grund">Telegram ist schon der Kanal der Freigabe; Auftrag und Freigabe im selben Kanal würden die Rollen vermischen.</td></tr>
+<tr><th data-label="Weg" scope="row">Leitstand-Seite</th><td data-label="Urteil">nur Anzeige</td><td data-label="Grund">zeigt Beiträge und Läufe, man kann den Agenten darüber nicht ansprechen; als Tür ungeeignet.</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section aria-labelledby="k3-t" class="kapitel" id="k3">
+<div class="kkopf"><div aria-hidden="true" class="knum">03</div><div>
+<p class="kklein">Kapitel 3</p><h2 id="k3-t">Was gebaut ist</h2>
+<p class="klede">Nur die Tür ist neu, der geprüfte Agent dahinter bleibt.</p>
+</div></div>
+<ul>
+<li><strong>Zugang:</strong> Die Chat-Seite ist öffentlich erreichbar, verlangt aber Benutzername und Passwort. Der Kunde steht fest auf Ordwin, das Modell kann ihn nicht wählen.</li>
+<li><strong>Begrüßung:</strong> Die Seite nennt sich als KI-System und bittet, das Fenster offen zu lassen, weil ein Beitrag 2 bis 5 Minuten braucht.</li>
+<li><strong>Werkzeuge sichtbar:</strong> Ein eigener Knoten am Ende baut die Zeile „Werkzeuge genutzt“: laufende Nummer, lesbarer Name, Status, keine Eingaben und keine Rohergebnisse. Er zeigt so viele Einträge, wie der Agent Werkzeuge aufrufen darf, im veröffentlichten Stand v26.5.3 sind das 14. Lokal mit 7 Fällen und einem Gegenfall geprüft, am 21.11.2026 auf der laufenden Chat-Seite gesehen: „Werkzeuge genutzt: 1. Markenwissen abfragen (ok), 2. Text schreiben (ok), 3. Qualität prüfen (ok), 4. Bilder gestalten (ok), 5. Zur Freigabe einreichen (ok)“ (Lauf 4064, Foto unten). Die Entscheidung des Agenten zeigt die Antwort über den Status (eingereicht oder Rückfrage), den Hinweis an den Menschen und die Note.</li>
+<li><strong>Sofortantwort und Freigabe getrennt:</strong> Wartet derselbe Workflow auf den Klick in Telegram, hängt die Chat-Seite bis zu 24 Stunden. Deshalb startet der Hauptworkflow die Freigabe als eigenen Workflow ohne Warten und antwortet sofort. Gemessen an einer Testkopie: mit offenem Fenster (Läufe 3974, 3981) und mit geschlossenem Fenster (Läufe 3938, 3954) läuft die Freigabe weiter. Ablehnen mit Grund ist in den Läufen 4000 und 4017 belegt.</li>
+</ul>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;align-items:start">
+<figure id="foto-chat-auftrag"><a href="bilder/w09t03-chatseite-auftrag.png"><img loading="lazy" alt="Chat-Seite Redaktions-Agent am Handy über Mobilfunk nach der Anmeldung: Begrüßung mit KI-Hinweis und der Bitte, das Fenster 2 bis 5 Minuten offen zu lassen, darunter der Auftrag und die Tippanzeige." src="bilder/w09t03-chatseite-auftrag.png" width="600" height="1229"/></a><figcaption>Chat-Seite nach der Anmeldung, Handy über Mobilfunk, 21.11.2026 (1. Versuch, Lauf 4056): Begrüßung, darüber angeschnitten das Ende des KI-Hinweises, Bitte um offenes Fenster, Auftrag gesendet. Adresszeile geschwärzt.</figcaption></figure>
+<figure id="foto-chat-antwort"><a href="bilder/w09t03-chatseite-antwort-werkzeuge.png"><img loading="lazy" alt="Antwort auf der Chat-Seite: Status eingereicht, Hinweis an den Menschen, Qualitätsprüfung Note 4,6, Beitragskennung, Die Freigabe wird vorbereitet, Werkzeuge genutzt mit 5 Einträgen jeweils ok." src="bilder/w09t03-chatseite-antwort-werkzeuge.png" width="600" height="1304"/></a><figcaption>Antwort aus Lauf 4064 mit der Zeile „Werkzeuge genutzt“ (5 Werkzeuge, alle „ok“) und Note 4,6. Oben die Telegram-Mitteilung der Freigabe, geschwärzt.</figcaption></figure>
+</div>
+<figure id="foto-hauptworkflow"><a href="bilder/w09t04-hauptworkflow-v26-5-3.png"><img loading="lazy" alt="n8n-Editor mit dem Hauptworkflow v26.5.3: oben Kopf mit Workflow-Beschreibung, Setup-Checkliste und Hinweisen, darunter die Rahmen 01 bis 12 in Laufrichtung von Eingang über KI, Verarbeitung, Freigabe und Ablage bis Antwort und Laufprotokoll." src="bilder/w09t04-hauptworkflow-v26-5-3.png" width="1920" height="1080"/></a><figcaption>Hauptworkflow v26.5.3 im Editor, Rahmen 01 bis 12 in Laufrichtung (Stand der Anordnung 21.11.2026, vor dem Veröffentlichen um 14:03 aufgenommen; veröffentlicht wurde derselbe Stand, die Notiz im Kopf nennt deshalb noch „Entwurf“). Sitzungskennung unten links geschwärzt.</figcaption></figure>
+<figure id="plan"><a href="plan/plan-w09t03-v26.png"><img loading="lazy" alt="Datenflussbild des Redaktions-Agenten, Endstand 20.11.2026 mit Hauptworkflow v26.5.2 und Systemprompt v4.4: Auftraggeber auf der Chat-Seite mit Anmeldung, Sofortantwort mit Werkzeugliste zurück (D19), S1 Eingang prüfen, C KI-Kennzeichnung, S2 Redaktions-Agent mit 6 Werkzeugen, Supabase mit Laufzeile vor dem Freigabe-Start, OpenRouter, Pixabay, Cloudflare Workers AI, Gotenberg, S8 Beitrag prüfen, Freigabe als eigener Workflow ohne Warten, Ablage in Nextcloud nur nach Freigabe; Pfeile D1 bis D21, rechts die Tabelle der 23 Datenflüsse." height="1986" src="bilder/w09t03-plan-v26.png" width="2592"/></a><figcaption><strong>Plan des Endstands von W9 Tag 3 nach der Fehlerbehebung (Hauptworkflow v26.5.2, Systemprompt v4.4).</strong> Neu gegenüber W9 Tag 2 sind die Chat-Seite mit Anmeldung als Eingang, die Sofortantwort mit der Werkzeugliste (D19) und die Freigabe als eigener Workflow, der ohne Warten startet. Werkzeug 6 (D20, D21) gehört zu <a href="w09t04.html">W9 Tag 4</a>. Der veröffentlichte Stand v26.5.3 vom 21.11.2026 ändert Anordnung, Rahmennummern und Setup-Zeilen und entfernt einen abgekoppelten Block mit der alten Freigabe; die Datenflüsse des Plans bleiben gleich. <a href="plan/plan-w09t03-v26.png">Volle Auflösung</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/plan/plan-w09t03-v26.excalidraw">Excalidraw-Datei</a>.</figcaption></figure>
+</section>
+
+<section aria-labelledby="k4-t" class="kapitel" id="k4">
+<div class="kkopf"><div aria-hidden="true" class="knum">04</div><div>
+<p class="kklein">Kapitel 4</p><h2 id="k4-t">Test von außen</h2>
+<p class="klede">Ein eigener Test von einem 2. Gerät, kein Test durch eine andere Person.</p>
+</div></div>
+<p>Es stand keine andere Person für den Test bereit. Deshalb habe ich den Zugang am 21.11.2026 selbst von einem 2. Gerät geprüft, einem Handy über Mobilfunk (5G), also nicht aus dem eigenen Netz: nur die Chat-Seite, nur der fest eingestellte Kunde, Anmeldung wie für jeden anderen Nutzer.</p>
+<div aria-labelledby="t-test" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-test">Prüfpunkte des Tests von außen</caption>
+<thead><tr><th scope="col">Prüfpunkt</th><th scope="col">Erwartung</th><th scope="col">Ergebnis</th></tr></thead>
+<tbody>
+<tr><th data-label="Prüfpunkt" scope="row">Aufruf ohne Anmeldung</th><td data-label="Erwartung">abgewiesen</td><td data-label="Ergebnis">bestanden: Die Seite zeigt nur „Authorization is required!“ (Foto unten).</td></tr>
+<tr><th data-label="Prüfpunkt" scope="row">Anmeldung und Auftrag</th><td data-label="Erwartung">Sofortantwort mit KI-Hinweis und Werkzeugliste</td><td data-label="Ergebnis">bestanden im 2. Versuch, Lauf 4064: Begrüßung mit KI-Hinweis, Antwort mit Note 4,6 und Zeile „Werkzeuge genutzt“ (5 Werkzeuge), Lauf 3:27,6 min (Fotos in Kapitel 3). Im 1. Versuch (Lauf 4056) kam auf der Seite keine Antwort an, weil das Handy während der Wartezeit gesperrt oder die App gewechselt war. Der Knoten „Antwort senden“ hat die Antwort gesendet und wartet, bis die Chat-Seite sie abholt; niemand holte sie ab, deshalb steht die Ausführung in n8n im Status „Waiting“. Einreichung, Freigabe und Ablage waren davon nicht betroffen (Kapitel 6).</td></tr>
+<tr><th data-label="Prüfpunkt" scope="row">Freigabe danach</th><td data-label="Erwartung">Vorschau kommt in Telegram, unabhängig vom Fenster</td><td data-label="Ergebnis">bestanden: Die Freigabe-Nachricht kam in Telegram, nach „Freigeben“ lag der Beitrag in Nextcloud (Läufe 4056 und 4064, Beitragsstatus „fertig“, Fotos in <a href="w09t04.html#k5">W9 Tag 4, Kapitel 5</a>). Auch beim 1. Versuch ohne Antwort auf der Seite lief die Freigabe weiter. Der Freigabe-Workflow lief dazu als eigener Lauf: 4062 zu Lauf 4056 und 4070 zu Lauf 4064.</td></tr>
+</tbody>
+</table>
+</div>
+<p>Die Chat-Seite antwortet nur, wenn der Hauptworkflow veröffentlicht ist. Vor der 1. Veröffentlichung liefen am 19. und 20.11.2026 unabhängige Prüfrunden, am 20.11.2026 3 Runden über den ganzen Hauptworkflow. Die gefundenen Fehler stehen in Kapitel 5, die letzte Runde fand keinen mittleren oder schweren Fehler mehr. Veröffentlicht ist der Hauptworkflow seit dem 21.11.2026 um 14:03, zusammen mit dem Freigabe-Workflow und dem Text-Werkzeug. Der Test von außen lief danach am veröffentlichten Eingang.</p>
+<figure id="foto-ohne-anmeldung"><a href="bilder/w09t03-chatseite-ohne-anmeldung.png"><img loading="lazy" alt="Handy über Mobilfunk: Aufruf der Chat-Seite ohne Anmeldung, die Seite zeigt nur den Text Authorization is required!" src="bilder/w09t03-chatseite-ohne-anmeldung.png" width="660" height="368"/></a><figcaption>Aufruf ohne Anmeldung, Handy über Mobilfunk, 21.11.2026: abgewiesen. Adresszeile geschwärzt.</figcaption></figure>
+</section>
+
+<section aria-labelledby="k5-t" class="kapitel" id="k5">
+<div class="kkopf"><div aria-hidden="true" class="knum">05</div><div>
+<p class="kklein">Kapitel 5</p><h2 id="k5-t">Fehlerfälle und Fixes</h2>
+<p class="klede">Was am Agenten und an der Chat-Seite schiefging, warum, und wie es geprüft ist.</p>
+</div></div>
+<p>Vor der 1. Veröffentlichung habe ich den Hauptworkflow nicht nur am geänderten Teil prüfen lassen, sondern als Ganzes. Jede Prüfrunde lief unabhängig vom Bau und hatte den Auftrag, Fehler zu finden. Die Fehler unten stammen aus diesen Runden vom 19. und 20.11.2026. Getestet habe ich die Fixes am Code jedes Knotens mit festen Proben, jeweils alter Stand gegen neuen Stand. Volle Läufe über die veröffentlichte Chat-Seite folgten am 21.11.2026 (Kapitel 4). Was den Freigabe-Workflow, die Rückmeldungen der Datenbank und das Text-Werkzeug betrifft, steht in <a href="w09t04.html#k8">W9 Tag 4, Kapitel 8</a>.</p>
+<div aria-labelledby="t-fehler" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-fehler">Fehlerfälle W9 Tag 3 (Agent, Aufrufgrenze, Chat-Seite)</caption>
+<thead><tr><th scope="col">Nr</th><th scope="col">Was schiefging</th><th scope="col">Ursache</th><th scope="col">Fix</th><th scope="col">Wie getestet</th><th scope="col">Stand</th></tr></thead>
+<tbody>
+<tr><th data-label="Nr" scope="row">1</th><td data-label="Was schiefging">Die Grenze von 12 Werkzeugaufrufen war zu knapp. Mit Qualitätsprüfung, 1 Nachbesserung und der erneuten Prüfung braucht ein Auftrag 13 bis 14 Aufrufe, der Agent wäre mitten in der Schleife abgewiesen worden.</td><td data-label="Ursache">Die Grenze stammte aus der Zeit vor Werkzeug 6.</td><td data-label="Fix">Grenze 14 im Systemprompt, in der Ausgabeprüfung und in der Werkzeuganzeige, Iterationsgrenze des Agenten von 14 auf 16.</td><td data-label="Wie getestet">36 Proben (vorher 25 von 36 grün): 14 regelgerechte Aufrufe laufen ohne Fund durch, 15 werden abgewiesen.</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">2</th><td data-label="Was schiefging">Die Grenze von 14 Aufrufen wirkt erst, wenn der Agent fertig ist. Ein 15. Aufruf, zum Beispiel eine 2. bezahlte Recherche, läuft also noch, bevor die Antwort verworfen wird.</td><td data-label="Ursache">Die Iterationsgrenze des Agenten zählt Modellrunden, nicht Werkzeugaufrufe. Gemessen an einer verkleinerten Messkopie: In 1 Runde rief der Agent 5 Werkzeuge gleichzeitig auf (Lauf 4043), bei einer Grenze von 3 Runden lief der letzte Aufruf noch (Lauf 4042).</td><td data-label="Fix">Eine harte Grenze vor jedem Aufruf gibt es im Agentenknoten nicht. Die Iterationsgrenze bleibt 16, die Prüfung bei 14 ist in Notizen und Code jetzt ehrlich als nachträgliche Ausgabeprüfung beschrieben.</td><td data-label="Wie getestet">2 Messläufe an der Messkopie mit erfundenen Daten.</td><td data-label="Stand">bekannte Grenze, beschrieben</td></tr>
+<tr><th data-label="Nr" scope="row">3</th><td data-label="Was schiefging">Der Agent schrieb sich selbst eine Note in die Antwort, zum Beispiel „Bewertung 4,4 von 5 Qualitätspunkten“, ohne dass Werkzeug 6 gelaufen war. Der Filter ließ das durch.</td><td data-label="Ursache">Der Notenfilter war am 19.11.2026 gegen Fehlalarme enger gefasst worden und erkannte danach Ziffernbewertungen mit „Bewertung“ und „Score“ nicht mehr.</td><td data-label="Fix">Der Filter erkennt Ziffernbewertungen wieder und entfernt nur den Notenteil eines Satzes, echter Inhalt wie „n8n“ bleibt stehen. Gleicher Filter in der Ausgabeprüfung und in der Freigabe-Nachricht, zeichengleich.</td><td data-label="Wie getestet">38 Notenformen: 29 erkannt (vorher 21). 22 Inhaltsproben: 18 unverändert wie vorher, keine Probe schlechter.</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">4</th><td data-label="Was schiefging">Der neue Filter hielt Zahlen für Noten: „Bewertung 4 von 5.000 Euro“ oder „Score 1.200 Zeichen“ wurden als Note gelesen und aus dem Text genommen.</td><td data-label="Ursache">Hinter der 5 wurde nicht geprüft, ob ein Dezimal- oder Tausendertrenner folgt.</td><td data-label="Fix">Hinter der 5 darf kein Trenner mit weiteren Ziffern folgen. „4 von 5“, „4 von 5,0“ und „5,00“ bleiben Noten, „5.000“ und „5,5“ nicht.</td><td data-label="Wie getestet">65 bisherige Proben unverändert, 23 neue Notenfälle ohne Abweichung.</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">5</th><td data-label="Was schiefging">Ein erkannter Schlüssel konnte im Laufprotokoll landen. Probe mit einem erfundenen Testschlüssel: Die Ausgabeprüfung verwarf die Antwort, das Protokoll speicherte den Schlüssel trotzdem in 2 Feldern.</td><td data-label="Ursache">Das Protokoll übernahm Freitextfelder des Agenten auch dann, wenn die Antwort verworfen war.</td><td data-label="Fix">Bei verworfener Antwort speichert das Protokoll nur feste Fehlercodes. Freitext wird vor dem Speichern immer geschwärzt.</td><td data-label="Wie getestet">Probe mit erfundenem Schlüssel und Zugangskennung: nichts davon im Protokoll, der Fehlercode bleibt. Teil von 81 Proben, 0 rot.</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">6</th><td data-label="Was schiefging">Die Chat-Seite konnte ohne Antwort bleiben. Fehlt der eingereichte Beitrag beim Nachlesen, antwortet die Datenbank erfolgreich mit einer leeren Liste. n8n gibt dann nichts weiter, weder an die Freigabe noch an den Fehlerweg. Außerdem galt eine gekürzte Beitragskennung mit 8 Zeichen als passend zur vollen Kennung.</td><td data-label="Ursache">Die Abfrage prüfte nicht, ob genau 1 Beitrag zurückkam, und der Vergleich der Kennung war ein Teilvergleich.</td><td data-label="Fix">Die Kennung muss vollständig und zeichengleich sein. Die Abfrage verlangt genau 1 Beitrag, kein oder mehrere Treffer laufen in den Fehlerweg mit Meldung und Chat-Antwort.</td><td data-label="Wie getestet">Proben mit voller, gekürzter, fremder und anders geschriebener Kennung; nur die volle passende wird angenommen. In der nächsten Prüfrunde bestätigt.</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">7</th><td data-label="Was schiefging">Die Sofortantwort sagte „Der Beitrag liegt zur Freigabe bei Patrick in Telegram“, obwohl zu diesem Zeitpunkt nur der Start des Freigabe-Workflows belegt ist.</td><td data-label="Ursache">Der Freigabe-Workflow startet ohne Warten, der Hauptworkflow bekommt keine Bestätigung der Zustellung.</td><td data-label="Fix">Die Sofortantwort sagt jetzt „Die Freigabe wird vorbereitet.“ Scheitert der Freigabe-Workflow danach, meldet er das selbst in Telegram.</td><td data-label="Wie getestet">Wortlaut im Export geprüft, in der nächsten Prüfrunde bestätigt.</td><td data-label="Stand">behoben</td></tr>
+</tbody>
+</table>
+</div>
+<h3>Bekannte Grenzen</h3>
+<ul>
+<li>Ein Thema, das selbst eine Bewertung ist, sieht für den Filter wie eine Note aus. Beispiel: Ein Auftrag über die „Google-Bewertung 5 von 5 Sternen“. Fragt der Agent dazu zurück, ohne Werkzeug 6 aufzurufen, wertet die Ausgabeprüfung das als Note ohne Prüfung.</li>
+<li>Notenangaben ohne Schlüsselwort wie „Der Text erhielt 4 von 5 Punkten.“ und Noten in Worten erkennt der Filter nicht. Darunter steht dann die Zeile des Workflows „Achtung, Endtext ungeprüft“, und die gilt.</li>
+<li>Schreibt der Agent seinen Hinweis in 2 Zeilen und beginnt die 2. Zeile mit einer Ziffernnote, kann der ganze Hinweis wegfallen. Der Systemprompt verlangt 1 Satz, der Fall ist selten.</li>
+<li>Die Grenze von 14 Werkzeugaufrufen ist eine nachträgliche Prüfung (Fall 2).</li>
+<li>Die Chat-Seite bekommt ihre Antwort nur, solange sie offen und aktiv ist. Der letzte Knoten „Antwort senden“ sendet die Antwort und wartet, bis die Chat-Seite sie abholt. War die Seite zu (Handy gesperrt oder App gewechselt, Lauf 4056) oder lief der Lauf im Editor ohne Chat-Seite (Lauf 4047), holt sie niemand ab, und die Ausführung bleibt in n8n im Status „Waiting“ stehen. Einreichung, Freigabe und Ablage sind davon nicht betroffen (Kapitel 4).</li>
+</ul>
+</section>
+
+<section aria-labelledby="k6-t" class="kapitel" id="k6">
+<div class="kkopf"><div aria-hidden="true" class="knum">06</div><div>
+<p class="kklein">Kapitel 6</p><h2 id="k6-t">Bekannte Einschränkungen</h2>
+<p class="klede">Was beim Test von außen am 21.11.2026 aufgefallen ist und bei der Nutzung gilt.</p>
+</div></div>
+<ul>
+<li><strong>Seite bis zur Antwort offen und aktiv lassen.</strong> Die Antwort braucht rund 2 bis 5 Minuten (gemessen 1:59,3 bis 3:45,5 min). Wird das Handy in dieser Zeit gesperrt oder die App gewechselt, trennt es die Verbindung: Die Antwort erscheint auf der Seite nicht. Der Knoten „Antwort senden“ wartet dann weiter darauf, dass die Seite die Antwort abholt, und die Ausführung bleibt in n8n im Status „Waiting“ stehen (1. Versuch, Lauf 4056; ebenso der Lauf 4047 im Editor). Einreichung, Freigabe und Ablage waren davon nicht betroffen. Mit Bildschirm an und Browser im Vordergrund kam sie an (Lauf 4064). Der Hinweis in der Begrüßung bleibt, die Demo läuft am PC.</li>
+<li>Einfache Zeilenumbrüche der Antwort zeigt die Seite als Leerzeichen: „Status: eingereicht“ und der folgende Hinweis stehen in einer Zeile (Foto in Kapitel 3). Absätze bleiben erhalten.</li>
+<li>Gemessen ist die Antwortzeit von außen an 1 Lauf mit Antwort (4064, 3:27,6 min).</li>
+</ul>
+</section>
+</main>
+<footer class="fuss">
+<span>Patrick Minkler · Redaktions-Agent K2 · Projekt 2</span>
+<span>Stand 21.11.2026 · W9 Tag 3 und Tag 4 gebündelt</span>
+</footer>
+</div>
+</body>
+</html>

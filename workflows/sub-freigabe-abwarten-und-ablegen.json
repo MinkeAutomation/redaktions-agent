@@ -1,0 +1,2000 @@
+{
+  "name": "SUB P2 Freigabe abwarten und ablegen",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "post_id"
+            },
+            {
+              "name": "topic"
+            },
+            {
+              "name": "kuerzel"
+            },
+            {
+              "name": "trace_id"
+            },
+            {
+              "name": "chat_id"
+            },
+            {
+              "name": "nutzer_id"
+            },
+            {
+              "name": "nachricht"
+            },
+            {
+              "name": "pfade",
+              "type": "any"
+            },
+            {
+              "name": "bilder",
+              "type": "any"
+            },
+            {
+              "name": "caption_instagram"
+            },
+            {
+              "name": "linkedin_post"
+            },
+            {
+              "name": "hashtags",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      "id": "d6a0eb5a-6a50-44ef-b4ed-e7eb5d3ba8ed",
+      "name": "Auftrag empfangen [Execute Workflow Trigger]",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        112,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.bilder === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "04a3bf02-8a33-4f27-a706-9a6980d0b6bd",
+      "name": "Bilder vorhanden? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1072,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f1",
+              "name": "bilder",
+              "value": "={{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.bilder }}",
+              "type": "boolean"
+            },
+            {
+              "id": "f2",
+              "name": "pfade",
+              "value": "={{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.pfade }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fe19b7d7-81d0-4317-bd04-285b39dcaa08",
+      "name": "Freigabefelder erhalten [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1072,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://SUPABASE_URL/storage/v1/object/sign/k1-medien",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ expiresIn: 86400, paths: $json.pfade }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "87ff9749-015b-4855-aecc-fb486c74b09a",
+      "name": "Vorschau-Adressen holen [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1392,
+        256
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API | KI-AGT-2606"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.chat_id }}",
+        "text": "={{ (function () { const v = $('Auftrag empfangen [Execute Workflow Trigger]').first().json; const base = 'https://SUPABASE_URL/storage/v1'; const l = (($json.body) || []).filter(x => x && x.signedURL && x.path); const nr = x => { const m = String(x.path).split('/').pop().match(/^folie-(\\d+)\\.png$/); return m ? parseInt(m[1], 10) : 1000; }; l.sort((a, b) => nr(a) - nr(b)); const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;'); const zeilen = l.map(x => { const n = nr(x); return '<a href=\"' + esc(base + x.signedURL) + '\">' + (n === 1000 ? 'Einzelbild' : 'Folie ' + n) + '</a>'; }); return 'Vorschau zum Beitrag ' + esc(v.topic) + ' (Links 24 Stunden gültig):\\n' + zeilen.join('\\n'); })() }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "506d9f9f-ea4e-4a23-81f0-5cd08afa7745",
+      "name": "Vorschau senden [Telegram]",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1712,
+        256
+      ],
+      "webhookId": "WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Telegram API | Content-Generator"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Warum ein Element je Bild: der Ablage-Sub bekommt jedes Bild als eigene Datei. Soll gegen Ist: jeder Pfad braucht eine signierte Adresse, sonst Fehler statt einer unvollständigen Ablage.\nconst v = $('Auftrag empfangen [Execute Workflow Trigger]').first().json;\nconst base = 'https://SUPABASE_URL/storage/v1';\nconst antwort = $('Vorschau-Adressen holen [HTTP Request]').first().json;\nconst liste = Array.isArray(antwort.body) ? antwort.body.filter(x => x && x.signedURL && x.path) : [];\nconst soll = v.pfade.slice().sort();\nif (liste.length !== soll.length || liste.map(x => x.path).sort().some((p, i) => p !== soll[i])) throw new Error('Freigabe: Nicht für jedes Bild gibt es eine Vorschau-Adresse.');\nconst nr = x => { const m = String(x.path).split('/').pop().match(/^folie-(\\d+)\\.png$/); return m ? parseInt(m[1], 10) : 1000; };\nliste.sort((a, b) => nr(a) - nr(b) || String(a.path).localeCompare(String(b.path)));\nreturn liste.map(x => ({ json: { url: base + x.signedURL, file_name: String(x.path).split('/').pop(), path: x.path } }));\n"
+      },
+      "id": "78cbd5ee-917e-4b0d-acbc-2d8d4a8be04d",
+      "name": "Bilder einzeln [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2032,
+        256
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "7144bc0a-e84f-4ed0-ad22-3b4ad7157d88",
+      "name": "Bild laden [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2352,
+        256
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Alle geladenen Bilder bleiben im Lauf gespeichert (Bild laden); hier läuft nur noch 1 Element weiter, damit die Freigabe 1 Mal fragt.\n// Teilausfall wird an einer Stelle gemeldet: Bild laden meldet Fehler nicht mehr über einen eigenen Fehlerausgang, sondern reicht fehlgeschlagene Bilder als Element mit Feld error hierher. So wird ein Teilausfall an genau 1 Stelle gemeldet.\nconst alleEl = $input.all();\nconst defekt = alleEl.map((x, i) => ({ i, fehler: (x.json && x.json.error) ? String(x.json.error.message || x.json.error).slice(0, 80) : '', ohne: !(x.binary && x.binary.data) })).filter(x => x.fehler || x.ohne);\nif (defekt.length) throw new Error('Freigabe: ' + defekt.length + ' von ' + alleEl.length + ' Bildern nicht geladen (' + (defekt[0].fehler || 'ohne Daten') + ').');\nconst soll = $('Bilder einzeln [Code]').all().length;\nconst ist = $input.all().filter(i => i.binary && i.binary.data).length;\nif (ist !== soll) throw new Error('Freigabe: ' + ist + ' von ' + soll + ' Bildern geladen.');\nconst SIG = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);\nconst CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); t[n] = c >>> 0; } return t; })();\nconst crc32 = b => { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = CRC[(c ^ b[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };\nconst alle = $input.all();\nconst pfade = $('Bilder einzeln [Code]').all().map(x => String(x.json.path || '')); // kuerzel/paket_id/datei\nfor (let i = 0; i < alle.length; i++) {\n  const nr = 'Bild ' + (i + 1);\n  if (!alle[i].binary || !alle[i].binary.data) throw new Error('Freigabe: ' + nr + ' hat keine Binärdaten.');\n  const b = await this.helpers.getBinaryDataBuffer(i, 'data');\n  if (b.length < 33 || !b.subarray(0, 8).equals(SIG)) throw new Error('Freigabe: ' + nr + ' ist kein PNG.');\n  let o = 8, letzter = '';\n  const t = {};\n  while (o + 12 <= b.length) {\n    const len = b.readUInt32BE(o); const typ = b.subarray(o + 4, o + 8).toString('latin1');\n    if (o + 12 + len > b.length) throw new Error('Freigabe: ' + nr + ' ist abgeschnitten.');\n    if (crc32(b.subarray(o + 4, o + 8 + len)) !== b.readUInt32BE(o + 8 + len)) throw new Error('Freigabe: ' + nr + ' hat eine beschädigte Prüfsumme.');\n    if (typ === 'tEXt') { const d = b.subarray(o + 8, o + 8 + len); const z = d.indexOf(0); if (z > 0) t[d.subarray(0, z).toString('latin1')] = d.subarray(z + 1).toString('latin1'); }\n    letzter = typ; o += 12 + len;\n  }\n  if (letzter !== 'IEND') throw new Error('Freigabe: ' + nr + ' endet nicht mit IEND.');\n  const datei = pfade[i].split('/').pop(), paketId = pfade[i].split('/')[1] || '';\n  const fremdOk = t.ki_fremdfoto === 'true' && t.ki_bildquelle === 'pixabay' && t.ki_erzeugt === undefined && (datei === 'einzelbild.png' || datei === 'folie-01.png');\n  if (t.ki_bildquelle === 'pixabay' && (datei === 'einzelbild.png' || datei === 'folie-01.png') && !fremdOk) throw new Error('Freigabe: ' + nr + ' ist ein Pixabay-Bild mit KI-Marker.');\n  if (t.ki_erzeugt !== 'true' && !fremdOk) throw new Error('Freigabe: ' + nr + ' trägt keinen KI-Marker.');\n  if (datei !== 'einzelbild.png' && datei !== 'folie-01.png' && t.ki_bildquelle !== undefined) throw new Error('Freigabe: ' + nr + ' trägt eine Bildquelle, obwohl sie kein Foto enthält.');\n  if (!paketId || t.ki_paket_id !== paketId) throw new Error('Freigabe: ' + nr + ' trägt eine fremde Paket-ID.');\n}\nreturn [{ json: { bilder_geladen: ist } }];"
+      },
+      "id": "74339ff1-d7aa-4dc6-9450-922246a4d3ad",
+      "name": "Bilder zusammenfassen [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2672,
+        256
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.chat_id }}",
+        "text": "={{ (() => { const P = $('Auftrag empfangen [Execute Workflow Trigger]').first().json; const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); const MAX = 4096; const kopf = 'Instagram-Text:\\n\\n'; const fuss = '\\n\\n' + (Array.isArray(P.hashtags) ? P.hashtags.join(' ') : ''); const cap = String(P.caption_instagram || ''); const voll = esc(kopf + cap + fuss); if (voll.length <= MAX) return voll; const hinweis = '\\n(für Telegram gekürzt)'; const frei = MAX - esc(kopf + fuss + hinweis).length; const z = Array.from(cap); let lo = 0, hi = z.length; while (lo < hi) { const m = Math.ceil((lo + hi) / 2); if (esc(z.slice(0, m).join('') + '…').length <= frei) lo = m; else hi = m - 1; } let t = z.slice(0, lo).join(''); const g = t.search(/\\s\\S*$/); if (g > 0 && g > t.length - 120) t = t.slice(0, g); return esc(kopf + t.trimEnd() + '…' + hinweis + fuss); })() }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "3843186a-06b1-4bca-af88-2fc0f64428ca",
+      "name": "Instagram-Text senden [Telegram]",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2672,
+        416
+      ],
+      "webhookId": "WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Telegram API | Content-Generator"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.chat_id }}",
+        "file": "={{ ($('Bilder einzeln [Code]').all().find(i => i.json.file_name === 'einzelbild.png') || { json: {} }).json.url }}",
+        "additionalFields": {
+          "caption": "={{ (() => { const P = $('Auftrag empfangen [Execute Workflow Trigger]').first().json; const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); const MAX = 1024; const kopf = 'LinkedIn-Post mit Einzelbild:\\n\\n'; const post = String(P.linkedin_post || ''); const voll = esc(kopf + post); if (voll.length <= MAX) return voll; const hinweis = '\\n(für Telegram gekürzt)'; const frei = MAX - esc(kopf + hinweis).length; const z = Array.from(post); let lo = 0, hi = z.length; while (lo < hi) { const m = Math.ceil((lo + hi) / 2); if (esc(z.slice(0, m).join('') + '…').length <= frei) lo = m; else hi = m - 1; } let t = z.slice(0, lo).join(''); const g = t.search(/\\s\\S*$/); if (g > 0 && g > t.length - 120) t = t.slice(0, g); return esc(kopf + t.trimEnd() + '…' + hinweis); })() }}",
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "6b84141a-d8fd-41d3-afbb-17aec8a8f0f4",
+      "name": "LinkedIn-Post senden [Telegram]",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2992,
+        416
+      ],
+      "webhookId": "WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Telegram API | Content-Generator"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Zweck: die Eingabe des Hauptworkflows pruefen, bevor irgendetwas gesendet wird (R92). Eine fehlerhafte Eingabe geht ueber den eigenen Meldeweg, nicht still verloren.\n// Warum Typpruefung hier: pfade, bilder und hashtags sind am Trigger als beliebiger Typ gefuehrt, damit ein Typfehler nicht still am Trigger endet, sondern hier gemeldet wird.\nconst e = $input.first().json;\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;\nconst f = [];\nconst text = k => typeof e[k] === 'string' && e[k].trim() !== '';\nif (!UUID.test(String(e.post_id || ''))) f.push('post_id ist keine gültige Kennung');\nfor (const k of ['kuerzel', 'trace_id', 'chat_id', 'nutzer_id', 'nachricht']) if (!text(k)) f.push(k + ' fehlt');\nif (!Array.isArray(e.pfade) || e.pfade.some(x => typeof x !== 'string' || x === '')) f.push('pfade ist keine Liste von Pfaden');\nif (typeof e.bilder !== 'boolean') f.push('bilder ist kein Ja-Nein-Wert');\nelse if (Array.isArray(e.pfade) && e.bilder !== (e.pfade.length > 0)) f.push('bilder passt nicht zu pfade');\nif (!Array.isArray(e.hashtags)) f.push('hashtags ist keine Liste');\nreturn [{ json: { gueltig: f.length === 0, grund: f.join('; ').slice(0, 300), chat_id: text('chat_id') ? e.chat_id : '', trace_id: String(e.trace_id || ''), post_id: String(e.post_id || '') } }];\n"
+      },
+      "id": "f41d73e2-5cb8-412f-bfae-3548772f4d98",
+      "name": "Eingabe prüfen [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "g1",
+              "leftValue": "={{ $json.gueltig === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e6ef61d3-1bad-4e94-82ff-a691f28fd667",
+      "name": "Eingabe gültig? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        752,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Eingabe prüfen [Code]').first().json.chat_id }}",
+        "text": "={{ 'Redaktions-Agent: Der Freigabe-Sub hat die Eingabe abgewiesen (Hauptlauf ' + $('Eingabe prüfen [Code]').first().json.trace_id + ', Sub-Lauf ' + $execution.id + '). Grund: ' + String($('Eingabe prüfen [Code]').first().json.grund).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '. Es wurde nichts gesendet. Bitte den Lauf ansehen.' }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "337d5c37-f2ea-491b-b358-108515eda362",
+      "name": "Eingabe ungültig melden [Telegram]",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        752,
+        640
+      ],
+      "webhookId": "WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Telegram API | Content-Generator"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "errorMessage": "={{ 'Freigabe-Sub: ungültige Eingabe (Hauptlauf ' + $('Eingabe prüfen [Code]').first().json.trace_id + '): ' + $('Eingabe prüfen [Code]').first().json.grund }}"
+      },
+      "id": "5868322d-6303-48db-80eb-7447cd7a85bd",
+      "name": "Eingabe ungültig [Stop and Error]",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.chat_id }}",
+        "message": "={{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.nachricht }}",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "approveLabel": "✅ Freigeben",
+            "disapproveLabel": "❌ Ablehnen"
+          }
+        },
+        "chatApproval": true,
+        "approverIds": "={{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.nutzer_id }}",
+        "options": {
+          "limitWaitTime": {
+            "values": {
+              "resumeAmount": 24
+            }
+          },
+          "appendAttribution": false
+        }
+      },
+      "id": "ac6382f2-36e5-4063-95bb-9471729b87a7",
+      "name": "Freigabe abwarten [Telegram]",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2992,
+        256
+      ],
+      "webhookId": "WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Telegram API | Content-Generator"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ !!($json.data && $json.data.approved) }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "freigegeben"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ !!($json.data && $json.data.approved !== undefined && !$json.data.approved) }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "abgelehnt"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "abgelaufen"
+        }
+      },
+      "id": "59029252-820d-436b-a288-cf083f24c5ed",
+      "name": "Entscheidung verteilen [Switch]",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        3312,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://SUPABASE_URL/rest/v1/k1_posts?id=eq.{{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.post_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ status: 'fertig', decided_at: $now.toISO(), approved_by: $('Auftrag empfangen [Execute Workflow Trigger]').first().json.nutzer_id }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "aa7e51b7-e3f4-4a99-bbd3-a04d0aaa8dea",
+      "name": "Status fertig setzen [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3632,
+        256
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API | KI-AGT-2606"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.chat_id }}",
+        "message": "Warum abgelehnt? Bitte kurz den Grund schreiben.",
+        "responseType": "freeText",
+        "options": {
+          "limitWaitTime": {
+            "values": {
+              "resumeAmount": 2
+            }
+          },
+          "appendAttribution": false
+        }
+      },
+      "id": "4b40bf00-1c7f-40ec-973e-44abde6e85ae",
+      "name": "Grund abfragen [Telegram]",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3632,
+        544
+      ],
+      "webhookId": "WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Telegram API | Content-Generator"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://SUPABASE_URL/rest/v1/k1_posts?id=eq.{{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.post_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ status: 'freigabe_abgelaufen', decided_at: $now.toISO() }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "44d66107-4923-4f5f-bac8-e549a0ef52ea",
+      "name": "Status abgelaufen setzen [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3632,
+        832
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API | KI-AGT-2606"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://SUPABASE_URL/rest/v1/k1_posts?id=eq.{{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.post_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ status: 'abgelehnt', rejection_reason: String(($json.data && $json.data.text) || 'kein Grund angegeben, Frist abgelaufen').slice(0, 500), decided_at: $now.toISO(), approved_by: $('Auftrag empfangen [Execute Workflow Trigger]').first().json.nutzer_id }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "79f511d0-c9de-41ba-9b87-eafeb1929c75",
+      "name": "Status abgelehnt setzen [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3872,
+        544
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API | KI-AGT-2606"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Zweck: nach der Freigabe die Bild-Elemente samt Beitragsdaten für den Sub 'AGT-2606 P1 SUB Nextcloud-Ablage' zusammenstellen (wie in Projekt 1, Elemente aus Bild laden).\n// Warum Gate: nur bei status fertig wird abgelegt, sonst kein Element und damit kein Aufruf.\n// v02.1 (20.11.2026, Gegenpruefung G1): Status fertig setzen liefert die volle Antwort (fullResponse), die bestaetigte Zeile steht in body[0]; Fertig bestaetigt? hat genau 1 Zeile mit dieser post_id und status fertig belegt.\nconst antwort = $input.first() ? $input.first().json : {};\nconst row = (antwort && Array.isArray(antwort.body) && antwort.body.length === 1 && antwort.body[0] !== null && typeof antwort.body[0] === 'object') ? antwort.body[0] : {};\nif (!row || row.status !== 'fertig') return [];\nconst v = $('Auftrag empfangen [Execute Workflow Trigger]').first().json;\nconst meta = { customer_code: String(v.kuerzel), post_id: String(row.id), topic: String(row.topic || ''), trace_id: String(v.trace_id), caption_instagram: String(row.caption_instagram || ''), hashtags: Array.isArray(row.hashtags) ? row.hashtags : [], linkedin_post: String(row.linkedin_post || '') };\nlet namen = [], geladen = [];\ntry { namen = $('Bilder einzeln [Code]').all().map(i => i.json.file_name); geladen = $('Bild laden [HTTP Request]').all(); } catch (e) { namen = []; geladen = []; }\nconst out = [];\ngeladen.forEach((it, i) => { if (it.binary && it.binary.data && namen[i]) out.push({ json: Object.assign({}, meta, { file_name: namen[i] }), binary: { data: it.binary.data } }); });\nif (!out.length) out.push({ json: Object.assign({}, meta, { file_name: '' }) });\nreturn out;\n"
+      },
+      "id": "546e69ae-8432-471a-ac9d-a2fac94e502d",
+      "name": "Ablage-Elemente bauen [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3952,
+        256
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "WORKFLOW_ID_NEXTCLOUD_ABLAGE"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "customer_code": "={{ $json.customer_code }}",
+            "post_id": "={{ $json.post_id }}",
+            "topic": "={{ $json.topic }}",
+            "trace_id": "={{ $json.trace_id }}",
+            "caption_instagram": "={{ $json.caption_instagram }}",
+            "hashtags": "={{ $json.hashtags }}",
+            "linkedin_post": "={{ $json.linkedin_post }}",
+            "file_name": "={{ $json.file_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "customer_code",
+              "displayName": "customer_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "post_id",
+              "displayName": "post_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "topic",
+              "displayName": "topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "trace_id",
+              "displayName": "trace_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "caption_instagram",
+              "displayName": "caption_instagram",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "hashtags",
+              "displayName": "hashtags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            },
+            {
+              "id": "linkedin_post",
+              "displayName": "linkedin_post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "file_name",
+              "displayName": "file_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "9026fe94-32eb-45f1-91b5-d0b3c37d399c",
+      "name": "In Nextcloud ablegen [Execute Workflow]",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        4272,
+        256
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "o1",
+              "name": "output",
+              "value": "={{ (((Array.isArray($json.body) && $json.body[0]) || {}).status) === 'abgelehnt' ? 'Abgelehnt. Der Grund ist beim Beitrag gespeichert, abgelegt wurde nichts.' : 'Die Frist für die Freigabe ist abgelaufen. Der Beitrag wurde nicht abgelegt.' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4e6e9083-9679-4a81-85ef-e8a7e23451ad",
+      "name": "Ergebnis Entscheidung [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4272,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.chat_id }}",
+        "text": "={{ (function () { const j = $json; const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;'); const grund = j.grund || j.grund_link || 'kein Grund gemeldet'; const pid = $('Ablage-Elemente bauen [Code]').first().json.post_id || ''; const kopf = (j.ok === false) ? 'Freigegeben, aber die Ablage in Nextcloud meldet ein Problem' : 'Freigegeben und abgelegt, aber ohne Freigabelink'; return (kopf + ' (Beitrag ' + esc(pid) + ', Hauptlauf ' + esc($('Auftrag empfangen [Execute Workflow Trigger]').first().json.trace_id) + ', Sub-Lauf ' + $execution.id + '): ' + esc(grund)).slice(0, 4000); })() }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "a32d22a1-9b94-440c-bf90-a4bcdb11cd19",
+      "name": "Ablage-Problem senden [Telegram]",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4272,
+        832
+      ],
+      "webhookId": "WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Telegram API | Content-Generator"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "o1",
+              "name": "output",
+              "value": "={{ ($('In Nextcloud ablegen [Execute Workflow]').first().json.ok === false) ? 'Freigegeben. Die Ablage in Nextcloud meldet ein Problem, der Beitrag ist als fertig gespeichert.' : 'Freigegeben und in Nextcloud abgelegt.' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "afbeacb6-0e1b-4469-8ae1-a71e3cd22dd2",
+      "name": "Ergebnis Ablage [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4592,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fl1",
+              "leftValue": "={{ $json.freigabe_link || '' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "12cfd588-ae25-487a-b437-cdcb4f91baf8",
+      "name": "Freigabelink vorhanden? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4592,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.chat_id }}",
+        "text": "={{ (function () { const j = $json; const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;'); const ablauf = j.freigabe_ablauf ? String(j.freigabe_ablauf).split('-').reverse().join('.') : 'unbekannt'; const topic = $('Ablage-Elemente bauen [Code]').first().json.topic || ''; return 'Freigegeben und in Nextcloud abgelegt' + (topic ? ': ' + esc(topic) : '') + '.\\n<a href=\"' + esc(j.freigabe_link) + '\">Kundenordner öffnen</a> (gültig bis ' + esc(ablauf) + ')'; })() }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "3f6e2aaa-3f0b-4a7d-80a7-e3b708f005e7",
+      "name": "Freigabe-Bestätigung senden [Telegram]",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4592,
+        832
+      ],
+      "webhookId": "WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Telegram API | Content-Generator"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "o1",
+              "name": "output",
+              "value": "Die Freigabe oder die Ablage ist gescheitert. Der Beitrag bleibt gespeichert und wartet. Ein Mensch sieht sich den Lauf an.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0fb0918c-7045-41b1-b88c-6775bbe76cfc",
+      "name": "Freigabe-Fehler [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1056,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Zweck: der Freigabe-Sub ist gescheitert, NACHDEM der Chat schon gesagt hat, dass der Beitrag bei Patrick liegt. Patrick bekommt die Meldung ueber Telegram, im Protokoll des Hauptlaufs steht der Grund.\n// Wer scheiterte: die Fehlerausgaenge der Knoten dieses Subs liefern Elemente am Ausgang 1; der erste Knoten mit einem Element mit Feld error am Ausgang 1 wird genannt.\nconst e = $('Auftrag empfangen [Execute Workflow Trigger]').first().json;\nconst chat = String(e.chat_id || '').trim();\nconst KANDIDATEN = ['Vorschau-Adressen holen [HTTP Request]', 'Vorschau senden [Telegram]', 'Bilder einzeln [Code]', 'Bilder zusammenfassen [Code]', 'Instagram-Text senden [Telegram]', 'LinkedIn-Post senden [Telegram]', 'Freigabe abwarten [Telegram]', 'Status fertig setzen [HTTP Request]', 'Ablage-Elemente bauen [Code]', 'In Nextcloud ablegen [Execute Workflow]', 'Grund abfragen [Telegram]', 'Status abgelehnt setzen [HTTP Request]', 'Status abgelaufen setzen [HTTP Request]'];\nlet schritt = 'unbekannt';\nfor (const n of KANDIDATEN) {\n  try { if ($(n).isExecuted && $(n).all(1).some(x => x && x.json && x.json.error)) { schritt = n.replace(/\\s*\\[[^\\]]*\\]\\s*$/, ''); break; } } catch (err) { /* kein Fehlerausgang an diesem Knoten */ }\n}\n// v02.1 (20.11.2026, Gegenpruefung G1): bestaetigt die Datenbank einen Statuswechsel nicht (0 Zeilen, fremde Zeile, mehrere Zeilen), liegt das Element am Nein-Ausgang der Pruefweiche, ohne Feld error.\nconst PRUEFWEICHEN = [[\"Fertig bestätigt? [If]\",\"Status fertig setzen\"],[\"Ablehnung bestätigt? [If]\",\"Status abgelehnt setzen\"],[\"Ablauf bestätigt? [If]\",\"Status abgelaufen setzen\"]];\nif (schritt === 'unbekannt') for (const [w, s] of PRUEFWEICHEN) { try { if ($(w).isExecuted && $(w).all(1).length > 0) { schritt = s + ' (Datenbank hat den Statuswechsel nicht bestätigt)'; break; } } catch (err) { /* Weiche ohne Nein-Ausgang in diesem Lauf */ } }\nconst nachricht = 'Redaktions-Agent: Fehler im Freigabe-Sub (Sub-Lauf ' + $execution.id + ', Hauptlauf ' + e.trace_id + '). Betroffener Schritt: ' + schritt + '. Der Beitrag ' + e.post_id + ' steht in der Datenbank, der Stand ist im Leitstand sichtbar. Bitte den Lauf ansehen.';\nreturn [{ json: { chat_id: chat, nachricht: nachricht, error_text: ('Freigabe-Sub: Fehler in ' + schritt).slice(0, 300), trace_id: String(e.trace_id || '') } }];\n"
+      },
+      "id": "e777de01-0da0-4641-a9b7-2647ddafbd17",
+      "name": "Fehlertext bauen [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1376,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Fehlertext bauen [Code]').first().json.chat_id }}",
+        "text": "={{ $('Fehlertext bauen [Code]').first().json.nachricht }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "3b929035-d021-4c99-84de-87a76c0f3f84",
+      "name": "Freigabe-Fehler melden [Telegram]",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1696,
+        976
+      ],
+      "webhookId": "WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Telegram API | Content-Generator"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "amount": 20,
+        "unit": "seconds"
+      },
+      "id": "ef897965-46fa-4cfc-ba07-c81d873b5c55",
+      "name": "Fehlerprotokoll abwarten [Wait]",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2016,
+        976
+      ],
+      "webhookId": "WEBHOOK_ID"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://SUPABASE_URL/rest/v1/k2_agent_laeufe?trace_id=eq.{{ $('Fehlertext bauen [Code]').first().json.trace_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ error_text: String($('Fehlertext bauen [Code]').first().json.error_text).slice(0, 300) }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "68d8f367-d84d-470e-84f0-5e931b765c4f",
+      "name": "Fehler im Protokoll vermerken [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2336,
+        976
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API | KI-AGT-2606"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "# SUB P2 Freigabe abwarten und ablegen\nFreigabe des Redaktions-Agenten (Projekt 2): sendet Vorschau und Texte per Telegram, wartet auf Freigeben oder Ablehnen, setzt den Status und legt in Nextcloud ab. Der Hauptworkflow startet ihn ohne Warten.",
+        "height": 110,
+        "width": 3632,
+        "color": 5
+      },
+      "id": "b8753ebd-435b-449a-b241-7380e6605ce1",
+      "name": "Titelleiste",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -640
+      ]
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 440,
+        "width": 2192
+      },
+      "id": "7a08795a-6a5f-4d8d-bd90-3649fc53ccae",
+      "name": "Rahmen Kopf",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -480
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# 📋 Workflow-Beschreibung\n🎯 **Zweck:** Die Freigabe läuft unabhängig vom Chat: Auch wenn der Chat-Tab geschlossen ist, kommen Vorschau, Texte und die Freigabe-Frage in Telegram an.\n👥 **Für wen:** den Redaktions-Agenten im Workflow AGT-2606 P2 Redaktions-Agent. Patrick klickt in Telegram Freigeben oder Ablehnen.\n🕹️ **So nutzt du ihn:** Der Hauptworkflow ruft ihn nach der Beitragsprüfung ohne Warten auf und übergibt 12 Felder.\n## Status: 🟡 Entwurf v02.1, Statuswechsel werden bestätigt, Test läuft",
+        "height": 200,
+        "width": 1100,
+        "color": 7
+      },
+      "id": "dd9a9eeb-1dc3-4d34-b950-3beef3804f6e",
+      "name": "Workflow-Beschreibung",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        32,
+        -464
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# 🧾 Version\nv02.1 vom 20.11.2026 (Entwurf): Fehlervermerk und die 3 Statuswechsel werden bestätigt (genau 1 Zeile), sonst Fehlerweg.\nv01 vom 19.11.2026: Freigabe-Zweig aus dem Hauptworkflow ausgelagert (Fehlerbehebung Chat-Lücke F5), dazu Eingabeprüfung und eigener Fehlerweg.\nAlle Änderungen stehen im Changelog n8n-WORKFLOW_ID_SUB_FREIGABE.md.",
+        "height": 200,
+        "width": 1040,
+        "color": 7
+      },
+      "id": "25cdc5dc-0681-463c-9e6d-41300fc8402d",
+      "name": "Version",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        -464
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# 🧪 Freigabe abwarten und ablegen\n**Aufgabe:** Beitrag in Telegram zeigen, auf die Entscheidung warten und je nach Antwort Status setzen und ablegen.\n**Die Idee:** Der Zweig hängt nicht mehr hinter der Chat-Antwort, sondern läuft als eigener Lauf, der auf den Klick wartet.\n**Warum so?** Der Chat-Knoten hält den Hauptlauf an, bis der Browser die Antwort abholt; ein geschlossener Tab blockierte vorher die Freigabe.\n**Hinweis:** Stufe: Durchstich bis 24.11.2026. Abweichung von R105 und R20 (Send and Wait im Sub, Start ohne Warten) von Patrick am 19.11.2026 zugelassen.",
+        "height": 200,
+        "width": 1100,
+        "color": 7
+      },
+      "id": "384bf3a9-6683-411d-aa26-ccdce623fb5b",
+      "name": "Kopf",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        32,
+        -256
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Ablauf\n① Auftrag empfangen und prüfen\n② Bilder und Vorschau\n③ Texte und Freigabe-Frage\n④ Entscheidung, Status, Ablage\n⑤ Fehler melden",
+        "height": 200,
+        "width": 508,
+        "color": 7
+      },
+      "id": "3c491f1d-800c-4f03-b231-1fad04adce02",
+      "name": "Ablauf",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        -256
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Status\n🟢 Aufbau nach Export geprüft\n🟡 Tests T-FS-1 bis T-FS-13 laufen\n🔴 Pflicht: erst Sub veröffentlichen, dann Hauptworkflow\n🔵 Start ohne Warten",
+        "height": 200,
+        "width": 512,
+        "color": 7
+      },
+      "id": "1bd09b5d-a9c3-4701-9023-e26c5ab8874c",
+      "name": "Status",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        -256
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## ① Auftrag empfangen und prüfen\nDer Hauptworkflow übergibt 12 Felder. Eine fehlerhafte Eingabe meldet zuerst Telegram und endet dann mit Fehler.\n\n### 🟡 Test T-FS-3",
+        "height": 196,
+        "width": 908
+      },
+      "id": "86dfd4fc-0b3e-4fc3-a35c-086d40eb9b62",
+      "name": "Karte 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        16,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## ② Bilder und Vorschau\nOhne Bilder geht es direkt zur Freigabe-Frage. Sonst kommen die Vorschau-Links, jedes Bild wird geladen und auf PNG, Prüfsumme und KI-Marker geprüft.\n\n### 🟡 Test T-FS-12 ohne Bilder",
+        "height": 196,
+        "width": 1880
+      },
+      "id": "8aacbf3f-e39a-4a64-87e3-c593dc28845a",
+      "name": "Karte 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        976,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## ③ Freigabe-Frage\nInstagram-Text, LinkedIn-Post, dann die Frage mit Freigeben und Ablehnen. Die Frist beträgt 24 Stunden.\n\n### 🟡 Test T-FS-1",
+        "height": 196,
+        "width": 640
+      },
+      "id": "ffad51ba-5a66-422b-b924-9c537d981d79",
+      "name": "Karte 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2912,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## ④ Entscheidung und Ablage\nFreigeben setzt den Status fertig und legt in Nextcloud ab, Ablehnen fragt den Grund, Ablauf setzt freigabe_abgelaufen.\n\n### 🟡 Test T-FS-6 nur mit Kürzel test-p2",
+        "height": 196,
+        "width": 1096
+      },
+      "id": "b5ad7ff9-6f86-4a9a-a53f-39e25f84fc84",
+      "name": "Karte 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3616,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 252,
+        "width": 768,
+        "color": 5
+      },
+      "id": "1cea1444-3570-45a2-81f0-a29a77a8ec65",
+      "name": "Rahmen Fehlerweg",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        1216
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## ⑤ Fehlerweg\nJeder Fehlerausgang führt hierher: Telegram an Patrick, nach 20 Sekunden der Grund im Protokoll; ohne Bestätigung eine 2. Meldung.\n\n### 🔴 Melden statt still scheitern",
+        "height": 220,
+        "width": 360,
+        "color": 3
+      },
+      "id": "ef44fefc-c6a5-4df8-9513-a8243e5ba7bd",
+      "name": "Karte Fehler melden",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        1232
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# 📋 Error Report\nLäufe und Fehler dieses Subs stehen in den Ausführungen des Workflows (Dashboard: DEINE-N8N-INSTANZ, Workflow SUB P2 Freigabe abwarten und ablegen, Reiter Ausführungen). Der Hauptlauf zeigt den Unterlauf.",
+        "height": 220,
+        "width": 360,
+        "color": 3
+      },
+      "id": "1b1c2439-fd6d-43f8-b8d1-079043103394",
+      "name": "Karte Error Report",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        1232
+      ]
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 440,
+        "width": 1348,
+        "color": 5
+      },
+      "id": "d0645129-01e4-420a-b230-7f20fe917941",
+      "name": "Rahmen Hilfe-Spalte",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2288,
+        -480
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# ✅ Setup-Checkliste\n1. Credential Telegram API | Content-Generator an den 9 Telegram-Knoten.\n2. Credential Supabase API | KI-AGT-2606 an den 5 Supabase-Knoten.\n3. Sub WORKFLOW_ID_NEXTCLOUD_ABLAGE (Nextcloud-Ablage) muss veröffentlicht sein.\n4. Reihenfolge: erst diesen Sub veröffentlichen, dann den Hauptworkflow.\n5. Aufrufrecht: nur Workflows desselben Besitzers.\n6. Erster Test: Testaufruf mit Testkürzel, nie mit dem Kundenkürzel.",
+        "height": 396,
+        "width": 420,
+        "color": 7
+      },
+      "id": "a5a90233-b400-47a3-8791-ae0ea292272d",
+      "name": "Setup-Checkliste",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2304,
+        -464
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# 🌐 Plattform-Hinweise\n**DEINE-N8N-INSTANZ (n8n):** Erlaubt: Start ohne Warten aus dem Hauptworkflow. 🟡 Besonderheit: dieser Sub muss veröffentlicht sein, sonst läuft der Aufruf ins Leere.\n**Telegram:** Erlaubt: Nachrichten an den Testchat. 🟡 Besonderheit: Den Freigabe-Klick macht nur Patrick im Testchat.",
+        "height": 394,
+        "width": 420,
+        "color": 7
+      },
+      "id": "2c1719da-12e5-4b07-8946-c185aa224e43",
+      "name": "Plattform-Hinweise",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2752,
+        -464
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# 🩺 Fehlerbehebung\n**Keine Nachricht in Telegram:** Läuft der Unterlauf (Ausführungen dieses Workflows)? Ist der Sub veröffentlicht?\n**Fehlermeldung mit Schritt:** den Schritt in der Ausführung öffnen.\n**Ungültige Eingabe:** Hauptlauf und Grund stehen in der Telegram-Meldung.",
+        "height": 388,
+        "width": 420,
+        "color": 7
+      },
+      "id": "8e98ef6f-99db-4779-a5a3-7dab8097a6d2",
+      "name": "Fehlerbehebung",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3200,
+        -464
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "vb1",
+              "leftValue": "={{ (() => { const t = String($('Fehlertext bauen [Code]').first().json.trace_id || ''); const r = $input.all().map(x => x.json || {}); return t !== '' && r.length === 1 && typeof r[0].id === 'string' && String(r[0].trace_id) === t; })() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "bf939d2b-ed32-42cf-b572-d4076e03e2d4",
+      "name": "Vermerk bestätigt? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2656,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Fehlertext bauen [Code]').first().json.chat_id }}",
+        "text": "={{ 'Redaktions-Agent: Der Fehler des Freigabe-Subs (Sub-Lauf ' + $execution.id + ', Hauptlauf ' + $('Fehlertext bauen [Code]').first().json.trace_id + ') steht NICHT im Laufprotokoll, die Datenbank hat den Vermerk nicht bestätigt. Bitte den Lauf ansehen.' }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "6294c79c-445a-426b-9ff4-57b36e7f9817",
+      "name": "Vermerk-Fehler melden [Telegram]",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2976,
+        1120
+      ],
+      "webhookId": "WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Telegram API | Content-Generator"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fb1",
+              "leftValue": "={{ (() => { const id = String($('Auftrag empfangen [Execute Workflow Trigger]').first().json.post_id || ''); const b = $json.body; return id !== '' && Number($json.statusCode) >= 200 && Number($json.statusCode) < 300 && Array.isArray(b) && b.length === 1 && b[0] !== null && typeof b[0] === 'object' && String(b[0].id) === id && b[0].status === 'fertig'; })() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "50f05478-a487-4aa1-b7d2-19ef5a56edaa",
+      "name": "Fertig bestätigt? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3952,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ab1",
+              "leftValue": "={{ (() => { const id = String($('Auftrag empfangen [Execute Workflow Trigger]').first().json.post_id || ''); const b = $json.body; return id !== '' && Number($json.statusCode) >= 200 && Number($json.statusCode) < 300 && Array.isArray(b) && b.length === 1 && b[0] !== null && typeof b[0] === 'object' && String(b[0].id) === id && b[0].status === 'abgelehnt'; })() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3c463ba5-4646-430c-b489-3bfffd8d60ca",
+      "name": "Ablehnung bestätigt? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4080,
+        688
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "al1",
+              "leftValue": "={{ (() => { const id = String($('Auftrag empfangen [Execute Workflow Trigger]').first().json.post_id || ''); const b = $json.body; return id !== '' && Number($json.statusCode) >= 200 && Number($json.statusCode) < 300 && Array.isArray(b) && b.length === 1 && b[0] !== null && typeof b[0] === 'object' && String(b[0].id) === id && b[0].status === 'freigabe_abgelaufen'; })() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3f97208e-f5da-4556-870c-0938cf48de52",
+      "name": "Ablauf bestätigt? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3952,
+        976
+      ]
+    }
+  ],
+  "connections": {
+    "Bilder vorhanden? [If]": {
+      "main": [
+        [
+          {
+            "node": "Vorschau-Adressen holen [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Freigabe abwarten [Telegram]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Freigabefelder erhalten [Edit Fields]": {
+      "main": [
+        [
+          {
+            "node": "Bilder vorhanden? [If]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vorschau-Adressen holen [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Vorschau senden [Telegram]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Freigabe-Fehler [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vorschau senden [Telegram]": {
+      "main": [
+        [
+          {
+            "node": "Bilder einzeln [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Freigabe-Fehler [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bilder einzeln [Code]": {
+      "main": [
+        [
+          {
+            "node": "Bild laden [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Freigabe-Fehler [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bild laden [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Bilder zusammenfassen [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bilder zusammenfassen [Code]": {
+      "main": [
+        [
+          {
+            "node": "Instagram-Text senden [Telegram]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Freigabe-Fehler [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Instagram-Text senden [Telegram]": {
+      "main": [
+        [
+          {
+            "node": "LinkedIn-Post senden [Telegram]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Freigabe-Fehler [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Freigabe abwarten [Telegram]": {
+      "main": [
+        [
+          {
+            "node": "Entscheidung verteilen [Switch]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Freigabe-Fehler [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn-Post senden [Telegram]": {
+      "main": [
+        [
+          {
+            "node": "Freigabe abwarten [Telegram]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Freigabe-Fehler [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entscheidung verteilen [Switch]": {
+      "main": [
+        [
+          {
+            "node": "Status fertig setzen [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Grund abfragen [Telegram]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Status abgelaufen setzen [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status fertig setzen [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Fertig bestätigt? [If]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Freigabe-Fehler [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Grund abfragen [Telegram]": {
+      "main": [
+        [
+          {
+            "node": "Status abgelehnt setzen [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Freigabe-Fehler [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status abgelaufen setzen [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Ablauf bestätigt? [If]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Freigabe-Fehler [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status abgelehnt setzen [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Ablehnung bestätigt? [If]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Freigabe-Fehler [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ablage-Elemente bauen [Code]": {
+      "main": [
+        [
+          {
+            "node": "In Nextcloud ablegen [Execute Workflow]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Freigabe-Fehler [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "In Nextcloud ablegen [Execute Workflow]": {
+      "main": [
+        [
+          {
+            "node": "Freigabelink vorhanden? [If]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Freigabe-Fehler [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ablage-Problem senden [Telegram]": {
+      "main": [
+        [
+          {
+            "node": "Ergebnis Ablage [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Freigabelink vorhanden? [If]": {
+      "main": [
+        [
+          {
+            "node": "Freigabe-Bestätigung senden [Telegram]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ablage-Problem senden [Telegram]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Freigabe-Bestätigung senden [Telegram]": {
+      "main": [
+        [
+          {
+            "node": "Ergebnis Ablage [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auftrag empfangen [Execute Workflow Trigger]": {
+      "main": [
+        [
+          {
+            "node": "Eingabe prüfen [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eingabe prüfen [Code]": {
+      "main": [
+        [
+          {
+            "node": "Eingabe gültig? [If]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eingabe gültig? [If]": {
+      "main": [
+        [
+          {
+            "node": "Freigabefelder erhalten [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Eingabe ungültig melden [Telegram]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eingabe ungültig melden [Telegram]": {
+      "main": [
+        [
+          {
+            "node": "Eingabe ungültig [Stop and Error]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Freigabe-Fehler [Edit Fields]": {
+      "main": [
+        [
+          {
+            "node": "Fehlertext bauen [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fehlertext bauen [Code]": {
+      "main": [
+        [
+          {
+            "node": "Freigabe-Fehler melden [Telegram]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Freigabe-Fehler melden [Telegram]": {
+      "main": [
+        [
+          {
+            "node": "Fehlerprotokoll abwarten [Wait]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fehlerprotokoll abwarten [Wait]": {
+      "main": [
+        [
+          {
+            "node": "Fehler im Protokoll vermerken [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fehler im Protokoll vermerken [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Vermerk bestätigt? [If]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vermerk bestätigt? [If]": {
+      "main": [
+        null,
+        [
+          {
+            "node": "Vermerk-Fehler melden [Telegram]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fertig bestätigt? [If]": {
+      "main": [
+        [
+          {
+            "node": "Ablage-Elemente bauen [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Freigabe-Fehler [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ablehnung bestätigt? [If]": {
+      "main": [
+        [
+          {
+            "node": "Ergebnis Entscheidung [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Freigabe-Fehler [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ablauf bestätigt? [If]": {
+      "main": [
+        [
+          {
+            "node": "Ergebnis Entscheidung [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Freigabe-Fehler [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "errorWorkflow": "ERROR_WORKFLOW_ID",
+    "callerPolicy": "workflowsFromSameOwner",
+    "binaryMode": "separate"
+  },
+  "meta": {},
+  "pinData": {},
+  "tags": [],
+  "id": "WORKFLOW_ID_SUB_FREIGABE",
+  "versionId": "b35b9792-889e-4a51-bef5-e3e0b7d16bb8",
+  "active": true,
+  "activeVersionId": "b35b9792-889e-4a51-bef5-e3e0b7d16bb8",
+  "description": "Projekt 2 AGT-2606: Freigabe des Redaktions-Agenten, sendet Vorschau und Texte per Telegram, wartet auf Freigeben oder Ablehnen, setzt den Status und legt in Nextcloud ab. Wird ohne Warten vom Hauptworkflow gestartet.",
+  "nodeGroups": [],
+  "staticData": null,
+  "sourceWorkflowId": null,
+  "isArchived": false,
+  "parentFolder": {
+    "id": "FOLDER_ID_PROJEKTORDNER",
+    "name": "Projektordner"
+  }
+}

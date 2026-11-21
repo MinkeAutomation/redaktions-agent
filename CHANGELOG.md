@@ -28,14 +28,30 @@ Dieselben 4 Statuswörter stehen in der Spalte Status von [versionen.md](version
 
 ## Versionen
 
-Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V4.1 ist der geltende Systemprompt (seit 18.11.2026); V4 ist von V4.1 abgelöst und bleibt als Baseline in `prompts/` (der Vergleich mit V2 blieb offen). V5 ist verworfen (getestet, nicht übernommen), ebenso V3; V2 ist archiviert, von V4 abgelöst, V1 ist archiviert.
+Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V4.4 ist der geltende Systemprompt (seit 19.11.2026, veröffentlicht mit Hauptworkflow v26.5.3 am 21.11.2026); V4.1 ist von V4.4 abgelöst, V4.2 und V4.3 sind Zwischenstände. V4 ist von V4.1 abgelöst und bleibt als Baseline in `prompts/` (der Vergleich mit V2 blieb offen). V5 ist verworfen (getestet, nicht übernommen), ebenso V3; V2 ist archiviert, von V4 abgelöst, V1 ist archiviert.
 
+### `20261119_System-Prompt-Redaktions-Agent_V4.4.md`
+
+| | |
+|---|---|
+| **Datum** | 19.11.2026 |
+| **Status** | Live, Hauptworkflow v26.1 bis v26.5.3 (veröffentlicht 21.11.2026 14:03) |
+| **Agent** | Redaktions-Agent |
+| **Version** | V4.4 |
+| **Prompt-Datei** | [prompts/20261119_System-Prompt-Redaktions-Agent_V4.4.md](prompts/20261119_System-Prompt-Redaktions-Agent_V4.4.md) |
+| **Agent-Konfiguration** | der Auszug zu V4.4 liegt noch nicht vor |
+
+**Beschreibung:** V4.4 ergänzt V4.1 um die Regeln für Werkzeug 6 „Qualität prüfen“: höchstens 1 Nachbesserung, danach genau 1 erneute Prüfung, höchstens 14 Werkzeugaufrufe je Auftrag. Der Prompt, den das Modell bekommt, ist dadurch rund 36 Prozent länger (9.160 statt 6.733 Byte im Feld `systemMessage` des Workflows, Export v26.5.3 gegen v23.1); die Prompt-Datei ist mit ihrem Änderungskopf größer (13.962 Byte). Belegt in vollen Läufen am 21.11.2026 (4056 und 4064 am veröffentlichten Stand), der Test gegen die Baseline ist bis zum Freeze am 23.11.2026 geplant ([W9 Tag 4](docs/w09t04.html)).
+
+V4.2 und V4.3 (19.11.2026) sind Zwischenstände auf dem Weg dorthin, nie veröffentlicht, Dateien unter [archiv/prompts/](archiv/prompts/).
+
+---
 ### `20261118_System-Prompt-Redaktions-Agent_V4.1.md`
 
 | | |
 |---|---|
 | **Datum** | 18.11.2026 |
-| **Status** | Live, Hauptworkflow v23.1 (`54dec01b`) |
+| **Status** | Abgelöst von V4.4 (19.11.2026), war live mit Hauptworkflow v23.1 (`54dec01b`) |
 | **Agent** | Redaktions-Agent |
 | **Version** | V4.1 |
 | **Prompt-Datei** | [prompts/20261118_System-Prompt-Redaktions-Agent_V4.1.md](prompts/20261118_System-Prompt-Redaktions-Agent_V4.1.md) |
@@ -147,6 +163,15 @@ Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V4.1 ist 
 - Schritt für fehlende Werkzeuge und genauere Werkzeugbeschreibung (→ V2).
 
 ---
+
+## Arbeitsschritte 16.11. bis 21.11.2026 (Woche 9)
+
+- **W9 Tag 1 (16. und 17.11.):** Compliance nach dem EU AI Act, KI-Kennzeichnung in Chat, Text und Bildern, Datenflussbild; Hauptworkflow v22 ([W9 Tag 1](docs/w09t01.html)).
+- **W9 Tag 2 (17. und 18.11.):** Testtabelle mit 20 Fällen, Systemprompt V4.1, Regression 19 von 20; Hauptworkflow v23.1 ([W9 Tag 2](docs/w09t02.html)).
+- **W9 Tag 3 (18.11., Stand 21.11.):** Chat-Seite mit Anmeldung, Sofortantwort mit Werkzeugliste, Freigabe als eigener Workflow ohne Warten; 7 Fehlerfälle, 6 behoben, 1 als Grenze beschrieben; Test von außen am 21.11.2026 bestanden ([W9 Tag 3](docs/w09t03.html)).
+- **W9 Tag 4 (19.11., Stand 21.11.):** Werkzeug 6 „Qualität prüfen“, Systemprompt V4.4, Feature Freeze am Abend; 23 Fehlerfälle an Freigabe, Statuswechseln und Kürzung behoben; Token, Laufzeit und Kosten vorher und nachher, Kosten nachher aus Tokens und Listenpreis berechnet ([W9 Tag 4](docs/w09t04.html)).
+- **21.11.2026, 14:03:** Hauptworkflow v26.5.3 (Anordnung in Laufrichtung, Rahmen 01 bis 12, Setup-Zeilen, abgekoppelter Block der alten Freigabe entfernt), Freigabe-Workflow v02.1 und Text-Werkzeug v09.3 veröffentlicht. Abgabestände unter [workflows/abgaben/W09T03](workflows/abgaben/W09T03/README.md) und [W09T04](workflows/abgaben/W09T04/README.md).
+- **Bis zum Freeze am 23.11.2026 geplant:** Fristablauf der Freigabe, Angriffsfall am Eingang, Regression über 20 Fälle am veröffentlichten Stand, Test gegen die Baseline, Abschnitt mit allen 6 Werkzeugen, Kostenfolie.
 
 ## Arbeitsschritte 15.11.2026 (Tag 5: Vertrauensstufen und Freigabe)
 

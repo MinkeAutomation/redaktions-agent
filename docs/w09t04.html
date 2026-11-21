@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#FAFAF8" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#121416" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<title>W09T04 Optimierung</title>
+<meta content="Tages-Doku W09T04 des Redaktions-Agenten K2: Token und Laufzeit vorher und nachher, Kosten je Anfrage, Tag und Monat mit Staffel, Abgleich mit den MUSS-Kriterien, letzte Fixes, Regression und Feature Freeze." name="description"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&amp;display=swap" rel="stylesheet"/>
+<link href="assets/doku.css" rel="stylesheet"/>
+</head>
+<body>
+<a class="sprung" href="#inhalt">Zum Inhalt springen</a>
+<div class="huelle">
+<header class="leiste">
+<span>Redaktions-Agent K2 · Woche 8 und 9</span>
+<nav aria-label="Seiten">
+<a href="index.html">Wochen-Doku</a>
+<a href="w08t01.html">W8 Tag 1</a>
+<a href="w08t02.html">W8 Tag 2</a>
+<a href="w08t03.html">W8 Tag 3</a>
+<a href="w08t04.html">W8 Tag 4</a>
+<a href="w08t05.html">W8 Tag 5</a>
+<a href="w09t01.html">W9 Tag 1</a>
+<a href="w09t02.html">W9 Tag 2</a>
+<a href="w09t03.html">W9 Tag 3</a>
+<a aria-current="page" href="w09t04.html">W9 Tag 4</a>
+<a href="charter.html">Projekt-Charter</a>
+<a href="https://github.com/MinkeAutomation/redaktions-agent">Repository</a>
+</nav>
+</header>
+<div class="titelkopf">
+<div>
+<p class="oberzeile"><span aria-hidden="true" class="marke"></span>Tages-Doku W09T04 · Do 19.11.2026 (Stand 21.11.2026) · Hauptworkflow v26.5.3, veröffentlicht am 21.11.2026</p>
+<h1>Optimierung <span class="leise">und</span> Feature Freeze</h1>
+<p class="untertitel">An Tag 4 der Woche 9 sind Token, Laufzeit und Kosten gemessen, die 25 MUSS-Kriterien einzeln geprüft (20 erledigt, 4 teilweise, 1 offen) und die letzten Fixes eingebaut. Die Regression über die 20 Fälle ist am veröffentlichten Stand noch nicht gefahren, sie ist bis zum Freeze am Mo 23.11.2026 geplant. Am Abend ist Feature Freeze: Alle Funktionen sind eingebaut, bis Mo 23.11.2026 wird nur noch behoben, ab Di 24.11.2026 gilt der Hard Freeze. Getestet mit dem fest eingestellten Kunden Ordwin und erfundenen Daten; an Personen ging nichts.</p>
+</div>
+</div>
+<dl aria-label="Kennzahlen W09T04" class="messleiste">
+<div><dt>Kosten je Lauf</dt><dd>0,0046 → 0,0070 $<small>vorher aus der Abrechnung, nachher aus Tokens und Listenpreis berechnet</small></dd></div><div><dt>Agent-Tokens</dt><dd>rund 64.000<small>nachher, Mittel aus 4056 und 4064, dieselben Läufe wie bei den Kosten</small></dd></div><div><dt>Laufzeit</dt><dd>2 bis 3,8 min<small>nachher, 3 Läufe, bis die Antwort im Workflow bereitstand; in 4056 fiel die Qualitätsprüfung aus</small></dd></div><div><dt>MUSS</dt><dd>20 von 25<small>erledigt, 4 teilweise, 1 offen</small></dd></div><div><dt>Qualität prüfen</dt><dd>Note 4,4 bis 4,6<small>Läufe 3997, 4010, 4013</small></dd></div><div><dt>Feature Freeze</dt><dd>19.11.<small>Hard Freeze Di 24.11.</small></dd></div>
+</dl>
+<div class="knoepfe">
+<a class="knopf zweit" href="w09t03.html">Vorheriger Tag: W9 Tag 3 <span aria-hidden="true" class="pfeil">←</span></a>
+<a class="knopf zweit" href="index.html">Wochen-Doku <span aria-hidden="true" class="pfeil">→</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/CHANGELOG.md">CHANGELOG <span aria-hidden="true" class="pfeil">↗</span></a>
+</div>
+<main id="inhalt">
+<div class="merksatz einminute" id="in-1-minute"><span class="ktag">In 1 Minute</span>
+<ul>
+<li><strong>Kosten:</strong> Ein voller Lauf kostete vorher rund 0,0046 $ ohne Recherche (aus der Abrechnung), nachher rund 0,0070 $ (aus Tokens und Listenpreis berechnet), mit 1 Recherche rund 0,0126 $. Nur der Agent und die Recherche kosten Geld, alle anderen Modelle laufen kostenlos.</li>
+<li><strong>Token und Laufzeit:</strong> Nachher braucht der Agent im Mittel rund 64.000 Tokens je Lauf (4056 und 4064 am veröffentlichten Stand, dieselben Läufe wie bei den Kosten), davon 96 bis 98 Prozent Prompt. Ein voller Lauf dauert 2 bis 3,8 Minuten, bis die Antwort im Workflow bereitsteht (2 Läufe am veröffentlichten Stand und 1 Lauf im Editor kurz davor, alle am 21.11.2026), in 4056 fiel die Qualitätsprüfung aus, daher der kürzeste Lauf. Vorher wurden keine Tokens erfasst. Die Werte stammen aus der Ausführungsansicht in n8n, weil das Laufprotokoll die Agent-Tokens leer schreibt.</li>
+<li><strong>MUSS:</strong> 20 von 25 erledigt, 4 teilweise, 1 offen (die Präsentation selbst). Fertigstellung der teilweisen Punkte bis zum Freeze am Mo 23.11.2026.</li>
+<li><strong>Neu bis zum Freeze:</strong> Werkzeug 6 „Qualität prüfen“ mit Noten, Bild-Werkzeug im dunklen Layout mit „Mit KI erstellt“ auf jeder Folie, Kunde Ordwin, Chat-Seite, Freigabe ohne Warten, Text-Werkzeug mit Neufassung bei Ziffern.</li>
+<li><strong>Architektur:</strong> ein Agent mit Werkzeugen, kein Multi-Agent, kein MCP (Kapitel 6).</li>
+<li><strong>Fehlerfälle:</strong> 5 Fälle an Freigabe und Rückmeldungen der Datenbank und 18 Fälle an der Kürzung im Text-Werkzeug, je mit Ursache, Fix und Test (Kapitel 8).</li>
+</ul></div>
+
+<section aria-labelledby="k1-t" class="kapitel" id="k1">
+<div class="kkopf"><div aria-hidden="true" class="knum">01</div><div>
+<p class="kklein">Kapitel 1</p><h2 id="k1-t">Ziele des Tages</h2>
+<p class="klede">Was an diesem Tag zu tun war, in eigener Gliederung.</p>
+</div></div>
+<ol>
+<li>Token und Laufzeit messen und senken, vorher und nachher belegen (Kapitel 2).</li>
+<li>Kosten je Anfrage, Tag und Monat rechnen (Kapitel 3).</li>
+<li>Alle MUSS-Kriterien gegen die Checkliste prüfen (Kapitel 4).</li>
+<li>Letzte Fehler beheben und die Regression fahren (Kapitel 5).</li>
+<li>Am Abend die Funktionen einfrieren (Kapitel 7).</li>
+</ol>
+</section>
+
+<section aria-labelledby="k2-t" class="kapitel" id="k2">
+<div class="kkopf"><div aria-hidden="true" class="knum">02</div><div>
+<p class="kklein">Kapitel 2</p><h2 id="k2-t">Token und Laufzeit</h2>
+<p class="klede">Vorher heißt Systemprompt V4.1, nachher der Stand v26.5.3 mit Systemprompt V4.4, gemessen am 21.11.2026: 4047 im Editor 12 Minuten vor dem Veröffentlichen, 4056 und 4064 über die veröffentlichte Chat-Seite.</p>
+</div></div>
+<div aria-labelledby="t-vn" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-vn">Vorher gegen nachher</caption>
+<thead><tr><th scope="col">Messgröße</th><th scope="col">Vorher (Systemprompt V4.1, 18.11.2026)</th><th scope="col">Nachher</th></tr></thead>
+<tbody>
+<tr><th data-label="Messgröße" scope="row">Laufzeit voller Lauf bis zur Einreichung</th><td data-label="Vorher">55,2 s (1 Lauf, 3804)</td><td data-label="Nachher">3:45,5 min (4047), 1:59,3 min (4056, Qualitätsprüfung fiel aus), 3:27,6 min (4064); Mittel 3:04 min aus allen 3 Läufen, in 4056 fiel die Qualitätsprüfung aus (kürzester Lauf, 1:59,3 min). Gemessen, bis die Antwort im Workflow bereitsteht, also mit Qualitätsprüfung und Bildern, und damit nicht direkt mit dem Vorher-Wert vergleichbar. Bei 4047 und 4056 kam die Antwort auf der Chat-Seite nicht an (Kapitel 7).</td></tr>
+<tr><th data-label="Messgröße" scope="row">Agent-Tokens je voller Lauf</th><td data-label="Vorher">nicht erfasst</td><td data-label="Nachher">Mittel rund 64.000 aus 4056 und 4064 (dieselben Läufe wie bei den Kosten): 61.713 (4056, davon 1.289 Completion), 66.354 (4064, 1.925); dazu 90.632 im Editor-Lauf 4047 (3.469 Completion). Mit den Modellen der Eingangsprüfung 66.616 bis 96.145 je Lauf.</td></tr>
+<tr><th data-label="Messgröße" scope="row">Kosten je voller Lauf</th><td data-label="Vorher">rund 0,0046 $ (Mittel aus 3668, 3673, 3677)</td><td data-label="Nachher">rund 0,0070 $, berechnet aus Tokens und Listenpreis: Prompt-Tokens mal 0,10 $ je 1 Mio. plus Completion-Tokens mal 0,50 $ je 1 Mio. (4056: 0,0067 $, 4064: 0,0074 $). Nicht aus der Abrechnung und ohne Rabatt für wiederverwendete Prompt-Teile; die Laufzeile in der Datenbank hat keine Agent-Kosten.</td></tr>
+<tr><th data-label="Messgröße" scope="row">Länge Systemprompt</th><td data-label="Vorher">6.733 Byte (V4.1, Feld <code>systemMessage</code> im Export v23.1)</td><td data-label="Nachher">9.160 Byte (V4.4, Feld <code>systemMessage</code> im Export v26.5.3), also rund 36 Prozent mehr. Die Prompt-Datei hat mit ihrem Änderungskopf 13.962 Byte, das Modell bekommt nur den Text im Feld.</td></tr>
+<tr><th data-label="Messgröße" scope="row">Werkzeugaufrufe je voller Lauf</th><td data-label="Vorher">4 (Markenwissen, Text, Bilder, Einreichen; Lauf 3668)</td><td data-label="Nachher">5 (4064: Markenwissen, Text, Qualität prüfen, Bilder, Einreichen), 7 (4047, mit Nachbesserung und 2. Prüfung); 4064 brauchte dafür 6 Modellaufrufe des Agenten</td></tr>
+<tr><th data-label="Messgröße" scope="row">Langsamster Schritt</th><td data-label="Vorher">nicht ausgewertet</td><td data-label="Nachher">Werkzeug 3 „Text schreiben“ in 4064: 2:10,7 min von 3:27,6 min, also 63 Prozent des Laufs. Darin 2 Modellaufrufe: 70,5 s für den Text und 58,7 s für eine Neufassung. Danach folgen Qualität prüfen mit 28,1 s und Bilder gestalten mit 18,2 s.</td></tr>
+</tbody>
+</table>
+</div>
+<p>Die Vorher-Werte sind dünn: 1 Laufzeit, 3 Kostenwerte, keine Tokens. Das Laufprotokoll schreibt Tokens und Kosten leer, weil der Modellknoten im Agenten dafür nicht auslesbar ist; für die Nachher-Werte zählen deshalb die Tokens aus der Ausführungsansicht in n8n, die Kosten sind daraus mit dem Listenpreis berechnet. Geprüfte Hebel: Länge des Systemprompts, Länge der Werkzeugbeschreibungen, nur nötige Felder aus dem Markenwissen, Zahl der Modellaufrufe. Den Systemprompt habe ich nicht gekürzt. Er ist von V4.1 auf V4.4 um rund 36 Prozent gewachsen (6.733 auf 9.160 Byte im Workflow), weil die Regeln für Werkzeug 6 und die Qualitätsschleife dazukamen: höchstens 1 Nachbesserung, danach genau 1 erneute Prüfung, höchstens 14 Werkzeugaufrufe je Auftrag. Hier habe ich Qualität vor Tokens gestellt. Die Nachher-Messung zeigt, wo die Tokens liegen: 96 bis 98 Prozent der Agent-Tokens sind Prompt, die Antworten des Modells machen nur 1.289 bis 3.469 Tokens aus. Der längere Systemprompt wirkt also auf jeden der Modellaufrufe eines Laufs, und jeder zusätzliche Werkzeugaufruf kostet einen weiteren (4047 mit 7 Werkzeugen: 90.632 Tokens, 4064 mit 5: 66.354). Einen Vorher-Nachher-Vergleich in Tokens gibt es nicht, weil vorher keine erfasst wurden. Die Kosten je Lauf stiegen von rund 0,0046 $ auf rund 0,0070 $, also auf rund das 1,5-Fache (Tabelle); gesenkt habe ich Tokens und Laufzeit nicht.</p>
+<figure id="foto-tokens"><a href="bilder/w09t04-ausfuehrung-4064-tokens.png"><img loading="lazy" alt="n8n-Ausführungsansicht von Lauf 4064: Succeeded in 3m 27.562s, Logs-Panel mit Redaktions-Agent 66.354 Tokens, eingeblendet Prompt 64.429 Tokens und Completion 1.925 Tokens, darunter Werkzeuge und Modellaufrufe in der Baumansicht." src="bilder/w09t04-ausfuehrung-4064-tokens.png" width="1920" height="1080"/></a><figcaption>Lauf 4064 in der Ausführungsansicht: 3 Minuten 27,6 Sekunden, Agent 66.354 Tokens (Prompt 64.429, Completion 1.925), ganzer Lauf 71.868 Tokens. Sitzungskennung geschwärzt.</figcaption></figure>
+<p>Der langsamste Schritt ist das Text-Werkzeug. Im Unterlauf 4066 enthielt die erste Fassung die Ziffer 2, obwohl das Briefing keine Zahlen erlaubte. Die Zahlenprüfung verlangte deshalb 1 Neufassung, und die kostete fast 1 Minute. Ein Lauf ohne diese Neufassung wäre rund 1 Minute kürzer. Geändert habe ich daran nach dem Feature Freeze nichts.</p>
+<figure id="foto-langsamster-schritt"><a href="bilder/w09t04-ausfuehrung-4064-text-schreiben.png"><img loading="lazy" alt="n8n-Ausführungsansicht von Lauf 4064, im Logs-Baum ist Text_schreiben gewählt, oben rechts Success in 2m 10.733s, daneben Eingabe mit dem Briefing und Ausgabe mit Status OK und paket_id." src="bilder/w09t04-ausfuehrung-4064-text-schreiben.png" width="1920" height="1080"/></a><figcaption>Lauf 4064: Das Text-Werkzeug braucht 2 Minuten 10,7 Sekunden, der ganze Lauf 3 Minuten 27,6 Sekunden. Sitzungskennung geschwärzt.</figcaption></figure>
+<p>Werkzeug 6 macht einen Lauf eher länger, nicht kürzer: Es ist ein zusätzlicher Prüfschritt, der bei einer schwachen Note eine Überarbeitung auslöst (Kapitel 5). Das ist gewollt, weil es die Qualität sichert.</p>
+</section>
+
+<section aria-labelledby="k3-t" class="kapitel" id="k3">
+<div class="kkopf"><div aria-hidden="true" class="knum">03</div><div>
+<p class="kklein">Kapitel 3</p><h2 id="k3-t">Kosten je Anfrage, Tag und Monat</h2>
+<p class="klede">Nur Modellkosten, ohne Server, Datenbank und Ablage.</p>
+</div></div>
+<div aria-labelledby="t-bau" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-bau">Bausteine einer Anfrage</caption>
+<thead><tr><th scope="col">Baustein</th><th scope="col">Modell oder Dienst</th><th scope="col">Kosten je Anfrage</th></tr></thead>
+<tbody>
+<tr><th data-label="Baustein" scope="row">Agent</th><td data-label="Modell">Claude Haiku 5.5 über OpenRouter</td><td data-label="Kosten">vorher rund 0,0046 $ (gemessen an der Abrechnung, 3 Läufe), nachher rund 0,0070 $ (berechnet aus Tokens und Listenpreis, Läufe 4056 und 4064)</td></tr>
+<tr><th data-label="Baustein" scope="row">Recherche</th><td data-label="Modell">Sonar über OpenRouter</td><td data-label="Kosten">nur wenn aufgerufen; rund 0,0055 $ je Aufruf, Schätzung aus Projekt 1</td></tr>
+<tr><th data-label="Baustein" scope="row">Text, Eingangs- und Ausgangsprüfung, Qualität prüfen</th><td data-label="Modell">kostenlose Modelle</td><td data-label="Kosten">0 $</td></tr>
+<tr><th data-label="Baustein" scope="row">KI-Bild</th><td data-label="Modell">FLUX.1 schnell bei Cloudflare Workers AI</td><td data-label="Kosten">0 $ im täglichen Freikontingent (rund 175 Bilder am Tag, eigene Rechnung)</td></tr>
+</tbody>
+</table>
+</div>
+<p>Rechenweg: Kosten je Tag gleich Anfragen je Tag mal Kosten je Anfrage, Kosten je Monat gleich Kosten je Tag mal 22 Arbeitstage. Vorher gerechnet mit 0,004567 $ je Anfrage ohne Recherche und 0,010107 $ mit 1 Recherche. Nachher gerechnet mit 0,007046 $ je Anfrage (Mittel aus 4056 und 4064, berechnet aus Tokens und Listenpreis) und 0,012586 $ mit 1 Recherche.</p>
+<div aria-labelledby="t-staffel" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-staffel">Staffel bei 22 Arbeitstagen, vorher (V4.1) und nachher (v26.5.3)</caption>
+<thead><tr><th scope="col">Aufrufe im Monat</th><th scope="col">Anfragen je Tag</th><th scope="col">je Tag vorher</th><th scope="col">je Monat vorher</th><th scope="col">je Monat vorher mit 1 Recherche</th><th scope="col">je Tag nachher</th><th scope="col">je Monat nachher</th><th scope="col">je Monat nachher mit 1 Recherche</th></tr></thead>
+<tbody>
+<tr><th data-label="Aufrufe" scope="row">10</th><td data-label="je Tag">0,45</td><td data-label="Kosten Tag">0,0021 $</td><td data-label="Kosten Monat">0,0457 $</td><td data-label="mit Recherche">0,1011 $</td><td data-label="Tag nachher">0,0032 $</td><td data-label="Monat nachher">0,0705 $</td><td data-label="nachher mit Recherche">0,1259 $</td></tr>
+<tr><th data-label="Aufrufe" scope="row">100</th><td data-label="je Tag">4,55</td><td data-label="Kosten Tag">0,0208 $</td><td data-label="Kosten Monat">0,4567 $</td><td data-label="mit Recherche">1,0107 $</td><td data-label="Tag nachher">0,0320 $</td><td data-label="Monat nachher">0,7046 $</td><td data-label="nachher mit Recherche">1,2586 $</td></tr>
+<tr><th data-label="Aufrufe" scope="row">1.000</th><td data-label="je Tag">45,45</td><td data-label="Kosten Tag">0,2076 $</td><td data-label="Kosten Monat">4,5667 $</td><td data-label="mit Recherche">10,1067 $</td><td data-label="Tag nachher">0,3203 $</td><td data-label="Monat nachher">7,0462 $</td><td data-label="nachher mit Recherche">12,5862 $</td></tr>
+<tr><th data-label="Aufrufe" scope="row">10.000</th><td data-label="je Tag">454,55</td><td data-label="Kosten Tag">2,0758 $</td><td data-label="Kosten Monat">45,6667 $</td><td data-label="mit Recherche">101,0667 $</td><td data-label="Tag nachher">3,2028 $</td><td data-label="Monat nachher">70,4615 $</td><td data-label="nachher mit Recherche">125,8615 $</td></tr>
+<tr><th data-label="Aufrufe" scope="row">100.000</th><td data-label="je Tag">4.545,45</td><td data-label="Kosten Tag">20,7576 $</td><td data-label="Kosten Monat">456,6667 $</td><td data-label="mit Recherche">1.010,6667 $</td><td data-label="Tag nachher">32,0280 $</td><td data-label="Monat nachher">704,6150 $</td><td data-label="nachher mit Recherche">1.258,6150 $</td></tr>
+</tbody>
+</table>
+</div>
+<p>Die Nachher-Spalten sind berechnet, nicht gemessen: Tokens der Läufe 4056 und 4064 aus der Ausführungsansicht mal Listenpreis des Agent-Modells bei OpenRouter (Stand 13.11.2026). Maßgeblich wäre die Abrechnung des Modellzugangs für diese Läufe, die habe ich nicht ausgewertet.</p>
+<p>Grenzen: Ab rund 175 KI-Bildern am Tag endet das Freikontingent für Bilder. Die kostenlosen Modelle haben keine Verfügbarkeitszusage und lehnen bei Last ab; ab etwa 10.000 Aufrufen im Monat wäre ein bezahltes Modell nötig, das ist hier nicht eingerechnet.</p>
+</section>
+
+<section aria-labelledby="k4-t" class="kapitel" id="k4">
+<div class="kkopf"><div aria-hidden="true" class="knum">04</div><div>
+<p class="kklein">Kapitel 4</p><h2 id="k4-t">MUSS-Kriterien und Freeze-Checkliste</h2>
+<p class="klede">Alle 25 MUSS-Kriterien einzeln geprüft, nicht nur die 6 Punkte der Freeze-Checkliste.</p>
+</div></div>
+<p>Stand 21.11.2026, nach der Fehlerbehebung neu gezählt: 20 erledigt, 4 teilweise, 1 offen. Die vollständige Liste der 25 Kriterien mit Beleg je Kriterium führe ich intern; die 5 nicht erledigten Punkte stehen in der Tabelle unten. Am 19.11.2026 nachmittags waren es 19 erledigt, 5 teilweise, 1 offen. Dazugekommen ist das Architekturbild: Der Plan des Endstands zeigt Werkzeug 6, die Chat-Seite und den Freigabe-Workflow (Kapitel 6).</p>
+<div aria-labelledby="t-muss" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-muss">Teilweise und offen</caption>
+<thead><tr><th scope="col">Kriterium</th><th scope="col">Stand</th><th scope="col">Was fehlt</th></tr></thead>
+<tbody>
+<tr><th data-label="Kriterium" scope="row">Aktueller Prompt gegen die Baseline getestet</th><td data-label="Stand">teilweise</td><td data-label="Was fehlt">Prompt des Freeze-Stands gegen V4.1 an denselben Fällen messen. Fertigstellung bis zum Freeze am Mo 23.11.2026.</td></tr>
+<tr><th data-label="Kriterium" scope="row">Fails behoben, Regression geprüft</th><td data-label="Stand">teilweise</td><td data-label="Was fehlt">Fristablauf der Freigabe (T3) und Angriffsfall am Eingang (T4) offen; am veröffentlichten Stand nur 2 volle Läufe statt der 20 Fälle (Kapitel 5). Fertigstellung bis zum Freeze am Mo 23.11.2026.</td></tr>
+<tr><th data-label="Kriterium" scope="row">Tool-Beschreibungen in der Doku</th><td data-label="Stand">teilweise</td><td data-label="Was fehlt">eigener Abschnitt mit allen 6 Werkzeugen. Fertigstellung bis zum Freeze am Mo 23.11.2026.</td></tr>
+<tr><th data-label="Kriterium" scope="row">Aufbau der Präsentation</th><td data-label="Stand">teilweise</td><td data-label="Was fehlt">Kostenfolie mit Vorher- und Nachher-Werten (Werte stehen in Kapitel 3). Fertigstellung bis zum Freeze am Mo 23.11.2026.</td></tr>
+<tr><th data-label="Kriterium" scope="row">15 Minuten Präsentation mit Live-Demo</th><td data-label="Stand">offen</td><td data-label="Was fehlt">erst am Do 26.11.2026 erfüllbar; 2 Proben mit Stoppuhr am 24. und 25.11.</td></tr>
+</tbody>
+</table>
+</div>
+<p>Freeze-Checkliste: 5 von 6 Punkten erfüllt (Testtabelle mit 15 und mehr Fällen, Prompt mit Versionen und Changelog, 5 Angriffe, Compliance, Architektur). Offen ist der Gesamtabschluss der Muss-Kriterien.</p>
+</section>
+
+<section aria-labelledby="k5-t" class="kapitel" id="k5">
+<div class="kkopf"><div aria-hidden="true" class="knum">05</div><div>
+<p class="kklein">Kapitel 5</p><h2 id="k5-t">Letzte Fixes, Abnahme und Regression</h2>
+<p class="klede">Was bis zum Freeze dazukam und wie es belegt ist.</p>
+</div></div>
+<div aria-labelledby="t-fix" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-fix">Eingebaut bis zum Freeze</caption>
+<thead><tr><th scope="col">Was</th><th scope="col">Warum</th><th scope="col">Beleg</th></tr></thead>
+<tbody>
+<tr><th data-label="Was" scope="row">Werkzeug 6 „Qualität prüfen“</th><td data-label="Warum">bewertet den Beitrag gegen Markenpaket und Kriterien und lässt ihn überarbeiten; ein Sprachmodell als Prüfer, mit 3 Wiederholungen bei Überlast</td><td data-label="Beleg">Note 4,6 im ersten vollen Lauf (3997), Rückschleife mit Note 4,4 und 4,6 (4010, 4013)</td></tr>
+<tr><th data-label="Was" scope="row">Bilder im dunklen Layout</th><td data-label="Warum">gleicher Look wie Projekt 1, Kennzeichnung bleibt</td><td data-label="Beleg">Lauf 4007: 9 Folien plus Einzelbild, „Mit KI erstellt“ auf jeder Folie</td></tr>
+<tr><th data-label="Was" scope="row">Kunde Ordwin</th><td data-label="Warum">echtes Markenpaket statt Testkunde für die Abnahme</td><td data-label="Beleg">Läufe 3720, 3992, 4007</td></tr>
+<tr><th data-label="Was" scope="row">Text-Werkzeug v09.2b</th><td data-label="Warum">Ziffern und Zahlwörter im Text lösen 1 Neufassung aus statt eines sofortigen Abbruchs</td><td data-label="Beleg">40 lokale Tests wie erwartet; Lauf 4009 ohne Zahlenfehler</td></tr>
+<tr><th data-label="Was" scope="row">Bildsuche mit konkreten Suchbegriffen</th><td data-label="Warum">die Fotosuche fand zu abstrakte Begriffe nicht</td><td data-label="Beleg">Foto in 2 von 3 Probeläufen</td></tr>
+</tbody>
+</table>
+</div>
+<figure id="foto-werkzeug6"><a href="bilder/w09t04-werkzeug6-qualitaet.png"><img loading="lazy" alt="n8n-Editor mit Werkzeug 6 Qualität prüfen: oben Beschreibung, Version, Ablauf, Status und Setup-Checkliste, darunter die Kette Auftrag empfangen, Eingabe prüfen, Paket und Marke lesen, Stufe 1 ohne Modell, Judge, Urteil bauen und Rückgabe, unten Fehlerwege und das Ersatzmodell." src="bilder/w09t04-werkzeug6-qualitaet.png" width="1920" height="1080"/></a><figcaption>Werkzeug 6 „Qualität prüfen“ im Editor, veröffentlichter Stand v05.1, aufgenommen am 21.11.2026; die Statusnotiz im Kopf nennt noch den Entwurf v05 vor dem Veröffentlichen. Erst prüft Code ohne Modell, dann bewertet ein Sprachmodell den Beitrag; fällt es aus, springt ein Ersatzmodell ein. Setup-Checkliste, Plattform-Hinweise und Error Report abgedeckt.</figcaption></figure>
+<p><strong>Abnahme gegen Projekt 1:</strong> Je 1 Beitrag aus Projekt 1 und aus dem Agenten nebeneinander. Im 2. Lauf (4007) gleiches Layout, dazu KI-Kennzeichnung, Hashtags und Qualitätsprüfung; schwächer sind Folie 1 ohne Foto und ein Stockfoto statt einer Grafik im Einzelbild. Die Abnahme ist bestanden, die Schwächen gehen in die Fehlerbehebung.</p>
+<p><strong>Regression am Freeze-Stand:</strong> Die 20 Fälle der Testtabelle habe ich am veröffentlichten Stand nicht noch einmal gefahren. Am 21.11.2026 liefen stattdessen 3 volle Läufe: 4047 im Editor am Stand v26.5.3, 12 Minuten vor dem Veröffentlichen, danach 4056 und 4064 über die veröffentlichte Chat-Seite. Alle 3 liefen bis zur Einreichung, 4056 und 4064 bis zur Ablage. Die Regression über die 20 Fälle ist bis zum Freeze am 23.11. geplant. Die Fehlerbehebungen seit dem Freeze sind mit Proben am Code getestet, alter gegen neuer Stand (Kapitel 8). Die letzte Regression über alle 20 Fälle lief am 18.11.2026 am Stand v23.1: 19 bestanden, 1 nicht bestanden (K03), siehe <a href="w09t02.html">W9 Tag 2</a> und <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/test-tabelle-w09t02.md">Testtabelle W09T02</a>.</p>
+<p><strong>Freigeben bis zur Ablage:</strong> bestanden am veröffentlichten Stand. In den Läufen 4056 und 4064 (Freigabe-Läufe 4062 und 4070) habe ich in Telegram „Freigeben“ geklickt, die Rückmeldung lautete „Freigegeben und in Nextcloud abgelegt“, und die Datenbank hat den Status „fertig“. Bei 4056 lagen im Kundenordner 11 Dateien (Beitrag, Einzelbild, 9 Folien, Foto unten); bei 4064 nennt die Freigabe-Nachricht 11 Bilder, die Dateien im Ordner habe ich für diesen Lauf nicht gezählt. Den Weg „Ablehnen“ belegt Lauf 4047 mit dem Freigabe-Lauf 4055 (Status „abgelehnt“ mit Grund), ein Lauf im Editor kurz vor dem Veröffentlichen. In Lauf 4056 meldete Werkzeug 6 einen Dienstfehler; der Beitrag ging dann wie vorgesehen mit dem Hinweis „ungeprüft eingereicht“ zur Freigabe.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;align-items:start">
+<figure id="foto-freigeben"><a href="bilder/w09t04-telegram-freigeben.png"><img loading="lazy" alt="Telegram: Freigabe-Nachricht für ordwin mit 11 Bildern, Qualitätsprüfung Note 4,6, KI-Kennzeichnung vorhanden, Approved by Patrick Minkler, darunter die Rückmeldung Freigegeben und in Nextcloud abgelegt mit Link zum Kundenordner." src="bilder/w09t04-telegram-freigeben.png" width="660" height="595"/></a><figcaption>Freigeben in Telegram (Lauf 4064) und Rückmeldung der Ablage.</figcaption></figure>
+<figure id="foto-nextcloud"><a href="bilder/w09t04-nextcloud-ablage.png"><img loading="lazy" alt="Nextcloud-Ordner des Beitrags mit beitrag.md, einzelbild.png und folie-01 bis folie-09, unten 11 Dateien." src="bilder/w09t04-nextcloud-ablage.png" width="600" height="977"/></a><figcaption>Kundenordner in Nextcloud nach der Freigabe (Lauf 4056): 11 Dateien. Adresszeile geschwärzt.</figcaption></figure>
+</div>
+<figure id="foto-beitragsstatus"><a href="bilder/w09t04-supabase-beitragsstatus.png"><img loading="lazy" alt="Supabase-Tabelle k1_posts, gefiltert auf 3 Beiträge: abgelehnt mit Grund Test für Lauf 4047, fertig für die Läufe 4056 und 4064, mit Zeitpunkten der Entscheidung." src="bilder/w09t04-supabase-beitragsstatus.png" width="1615" height="240"/></a><figcaption>Beitragstabelle <code>k1_posts</code>: Status je Lauf nach der Entscheidung in Telegram. Spalte der freigebenden Kennung geschwärzt.</figcaption></figure>
+</section>
+
+<section aria-labelledby="k6-t" class="kapitel" id="k6">
+<div class="kkopf"><div aria-hidden="true" class="knum">06</div><div>
+<p class="kklein">Kapitel 6</p><h2 id="k6-t">Architektur: ein Agent mit Werkzeugen</h2>
+<p class="klede">Kein Multi-Agent, kein MCP.</p>
+</div></div>
+<p>Ein Auftrag läuft immer in derselben Abfolge: recherchieren, schreiben, gestalten, prüfen, einreichen. Diese Abfolge steuert ein Agent mit Werkzeugen, die als Sub-Workflows gebaut sind. Mehrere Agenten brächten Abstimmungsaufwand, ohne dass es einen 2. Entscheider gibt. Ein MCP-Server lohnt erst, wenn mehrere Programme dieselben Werkzeuge nutzen; hier wäre er nur Mehraufwand und ein zusätzlicher Dienst.</p>
+<p>Gegenüber der festen Kette aus Projekt 1 bringt der Agent 3 Dinge: Er wählt die Werkzeuge je Auftrag, er fragt zurück, wenn etwas fehlt, und er lässt einen schwachen Beitrag über Werkzeug 6 überarbeiten.</p>
+<figure id="foto-hauptworkflow"><a href="bilder/w09t04-hauptworkflow-v26-5-3.png"><img loading="lazy" alt="n8n-Editor mit dem Hauptworkflow v26.5.3: Kopf mit Beschreibung und Setup-Checkliste, darunter die Rahmen 01 bis 12 in Laufrichtung." src="bilder/w09t04-hauptworkflow-v26-5-3.png" width="1920" height="1080"/></a><figcaption>Hauptworkflow v26.5.3, Rahmen 01 bis 12 in Laufrichtung, jeder Rahmen mit Zugängen trägt eine Setup-Zeile (aufgenommen vor dem Veröffentlichen am 21.11.2026, derselbe Stand, die Notiz im Kopf nennt deshalb noch „Entwurf“). Sitzungskennung unten links geschwärzt.</figcaption></figure>
+<figure id="plan"><a href="plan/plan-w09t04-v26.png"><img loading="lazy" alt="Datenflussbild des Redaktions-Agenten, Endstand 20.11.2026 mit Hauptworkflow v26.5.2, Systemprompt v4.4, Freigabe-Workflow v02.1 und Text-Werkzeug v09.3: Auftraggeber auf der Chat-Seite, S1 Eingang prüfen, C KI-Kennzeichnung, S2 Redaktions-Agent mit 6 Werkzeugen, darunter Werkzeug 6 Qualität prüfen mit Daten aus Supabase (D21) und Bewertung über die Prüfmodelle (D20), S8 Beitrag prüfen, Freigabe als eigener Workflow, Statuswechsel und Laufzeile in Supabase (D14), Ablage in Nextcloud nur nach Freigabe; Pfeile D1 bis D21, rechts die Tabelle der 23 Datenflüsse." height="1986" src="bilder/w09t04-plan-v26.png" width="2592"/></a><figcaption><strong>Plan des Endstands von W9 Tag 4 nach der Fehlerbehebung (Hauptworkflow v26.5.2, Systemprompt v4.4).</strong> Neu gegenüber W9 Tag 3 ist Werkzeug 6 mit seinen Datenflüssen D20 und D21; jeder Statuswechsel und die Laufzeile werden von der Datenbank bestätigt (D14). <a href="plan/plan-w09t04-v26.png">Volle Auflösung</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/plan/plan-w09t04-v26.excalidraw">Excalidraw-Datei</a>.</figcaption></figure>
+</section>
+
+<section aria-labelledby="k7-t" class="kapitel" id="k7">
+<div class="kkopf"><div aria-hidden="true" class="knum">07</div><div>
+<p class="kklein">Kapitel 7</p><h2 id="k7-t">Feature Freeze und bekannte Einschränkungen</h2>
+<p class="klede">Was bis zum Hard Freeze am Di 24.11.2026 behoben wird.</p>
+</div></div>
+<div class="merksatz" id="freeze-vermerk"><span class="ktag">Freeze-Vermerk</span>
+<p>Feature Freeze war am Do 19.11.2026 abends, seitdem kommen keine neuen Funktionen mehr dazu. Bis Mo 23.11.2026 werden Fehler behoben. Der Hauptworkflow ist nach unabhängiger Prüfung seit dem 21.11.2026 online. Ab Di 24.11.2026 gilt der Hard Freeze: nur noch echte Fehler und reine Gestaltung der Chat-Seite.</p>
+<p>Seit dem Freeze kamen nur Fehlerbehebungen. Das Bild-Werkzeug gibt wieder die richtige Rückmeldung (veröffentlicht am 19.11.2026). Im Hauptworkflow filtert die Ausgabeprüfung behauptete Noten strenger, die Aufrufgrenze passt mit 14 zur Qualitätsschleife, und ein ungeprüfter Endtext ist mit „Achtung, Endtext ungeprüft“ markiert. Das Text-Werkzeug kürzt einen zu langen LinkedIn-Post nur noch um ganze Sätze und lässt ihn sonst neu fassen. Jeder Fehlerfall dazu steht in Kapitel 8. Die Fehlerbehebungen sind mit Proben am Code und unabhängigen Prüfrunden belegt, dazu mit 2 vollen Läufen am veröffentlichten Stand und 1 Lauf im Editor kurz davor, alle am 21.11.2026 (Kapitel 5).</p>
+<p>Mehrere Agenten mit Orchestrator und ein MCP-Server (Kapitel 6) bleiben Ideen für die Zeit nach dem Kurs.</p></div>
+<ul>
+<li>Die Gegenprüfung des ganzen Hauptworkflows und des Freigabe-Workflows fand am 20.11.2026 in 3 Runden zuerst 4 mittlere und 1 kleinen Fehler, danach 1 weiteren mittleren. Alle sind behoben, die letzte Runde fand keinen mittleren oder schweren Fehler mehr (Kapitel 8). Veröffentlicht am 21.11.2026 um 14:03: Hauptworkflow v26.5.3, Freigabe-Workflow und Text-Werkzeug v09.3.</li>
+<li>Das Bild-Werkzeug gab nach einer Neuanordnung der Knoten eine falsche Rückmeldung an den Agenten zurück. Die Reihenfolge ist korrigiert, getestet und seit dem 19.11.2026 abends veröffentlicht.</li>
+<li>Die Rückschleife über Werkzeug 6 entfernt Gedankenstriche und eine falsche Absatzzahl nicht verlässlich, und der letzte Text geht ungeprüft zur Freigabe. Die Note gehört dann zum vorletzten Text. Seit v26.3 (veröffentlicht mit v26.5.3 am 21.11.2026) steht in diesem Fall „Achtung, Endtext ungeprüft“ statt der Note.</li>
+<li>Die Chat-Seite zeigt die Antwort nur, wenn sie bis dahin offen und aktiv bleibt. Der Knoten „Antwort senden“ sendet die Antwort und wartet, bis die Chat-Seite sie abholt. War die Seite zu (Handy gesperrt oder App gewechselt, Lauf 4056) oder lief der Lauf im Editor (Lauf 4047), holt sie niemand ab, und die Ausführung bleibt in n8n im Status „Waiting“ stehen. Einreichung, Freigabe und Ablage sind davon nicht betroffen (<a href="w09t03.html#k6">W9 Tag 3, Kapitel 6</a>).</li>
+<li>Fällt Werkzeug 6 mit einem Dienstfehler aus, geht der Beitrag ungeprüft mit Hinweis zur Freigabe (Lauf 4056 am 21.11.2026).</li>
+<li>Ohne Klick in Telegram verfällt die Freigabe nicht wie geplant (Test T3 aus <a href="w08t05.html#k4">W8 Tag 5</a>); die Behebung ist bis zum Freeze am 23.11. geplant.</li>
+<li>Die kostenlosen Modelle für Text und Prüfung lehnen bei Last ab; das Ersatzmodell der Qualitätsprüfung hat am 19.11.2026 nie geliefert.</li>
+<li>Das Laufprotokoll schreibt Agent-Tokens und Kosten leer, nur die Tokens der Werkzeuge stehen drin (4064: 5.713, 4047: 8.972).</li>
+<li>Bekannte Zahlwort-Lücken im Text-Werkzeug stehen in der <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/test-tabelle-w09t02.md">Testtabelle W09T02</a>.</li>
+</ul>
+<p>Veröffentlichte Versionen (Stand 21.11.2026): Hauptworkflow v26.5.3 (v26.5.2 plus Anordnung, Rahmen 01 bis 12, Setup-Zeilen), Freigabe-Workflow v02.1 (Wartezeit des Fehlerprotokolls mit ausdrücklicher Einheit Sekunden) und Text-Werkzeug v09.3, alle 3 am 21.11.2026 um 14:03; Werkzeug 6 v05.1 und das Bild-Werkzeug v05 (dunkles Layout, Layout 4, Rückgabe-Fix) am 19.11.2026. Jede Version mit Grund steht in <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/versionen.md">versionen.md</a>.</p>
+</section>
+
+<section aria-labelledby="k8-t" class="kapitel" id="k8">
+<div class="kkopf"><div aria-hidden="true" class="knum">08</div><div>
+<p class="kklein">Kapitel 8</p><h2 id="k8-t">Fehlerfälle und Fixes</h2>
+<p class="klede">Freigabe, Rückmeldungen der Datenbank und die Kürzung im Text-Werkzeug, Fall für Fall.</p>
+</div></div>
+<p>Alle Fälle stammen aus unabhängigen Prüfrunden vom 19. und 20.11.2026. Jede Runde hatte den Auftrag, Fehler zu finden, nicht den Bau zu bestätigen. Getestet sind die Fixes mit festen Proben am Code der Knoten, jeweils alter gegen neuen Stand, beim Text-Werkzeug zusätzlich mit absichtlich eingebauten Fehlern im Code, die die Tests finden müssen. Am veröffentlichten Stand liefen am 21.11.2026 2 volle Läufe über die Chat-Seite, dazu 1 Lauf im Editor kurz vor dem Veröffentlichen (Kapitel 5). Die Fälle am Agenten, an der Aufrufgrenze und an der Chat-Seite stehen in <a href="w09t03.html#k5">W9 Tag 3, Kapitel 5</a>.</p>
+
+<h3>Freigabe und Rückmeldungen</h3>
+<div aria-labelledby="t-fehler-a" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-fehler-a">Fehlerfälle Freigabe und Status (Hauptworkflow und Freigabe-Workflow)</caption>
+<thead><tr><th scope="col">Nr</th><th scope="col">Was schiefging</th><th scope="col">Ursache</th><th scope="col">Fix</th><th scope="col">Wie getestet</th><th scope="col">Stand</th></tr></thead>
+<tbody>
+<tr><th data-label="Nr" scope="row">1</th><td data-label="Was schiefging">Nach der Rückschleife über Werkzeug 6 ging der zuletzt geschriebene Text ungeprüft zur Freigabe, die gezeigte Note gehörte zum vorletzten Text.</td><td data-label="Ursache">Der Systemprompt verlangt die erneute Prüfung, der Code erzwingt sie nicht.</td><td data-label="Fix">Der Workflow liest die Note aus der Rückgabe von Werkzeug 6 und nur für das eingereichte Paket. Fehlt sie, steht in Chat und Telegram „Qualitätsprüfung: Achtung, Endtext ungeprüft“ (7 Stellen).</td><td data-label="Wie getestet">25 Proben (am alten Stand 23 rot), dazu die echten Zwischenschritte der Läufe 4007 und 3992: 4007 ergibt jetzt „Endtext ungeprüft“ statt Note 4,6, 3992 die belegte Note 4,6.</td><td data-label="Stand">behoben, Schleife selbst bleibt Grenze</td></tr>
+<tr><th data-label="Nr" scope="row">2</th><td data-label="Was schiefging">Scheiterte die Telegram-Meldung über einen gesperrten Beitrag (Zeitüberschreitung oder abgelehnter Versand), brach der ganze Lauf ab: kein Laufprotokoll, keine Antwort auf der Chat-Seite.</td><td data-label="Ursache">Der Knoten „Sperre melden“ hatte keinen Fehlerausgang.</td><td data-label="Fix">Fehlerausgang ergänzt, beide Wege führen weiter zu Protokoll und Chat-Antwort, das Protokoll vermerkt „Sperrmeldung an Patrick gescheitert“.</td><td data-label="Wie getestet">Teil von 81 Proben, 0 rot; in der nächsten Prüfrunde am Ablauf bestätigt.</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">3</th><td data-label="Was schiefging">Ein früher Fehler im Freigabe-Workflow konnte aus dem Laufprotokoll verschwinden.</td><td data-label="Ursache">Der Hauptworkflow legte seine Laufzeile erst nach dem Start des Freigabe-Workflows an. Schrieb der Freigabe-Workflow seinen Fehlervermerk früher, traf er keine Zeile, und der Hauptlauf schrieb danach „eingereicht“ ohne Fehler.</td><td data-label="Fix">Die Laufzeile entsteht jetzt vor dem Start und muss von der Datenbank bestätigt sein. Der Abschluss ergänzt die Zeile, ohne einen Fehlervermerk zu überschreiben. Der Fehlervermerk im Freigabe-Workflow muss genau 1 Zeile treffen, sonst geht eine Meldung an Telegram.</td><td data-label="Wie getestet">6 Fälle zur Bestätigung (1 Zeile ja; 0 Zeilen, Fehler, fremde Kennung, 2 Zeilen, leere Kennung nein), Probe mit beiden Schreibreihenfolgen.</td><td data-label="Stand">behoben (Ausnahme siehe Grenzen)</td></tr>
+<tr><th data-label="Nr" scope="row">4</th><td data-label="Was schiefging">4 Statuswechsel (Beitrag sperren, fertig, abgelehnt, abgelaufen) konnten still enden. Beispiel: Der Beitrag wird während der bis zu 24 Stunden Wartezeit gelöscht. Die Datenbank antwortet erfolgreich mit einer leeren Liste, n8n gibt nichts weiter, weder Erfolg noch Fehlerweg laufen.</td><td data-label="Ursache">Die Knoten werteten nur einzelne Treffer aus und prüften nicht, ob genau 1 Zeile mit dem richtigen Status zurückkam.</td><td data-label="Fix">Alle 4 Knoten werten die volle Antwort aus. Je 1 Weiche verlangt genau 1 Zeile mit der richtigen Beitragskennung und dem Zielstatus, alles andere läuft in den Fehlerweg mit Meldung, die den Schritt nennt.</td><td data-label="Wie getestet">74 Proben, 0 rot: je Knoten 0 Zeilen, fremde Zeile, falscher Status, 2 Zeilen und Datenbankfehler. In der letzten Prüfrunde 116 eigene Proben bestanden, 0 gescheitert.</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">5</th><td data-label="Was schiefging">Die Fehlermeldung in Telegram nannte bei den neuen Schritten zur Laufzeile „Betroffener Schritt: unbekannt“.</td><td data-label="Ursache">Die Liste der Schritte in der Meldung kannte die 2 neuen Knoten noch nicht.</td><td data-label="Fix">Meldung nennt „Laufzeile anlegen (Datenbank)“ und „Laufzeile nicht bestätigt“.</td><td data-label="Wie getestet">10 Fälle: die 2 neuen alt „unbekannt“, neu richtig, die 8 übrigen Meldungen wortgleich.</td><td data-label="Stand">behoben</td></tr>
+</tbody>
+</table>
+</div>
+
+<figure id="foto-freigabe-workflow"><a href="bilder/w09t04-freigabe-workflow-v02-1.png"><img loading="lazy" alt="n8n-Editor mit dem Freigabe-Workflow: oben Beschreibung, Version, Setup-Checkliste, Plattform-Hinweise und Fehlerbehebung, darunter die Rahmen Auftrag empfangen und prüfen, Bilder und Vorschau, Freigabe-Frage, Entscheidung und Ablage; rechts die Weichen Fertig bestätigt, Ablehnung bestätigt und Ablauf bestätigt, unten der Fehlerweg." src="bilder/w09t04-freigabe-workflow-v02-1.png" width="1920" height="1080"/></a><figcaption>Freigabe-Workflow v02.1 im Editor, veröffentlicht am 21.11.2026 um 14:03; die Statusnotiz oben links nennt noch den Entwurfsstand vor dem Veröffentlichen. Setup-Checkliste, Plattform-Hinweise und Error Report abgedeckt. Rechts die Weichen „Fertig bestätigt?“, „Ablehnung bestätigt?“ und „Ablauf bestätigt?“ aus Fall 4, unten der Fehlerweg mit dem Vermerk im Laufprotokoll aus Fall 3.</figcaption></figure>
+
+<figure id="foto-laufzeilen"><a href="bilder/w09t04-supabase-laufzeilen.png"><img loading="lazy" alt="Supabase-Tabelle k2_agent_laeufe mit Laufzeilen: Kennung, Zeitpunkt, trace_id und execution_id, Workflow-Name, erzeugt von p2_agent, Eingang chat; darunter die Zeilen 4047 und 4064 vom 21.11.2026." src="bilder/w09t04-supabase-laufzeilen.png" width="1615" height="690"/></a><figcaption>Laufzeilen in <code>k2_agent_laeufe</code>: je Lauf 1 Zeile, angelegt vor dem Start der Freigabe (Fall 3), darunter 4047 und 4064 vom 21.11.2026.</figcaption></figure>
+
+<h3>Kürzung im Text-Werkzeug</h3>
+<p>Ein LinkedIn-Post darf höchstens 900 Zeichen haben. Ist die erste Fassung des Modells länger, kürzt der Code. Die Regel dafür ging durch viele Runden, weil jede neue Regel einen neuen Randfall erzeugte. An 27 echten Posts aus früheren Läufen (je 3 Fassungen, in 2 Prüfknoten) änderte keine dieser Runden das Ergebnis, 162 von 162 Vergleichen blieben gleich. Die Fälle traten bei künstlich langen Posts auf, wie sie das Modell schreiben kann.</p>
+<figure id="foto-text-werkzeug"><a href="bilder/w09t04-text-werkzeug-v09-3.png"><img loading="lazy" alt="n8n-Editor mit dem Text-Werkzeug: oben Beschreibung, Notiz Version v09.3 vom 20.11.2026, Ablauf, Status, Setup-Checkliste, darunter die Kette von Auftrag empfangen über Prompt bauen, Text schreiben und Paket prüfen bis Paket speichern und Rückgabe, rechts unten Zahlenverbot prüfen, Neufassung vorbereiten und Text neu schreiben." src="bilder/w09t04-text-werkzeug-v09-3.png" width="1920" height="1080"/></a><figcaption>Text-Werkzeug v09.3 im Editor (Notiz „Version v09.3“), veröffentlicht am 21.11.2026 um 14:03. Die Kürzung sitzt in „Paket prüfen“, die Neufassung rechts unten. Setup-Checkliste und Plattform-Hinweise abgedeckt.</figcaption></figure>
+<div aria-labelledby="t-fehler-b" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-fehler-b">Fehlerfälle Text-Werkzeug v09.3 (Bereinigung und Kürzung des LinkedIn-Posts)</caption>
+<thead><tr><th scope="col">Nr</th><th scope="col">Was schiefging</th><th scope="col">Ursache</th><th scope="col">Fix</th><th scope="col">Wie getestet</th><th scope="col">Stand</th></tr></thead>
+<tbody>
+<tr><th data-label="Nr" scope="row">6</th><td data-label="Was schiefging">Nach der Kürzung hatte ein Post 901 statt höchstens 900 Zeichen, in bis zu 340 von 3.000 Zufallsposts.</td><td data-label="Ursache">Die Zielbreite rechnete das Trennzeichen vor dem gekürzten Satz nicht mit.</td><td data-label="Fix">Trennzeichen mitgerechnet. Später durch Fall 10 ganz abgelöst.</td><td data-label="Wie getestet">43 Abnahmeproben (am alten Stand 36 rot).</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">7</th><td data-label="Was schiefging">Ein Satz mit Datum wurde zerrissen: „Am 24.12.“ galt als eigener Satz, in 182 und 127 von rund 750 Proben.</td><td data-label="Ursache">Der Punkt hinter dem Datum galt als Satzende.</td><td data-label="Fix">Hinter einem Datum wie 24.12. wird nicht getrennt.</td><td data-label="Wie getestet">wie Fall 6</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">8</th><td data-label="Was schiefging">„5 ...10“ wurde „5 10“.</td><td data-label="Ursache">Auslassungspunkte zwischen Ziffern wurden ersatzlos entfernt.</td><td data-label="Fix">Zwischen 2 Ziffern wird daraus „bis“: „5 bis 10“, auch mit Prozent-, Grad- oder Währungszeichen.</td><td data-label="Wie getestet">wie Fall 6</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">9</th><td data-label="Was schiefging">Der Fix aus Fall 8 hatte eine Laufzeitfalle: Eine 5, 60 Punkte und ein Buchstabe brauchten über 3 Sekunden, schon bei 62 Zeichen.</td><td data-label="Ursache">Ein regulärer Ausdruck mit verschachtelten Wiederholungen, der dieselbe Punktreihe auf sehr viele Arten zerlegen kann.</td><td data-label="Fix">Punktreihen werden zuerst einmal zu einem Auslassungszeichen zusammengefasst, alle Regeln danach kennen nur noch dieses Zeichen.</td><td data-label="Wie getestet">18 Proben (am alten Stand 8 rot), 10.000 Punkte in 14 Formen höchstens 3,3 ms.</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">10</th><td data-label="Was schiefging">Die 900 Zeichen waren nicht garantiert. Ein Post mit 1.338 Zeichen kam nach der Kürzung mit 1.337 Zeichen und „OK“ heraus.</td><td data-label="Ursache">Die Kürzung nahm immer den längsten Absatz und brach ganz ab, wenn dort nichts zu kürzen war. Eine Schlussprüfung der Länge fehlte.</td><td data-label="Fix">Gekürzt wird über alle Absätze. Bleibt der Post zu lang, verlangt der Workflow 1 Neufassung vom Modell, beim 2. Mal gibt er einen Fehler zurück statt „OK“.</td><td data-label="Wie getestet">wie Fall 9</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">11</th><td data-label="Was schiefging">Die Kürzung schnitt am Wortende ab und änderte den Sinn: Aus „Wir öffnen am 24.12. auch für Beratung … nicht.“ fiel das „nicht“ weg.</td><td data-label="Ursache">Eine 2. Kürzungsstufe schnitt den längsten Satz einfach ab.</td><td data-label="Fix">Die 2. Stufe ist entfallen, gekürzt werden nur ganze Sätze. Was nicht reicht, wird neu gefasst (Fall 10).</td><td data-label="Wie getestet">wie Fall 9</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">12</th><td data-label="Was schiefging">War der Post nur zu lang, sagte der Hinweis an das Modell trotzdem „Der Auftrag verbietet Zahlen“.</td><td data-label="Ursache">Länge und Zahlenverbot liefen über dasselbe Feld.</td><td data-label="Fix">Eigener Absatz für den zu langen Post mit der Zeichenzahl, der Zahlenhinweis kommt nur bei einem Zahlengrund.</td><td data-label="Wie getestet">19 Proben (am alten Stand 8 rot).</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">13</th><td data-label="Was schiefging">Die Satzkürzung trennte hinter Abkürzungen und strich Bruchstücke: Aus „Der Termin dauert ca. 10 Minuten.“ wurde „Der Termin dauert ca.“ als eigener Satz behandelt.</td><td data-label="Ursache">Jeder Punkt galt als Satzende.</td><td data-label="Fix">Feste Liste von Abkürzungen (ca., Nr., z.B., Dr. und andere), hinter denen nicht getrennt wird.</td><td data-label="Wie getestet">31 Proben (am alten Stand 9 rot), 600 Abkürzungsproben: Bruchstücke von 140 auf 0.</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">14</th><td data-label="Was schiefging">Ein kurzer Einschränkungssatz wurde als erster gestrichen, weil er am kürzesten war. Ohne „Aber nicht für Reparaturen.“ kehrt sich die Aussage um.</td><td data-label="Ursache">Die Kürzung wählte Sätze nur nach Länge.</td><td data-label="Fix">Sätze mit Verneinung oder Einschränkung (nicht, kein, nur, aber, ohne, höchstens und weitere) werden nie gestrichen. Das war meine Entscheidung, obwohl es mehr Neufassungen kostet.</td><td data-label="Wie getestet">wie Fall 13</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">15</th><td data-label="Was schiefging">Abkürzungen außerhalb der Liste wie „Mo. bis Fr.“ oder „inkl. MwSt.“ hinterließen weiter Bruchstücke. Der Satz vor einem „Aber …“ war streichbar, und der Hinweis an das Modell erlaubte, Einschränkungssätze wegzulassen.</td><td data-label="Ursache">Liste zu kurz, Schutz nur für den Einschränkungssatz selbst, Hinweistext nicht angeglichen.</td><td data-label="Fix">Liste länger, Ordnungszahlen wie „Unser 100. Kunde“, der Satz vor einem Satz mit Aber, Doch, Jedoch, Nur und ähnlichen bleibt, Schutzwörter erweitert, Hinweistext mit derselben Wortliste.</td><td data-label="Wie getestet">47 Proben (am alten Stand 12 rot), 24 von 24 eingebauten Fehlern gefunden.</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">16</th><td data-label="Was schiefging">Der Schutz galt nur im selben Absatz, 2 Regeln brauchten 3 bis 4 Sekunden bei 20.000 Zeichen, und schrieb das Modell den KI-Hinweis selbst, zählte er zur Länge.</td><td data-label="Ursache">Absatzgrenzen nicht beachtet, Regeln mit quadratischer Laufzeit.</td><td data-label="Fix">Schutz über die Absatzgrenze, Regeln ohne quadratische Laufzeit, bei mehr als 300 Sätzen keine Streichung, KI-Hinweis des Modells vor der Kürzung entfernt.</td><td data-label="Wie getestet">64 Proben (am alten Stand 13 rot), 38 von 38 eingebauten Fehlern gefunden, langsamster Lauf 45 ms.</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">17</th><td data-label="Was schiefging">Hinter „Kunden-Nr.“ oder „Dipl.-Ing.“ wurde trotz Liste getrennt. Leerzeichenblöcke im Instagram-Text brauchten bis 3,4 Sekunden.</td><td data-label="Ursache">Ein Bindestrich vor der Abkürzung verhinderte den Treffer, eine Regel prüfte jede Stelle mehrfach.</td><td data-label="Fix">Abkürzung auch nach Bindestrich oder Schrägstrich, Prüfungen je Satz zwischengespeichert, Längenprüfung vor der Zahlenprüfung.</td><td data-label="Wie getestet">77 Proben (am alten Stand 8 rot), 48 von 48 eingebauten Fehlern gefunden, langsamster Lauf 32 ms (vorher bis 1.595 ms).</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">18</th><td data-label="Was schiefging">Eine Zeitspanne wie „Mo bis Fr“, im Text mit Gedankenstrich und Leerzeichen geschrieben, wurde „Mo, Fr“.</td><td data-label="Ursache">Der Gedankenstrich wird entfernt (Schreibregel des Projekts), die Regel dafür setzte ein Komma.</td><td data-label="Fix">Wochentage, Monate und Zahlen mit Einheit werden mit „bis“ verbunden: „9 Uhr bis 17 Uhr“, „Januar bis März“.</td><td data-label="Wie getestet">87 Proben (am alten Stand 5 rot).</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">19</th><td data-label="Was schiefging">Der Fix aus Fall 18 machte aus „18 Uhr“ und „20 Plätze“ mit Gedankenstrich dazwischen die Spanne „18 Uhr bis 20 Plätze“. Ein Datumsbereich wie „1. bis 3. Juli“ fehlte.</td><td data-label="Ursache">Die Regel prüfte die Einheit rechts nicht.</td><td data-label="Fix">„bis“ nur bei derselben Einheit rechts, sonst Komma; Datumsbereiche mit Tageszahl werden „bis“.</td><td data-label="Wie getestet">96 Proben (am alten Stand 5 rot), 64 von 64 eingebauten Fehlern gefunden.</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">20</th><td data-label="Was schiefging">„Am 24.12. bis 26.12. geschlossen“, mit Gedankenstrich geschrieben, verlor die Spanne und wurde „Am 24.12. 26.12. geschlossen“.</td><td data-label="Ursache">Links war nur eine Tageszahl erlaubt, kein Datum mit Monat.</td><td data-label="Fix">Links darf ein Datum TT.MM. stehen.</td><td data-label="Wie getestet">102 Proben (am alten Stand 4 rot), 68 von 68 eingebauten Fehlern gefunden.</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">21</th><td data-label="Was schiefging">Eine Einschränkung, die nicht mit „Aber“ beginnt, schützte ihren Bezugssatz nicht. Aus „Reparaturen sind kostenpflichtig. Die Beratung ist kostenlos. Das gilt aber nur für Neukunden.“ wurde „Reparaturen sind kostenpflichtig. Das gilt aber nur für Neukunden.“</td><td data-label="Ursache">Geschützt war nur der Satz vor einem Satz, der mit einem Einschränkungswort beginnt.</td><td data-label="Fix">Jeder Satz mit einem Schutzwort schützt den Satz davor, egal wo das Wort steht.</td><td data-label="Wie getestet">110 Proben, davon 8 neu; am alten Stand sind die 3 Proben mit 6 Formen der Einschränkung rot.</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">22</th><td data-label="Was schiefging">Mit einem Zwischensatz fiel der Bezugssatz weiter weg: Aus „Die Reparatur ist kostenpflichtig. Die Beratung ist kostenlos. Sie erfolgt telefonisch. Das gilt aber nur für Neukunden.“ fiel der Satz zur Beratung weg, danach bezog sich „Sie“ auf die Reparatur.</td><td data-label="Ursache">Der Schutz reichte nur 1 Satz zurück.</td><td data-label="Fix">Aus einem Absatz mit einem Schutzwort wird kein Satz mehr gestrichen. Reicht das nicht unter 900 Zeichen, fasst das Modell den Post neu.</td><td data-label="Wie getestet">122 Proben (am alten Stand 8 rot).</td><td data-label="Stand">behoben</td></tr>
+<tr><th data-label="Nr" scope="row">23</th><td data-label="Was schiefging">Steht die Einschränkung als eigener Absatz („Das gilt nur für Neukunden.“), bleibt der Bezugssatz im Absatz davor streichbar, und „Sie erfolgt telefonisch.“ bezieht sich wieder auf die Reparatur.</td><td data-label="Ursache">Der Absatzschutz aus Fall 22 sperrt den Absatz mit der Einschränkung, im Absatz davor nur den letzten Satz.</td><td data-label="Fix">Auch der Absatz direkt vor einem gesperrten Absatz bleibt ganz. Reicht das nicht unter 900 Zeichen, fasst das Modell den Post neu. Gleiche Regel in beiden Prüfknoten.</td><td data-label="Wie getestet">128 Proben bestanden, dazu 5.000 Zufallsproben ohne Abweichung zwischen den Knoten und ohne verletzten Absatzschutz bei 6.703 gesperrten Absätzen; unabhängige Prüfrunde ohne Fund.</td><td data-label="Stand">behoben, veröffentlicht am 21.11.2026</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Bekannte Grenzen</h3>
+<ul>
+<li>Bestätigt die Datenbank die Sperre eines beanstandeten Beitrags nicht, nennt die Telegram-Meldung den Schritt richtig, im Laufprotokoll steht nur „Freigabe-Fehler vor der Antwort“. Der Beitrag kann dann im Status „wartet auf Freigabe“ stehen bleiben.</li>
+<li>Läuft das Anlegen der Laufzeile in eine Zeitüberschreitung, obwohl die Zeile schon geschrieben ist, wird der Lauf als Fehler weitergeführt.</li>
+<li>Bekommt der Freigabe-Workflow eine ungültige Eingabe, meldet er das in Telegram, im Laufprotokoll steht dazu kein Vermerk.</li>
+<li>Im Hauptworkflow kreuzt eine Verbindungslinie den Rahmen „Freigabe und Ablage“. Das betrifft nur die Ansicht.</li>
+<li>Die Listen der Abkürzungen und Schutzwörter sind endlich. „ausgenommen“, „trotzdem“, „dennoch“, „falls“ und „sofern“ schützen nicht, eine Abkürzung außerhalb der Liste kann ein Bruchstück hinterlassen.</li>
+<li>Ein Gedankenstrich als Minuszeichen mit Leerzeichen danach geht verloren: Aus einer Temperatur von minus 5 Grad wird „5 Grad“.</li>
+<li>Eine Spanne mit anderer oder fehlender Einheit rechts wird Komma statt „bis“ („9 Uhr, 17.30“), „5 Min. 10 Minuten“ bleibt ohne Komma, an Ordnungszahlen kann ein falsches „bis“ entstehen („15. Mai bis 20. Jubiläum“), ebenso bei einem Einschub zwischen 2 Monatsnamen.</li>
+<li>Auslassungspunkte zwischen 2 Zahlen werden immer „bis“, auch wenn sie eine Pause sind: „3... 2... 1“ wird „3 bis 2 bis 1“.</li>
+<li>Eine Zahl aus der Nachbesserung eines Menschen kann eine Neufassung auslösen, weil die Nachbesserung nicht als Zahlenquelle gilt.</li>
+<li>Bei großem Überhang steigt die Zahl der Neufassungen. Wie das kostenlose Modell auf die geänderten Hinweise reagiert, ist nicht in einem Lauf gemessen.</li>
+</ul>
+
+<div class="merksatz" id="gelernt"><span class="ktag">Was ich daraus gelernt habe</span>
+<p>Die Kürzung im Code war ein Fass ohne Boden. Jede neue Regel für Satzzeichen, Abkürzungen oder Spannen hat in der nächsten Prüfrunde einen neuen Randfall erzeugt, 18 Fälle an einem Tag. Deshalb habe ich am Ende die Richtung gewechselt: Der Code streicht nur noch, wo es sicher ist, nämlich ganze Sätze aus Absätzen ohne Einschränkung. Alles andere bleibt stehen, und reicht das nicht, schreibt das Modell den Post neu. Nach der Abgabe prüfe ich, ob die Bereinigung ganz in den Prompt wandert, statt immer mehr Regeln in den Code zu schreiben.</p></div>
+</section>
+</main>
+<footer class="fuss">
+<span>Patrick Minkler · Redaktions-Agent K2 · Projekt 2</span>
+<span>Stand 21.11.2026 · W9 Tag 3 und Tag 4 gebündelt</span>
+</footer>
+</div>
+</body>
+</html>

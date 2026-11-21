@@ -2,6 +2,8 @@
 
 Projekt 2, Stand 12.11.2026, umgesetzt in n8n.
 
+**Hinweis:** Diese Charter beschreibt den Stand vom 12.11.2026 und ist in Teilen überholt. Seither kamen Werkzeug 6 (Qualität prüfen) und ein eigener Freigabe-Workflow dazu: Die Freigabe wartet dort, der Hauptworkflow startet sie ohne Warten und ist seit 21.11.2026 veröffentlicht, das Agent-Modell ist Claude Haiku 5.5. Den aktuellen Stand zeigt die [Wochen-Doku Woche 9](https://minkeautomation.github.io/redaktions-agent/).
+
 Repository: [github.com/MinkeAutomation/redaktions-agent](https://github.com/MinkeAutomation/redaktions-agent). Projektdokumentation: [Wochen-Doku](https://minkeautomation.github.io/redaktions-agent/) mit den Tagesseiten [Tag 1](https://minkeautomation.github.io/redaktions-agent/w08t01.html), [Tag 2](https://minkeautomation.github.io/redaktions-agent/w08t02.html), [Tag 3](https://minkeautomation.github.io/redaktions-agent/w08t03.html) und [Tag 4](https://minkeautomation.github.io/redaktions-agent/w08t04.html). Grundlage ist [Projekt 1, die Content-Maschine K1](https://github.com/MinkeAutomation/content-maschine-k1).
 
 ## 1 Ziel und Use Case
