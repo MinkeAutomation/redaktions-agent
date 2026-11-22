@@ -6,15 +6,15 @@ Hier liegen die abgelösten Stände des Redaktions-Agenten: ältere Fassungen de
 
 | Ordner | Inhalt | Dateien |
 |---|---|---|
-| `workflows/redaktions-agent/` | Hauptworkflow v01 bis v20.1 (v23.1 ist Live in `workflows/`, v22 liegt als Abgabestand unter `workflows/abgaben/W09T01/`) | 24 |
-| `workflows/sub-markenwissen-abfragen/` | Werkzeug 1, v01 bis v03.1 (v03.3 ist Live) | 6 |
-| `workflows/sub-thema-recherchieren/` | Werkzeug 2, v01 bis v03.1 (v03.2 ist Live) | 8 |
-| `workflows/sub-text-schreiben/` | Werkzeug 3, v00 bis v07.1 (v09.1 ist Live, v08 liegt als Abgabestand unter `workflows/abgaben/W09T01/`) | 17 |
-| `workflows/sub-bilder-gestalten/` | Werkzeug 4, v01 und v01.2 (der Stand vom 17.11.2026 ist Live) | 2 |
-| `workflows/sub-zur-freigabe-einreichen/` | Werkzeug 5, v01 und v01.2 (v02 ist Live) | 2 |
+| `workflows/redaktions-agent/` | Hauptworkflow v01 bis v20.1 (der Live-Stand liegt in `workflows/`, v22 liegt als Abgabestand unter `workflows/abgaben/W09T01/`) | 24 |
+| `workflows/sub-markenwissen-abfragen/` | Werkzeug 1, v01 bis v03.1 (Live-Stand in `workflows/`) | 6 |
+| `workflows/sub-thema-recherchieren/` | Werkzeug 2, v01 bis v03.1 (Live-Stand in `workflows/`) | 8 |
+| `workflows/sub-text-schreiben/` | Werkzeug 3, v00 bis v07.1 (Live-Stand in `workflows/`, v08 liegt als Abgabestand unter `workflows/abgaben/W09T01/`) | 17 |
+| `workflows/sub-bilder-gestalten/` | Werkzeug 4, v01 und v01.2 (Live-Stand in `workflows/`) | 2 |
+| `workflows/sub-zur-freigabe-einreichen/` | Werkzeug 5, v01 und v01.2 (Live-Stand in `workflows/`) | 2 |
 | `workflows/test-redaktions-agent-1-werkzeug/` | ältere Stände der Testkopie mit 1 Werkzeug, v00 bis v03 (v04 liegt in `workflows/test/`) | 4 |
 | `workflows/test-text-schreiben-lesefehler/` | ältere Stände der Testkopie zum Lesefehler von Werkzeug 3, v00 bis v02 (v03 liegt in `workflows/test/`) | 3 |
-| `prompts/` | Systemprompts V1, V2 und V3, zusätzlich V2 mit vollen n8n-Ausdrücken und der Prompt der Testkopie | 5 |
+| `prompts/` | Systemprompts V1, V2, V3, V4.2 und V4.3, zusätzlich V2 mit vollen n8n-Ausdrücken und der Prompt der Testkopie | 7 |
 | `konfiguration/` | Agent-Konfiguration V3 (verworfen) | 1 |
 | `bilder/` | Bildschirmfoto der Werkzeuge 4 und 5 vom Tag 3 (vor der Anordnung am Abend) | 1 |
 | `plaene/` | Plan des Tages 3 (v16) und seine verkleinerte Fassung vor der Reparatur der Pfeile und der Anbindung der Werkzeuge, jeweils als Bild; Quelle als Excalidraw-Datei | 3 |
@@ -38,4 +38,4 @@ Jede Archivdatei ist wie die heutigen Exporte bereinigt: Credential-IDs, Workflo
 | Status | Bedeutung hier |
 |---|---|
 | Archiviert | abgelöst, durch eine spätere Version ersetzt |
-| Verworfen | getestet, nicht übernommen: Systemprompt V3 (Hauptworkflow v06, Testkopie v02) und die Agent-Konfiguration V3; zunächst blieb V2 live, danach V4, seit 18.11.2026 V4.1; dazu der Systemprompt V5 vom 17.11.2026, gegen V4 gemessen und nicht übernommen (ohne eigene Datei, siehe CHANGELOG) |
+| Verworfen | getestet, nicht übernommen: Systemprompt V3 (Hauptworkflow v06, Testkopie v02) und die Agent-Konfiguration V3; zunächst blieb V2 live, danach V4, bis 19.11.2026 V4.1, seitdem V4.4; dazu der Systemprompt V5 vom 17.11.2026, gegen V4 gemessen und nicht übernommen (ohne eigene Datei, siehe CHANGELOG) |
