@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#FAFAF8" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#121416" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<title>W09T05 Retro und Fixes</title>
+<meta content="Tages-Doku W09T05 des Redaktions-Agenten K2: Rückblick auf Woche 9, Freeze-Stufen, die letzten Fixes an Hauptworkflow, Text-Werkzeug und Freigabe-Workflow und ihre Veröffentlichung am 21.11.2026." name="description"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&amp;display=swap" rel="stylesheet"/>
+<link href="assets/doku.css" rel="stylesheet"/>
+</head>
+<body>
+<a class="sprung" href="#inhalt">Zum Inhalt springen</a>
+<div class="huelle">
+<header class="leiste">
+<span>Redaktions-Agent K2 · Woche 8 bis 10</span>
+<nav aria-label="Seiten">
+<a href="index.html">Wochen-Doku</a>
+<a href="w08t01.html">W8 Tag 1</a>
+<a href="w08t02.html">W8 Tag 2</a>
+<a href="w08t03.html">W8 Tag 3</a>
+<a href="w08t04.html">W8 Tag 4</a>
+<a href="w08t05.html">W8 Tag 5</a>
+<a href="w09t01.html">W9 Tag 1</a>
+<a href="w09t02.html">W9 Tag 2</a>
+<a href="w09t03.html">W9 Tag 3</a>
+<a href="w09t04.html">W9 Tag 4</a>
+<a aria-current="page" href="w09t05.html">W9 Tag 5</a>
+<a href="w10t01.html">W10 Tag 1</a>
+<a href="w10t02.html">W10 Tag 2</a>
+<span class="aus">W10 Tag 3</span>
+<span class="aus">W10 Tag 4</span>
+<span class="aus">W10 Tag 5</span>
+<a href="charter.html">Projekt-Charter</a>
+<a href="https://github.com/MinkeAutomation/redaktions-agent">Repository</a>
+</nav>
+</header>
+<div class="titelkopf">
+<div>
+<p class="oberzeile"><span aria-hidden="true" class="marke"></span>Tages-Doku W09T05 · Fr 20.11.2026 (Stand 24.11.2026) · Hauptworkflow v26.5.3, veröffentlicht am 21.11.2026</p>
+<h1>Retro <span class="leise">und</span> letzte Fixes</h1>
+<p class="untertitel">Tag 5 der Woche 9 ist der Rückblick auf die Woche und der Ausblick auf den Abschluss. Eine Tagesaufgabe gab es nicht. Nach dem Feature Freeze vom Vorabend kamen keine neuen Funktionen dazu; gebaut wurden nur Fixes an Hauptworkflow, Text-Werkzeug und Freigabe-Workflow. Sie gingen am 21.11.2026 um 14:03 gemeinsam als Hauptworkflow v26.5.3, Text-Werkzeug v09.3 und Freigabe-Workflow v02.1 live. Getestet mit dem fest eingestellten Kunden Ordwin und erfundenen Daten.</p>
+</div>
+</div>
+<dl aria-label="Kennzahlen W09T05" class="messleiste">
+<div><dt>Hauptworkflow</dt><dd>v26.5.3<small>veröffentlicht 21.11.2026, 14:03</small></dd></div><div><dt>Text-Werkzeug</dt><dd>v09.3<small>Kürzung nur in ganzen Sätzen</small></dd></div><div><dt>Freigabe-Workflow</dt><dd>v02.1<small>jeder Statuswechsel bestätigt</small></dd></div><div><dt>Aufrufgrenze</dt><dd>14<small>Iterationen höchstens 16</small></dd></div><div><dt>Fehlerfälle</dt><dd>18<small>an der Kürzung, mit Fix und Test</small></dd></div><div><dt>Tagesaufgabe</dt><dd>keine<small>Hard Freeze Di 24.11.</small></dd></div>
+</dl>
+<div class="knoepfe">
+<a class="knopf zweit" href="w09t04.html">Vorheriger Tag: W9 Tag 4 <span aria-hidden="true" class="pfeil">←</span></a>
+<a class="knopf" href="w10t01.html">Nächster Tag: W10 Tag 1 <span aria-hidden="true" class="pfeil">→</span></a>
+<a class="knopf zweit" href="index.html">Wochen-Doku <span aria-hidden="true" class="pfeil">→</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/CHANGELOG.md">CHANGELOG <span aria-hidden="true" class="pfeil">↗</span></a>
+</div>
+<main id="inhalt">
+<div class="merksatz einminute" id="in-1-minute"><span class="ktag">In 1 Minute</span>
+<ul>
+<li><strong>Rahmen:</strong> Feature Freeze war Do 19.11.2026 abends. Ab dem Hard Freeze am Di 24.11.2026 wird nichts mehr geändert, bis dahin nur Fixes echter Fehler. Die Dokumentation ist spätestens Mi 25.11.2026 fällig, die Präsentation dauert 15 Minuten mit Fragen.</li>
+<li><strong>Hauptworkflow:</strong> Behauptete Ziffernnoten werden aus der Antwort entfernt, die Aufrufgrenze steht bei 14 Werkzeugaufrufen, die Iterationsgrenze bei 16. Fehlt eine Note zum eingereichten Paket, steht in Telegram „Achtung, Endtext ungeprüft“. Die Laufzeile entsteht vor dem Start der Freigabe und wird von der Datenbank bestätigt, ebenso die Sperre eines Beitrags.</li>
+<li><strong>Text-Werkzeug v09.3:</strong> Gekürzt werden nur ganze Sätze aus Absätzen ohne Einschränkung. Reicht das nicht, schreibt das Modell den Post 1 Mal neu.</li>
+<li><strong>Freigabe-Workflow v02.1:</strong> Die Statuswechsel „fertig“, „abgelehnt“ und „abgelaufen“ gelten erst, wenn die Datenbank genau 1 Zeile mit Beitragskennung und Zielstatus zurückgibt.</li>
+<li><strong>Live:</strong> Alle 3 Workflows wurden gemeinsam am 21.11.2026 um 14:03 veröffentlicht, nach unabhängiger Prüfung und Lauf 4047. Die Abnahme am veröffentlichten Stand steht in <a href="w09t04.html#k5">W9 Tag 4, Kapitel 5</a>.</li>
+</ul></div>
+
+<section aria-labelledby="k1-t" class="kapitel" id="k1">
+<div class="kkopf"><div aria-hidden="true" class="knum">01</div><div>
+<p class="kklein">Kapitel 1</p><h2 id="k1-t">Rahmen des Tages</h2>
+<p class="klede">Rückblick auf Woche 9, Zeitplan bis zur Präsentation.</p>
+</div></div>
+<div aria-labelledby="t-rahmen" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-rahmen">Termine bis zum Abschluss</caption>
+<thead><tr><th scope="col">Was</th><th scope="col">Wann</th><th scope="col">Was es für das Projekt heißt</th></tr></thead>
+<tbody>
+<tr><th data-label="Was" scope="row">Feature Freeze</th><td data-label="Wann">Do 19.11.2026 abends</td><td data-label="Heißt">keine neuen Funktionen mehr; Werkzeug 6, Chat-Seite und Freigabe-Workflow waren bis dahin eingebaut (<a href="w09t04.html">W9 Tag 4</a>)</td></tr>
+<tr><th data-label="Was" scope="row">Hard Freeze</th><td data-label="Wann">Di 24.11.2026</td><td data-label="Heißt">danach nichts mehr ändern; bis dahin nur Fixes echter Fehler, Styling der Oberfläche bleibt erlaubt</td></tr>
+<tr><th data-label="Was" scope="row">Dokumentation</th><td data-label="Wann">spätestens Mi 25.11.2026</td><td data-label="Heißt">Projektdokumentation als PDF mit allen MUSS-Kriterien, dazu eine Setup-Anleitung als eigenes Kapitel; die Präsentationsfolien werden mit abgegeben</td></tr>
+<tr><th data-label="Was" scope="row">Präsentation</th><td data-label="Wann">Do 26.11.2026</td><td data-label="Heißt">15 Minuten mit Fragen, rund 10 Minuten Vortrag; Live-Demo mit Grundfunktion und dem Besonderen des Systems</td></tr>
+</tbody>
+</table>
+</div>
+<p>Die Arbeit des Tages galt deshalb nur Fehlern, die in den Prüfungen vom 19.11.2026 offen geblieben waren. Hauptworkflow, Text-Werkzeug und Freigabe-Workflow sollten gemeinsam live gehen, damit eine einzige Messrunde für alle 3 reicht.</p>
+</section>
+
+<section aria-labelledby="k2-t" class="kapitel" id="k2">
+<div class="kkopf"><div aria-hidden="true" class="knum">02</div><div>
+<p class="kklein">Kapitel 2</p><h2 id="k2-t">Gebaut: Fixes ohne neue Funktion</h2>
+<p class="klede">Jede Zeile ist ein Entwurf vom 20.11.2026; veröffentlicht wurde der Endstand am 21.11.2026.</p>
+</div></div>
+<div aria-labelledby="t-fix" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-fix">Versionen des Tages</caption>
+<thead><tr><th scope="col">Version</th><th scope="col">Was sich ändert</th><th scope="col">Warum</th></tr></thead>
+<tbody>
+<tr><th data-label="Version" scope="row">Hauptworkflow v26.3</th><td data-label="Änderung">Behauptete Ziffernbewertungen werden aus der Antwort entfernt; Aufrufgrenze 12 auf 14, Iterationsgrenze 14 auf 16; Zeile „Qualitätsprüfung: Achtung, Endtext ungeprüft“ an 7 Stellen, wenn die Note nicht zum eingereichten Paket gehört</td><td data-label="Warum">Die Regeln des Systemprompts erlauben bis zu 14 Aufrufe; mit 12 wären regelgerechte Beiträge verworfen worden. Die Warnzeile hebt sich in Telegram vom Gutfall ab.</td></tr>
+<tr><th data-label="Version" scope="row">Hauptworkflow v26.4</th><td data-label="Änderung">Grenze von 14 Aufrufen als nachträgliche Prüfung der Ausgabe beschrieben; Notenfilter prüft den Trenner hinter der Ziffer</td><td data-label="Warum">Messläufe 4042 und 4043 an einer Messkopie: die Grenze greift erst nach den Werkzeugaufrufen, nicht davor</td></tr>
+<tr><th data-label="Version" scope="row">Hauptworkflow v26.5 bis v26.5.2</th><td data-label="Änderung">Laufprotokoll nur mit festen Codes und geschwärztem Freitext; Laufzeile vor dem Start der Freigabe, von der Datenbank bestätigt; Sofortantwort „Die Freigabe wird vorbereitet.“; Freigabe-Fehler nennt den Schritt; Sperre eines Beitrags wird bestätigt</td><td data-label="Warum">Bisher konnten ein Statuswechsel oder eine Laufzeile still fehlen (<a href="w09t04.html#k8">W9 Tag 4, Kapitel 8</a>)</td></tr>
+<tr><th data-label="Version" scope="row">Freigabe-Workflow v02 und v02.1</th><td data-label="Änderung">Fehlervermerk im Laufprotokoll trifft genau 1 Zeile, sonst Meldung; die 3 Statuswechsel werden bestätigt, sonst Freigabe-Fehler mit Schritt; am 21.11.2026 Einheit der Wartezeit ausdrücklich auf Sekunden gesetzt</td><td data-label="Warum">Ein Statuswechsel ohne Treffer endete vorher ohne Meldung</td></tr>
+<tr><th data-label="Version" scope="row">Text-Werkzeug v09.3</th><td data-label="Änderung">Gekürzt werden nur ganze Sätze aus Absätzen ohne Einschränkungswort; ein Absatz mit „nicht“, „nur“, „aber“, „kein“ und ähnlichen Wörtern bleibt ganz, ebenso der Satz davor; bleibt der Post über 900 Zeichen, fasst das Modell ihn 1 Mal neu, beim 2. Mal gibt das Werkzeug einen Fehler zurück; Zeitspannen mit „bis“, Abkürzungen trennen keine Sätze</td><td data-label="Warum">Die Kürzung hatte den kürzesten Satz gestrichen und damit die Aussage umgedreht (Beispiel: „Aber nicht für Reparaturen.“ fiel weg)</td></tr>
+</tbody>
+</table>
+</div>
+<p>Alle Änderungen betreffen nur Code in vorhandenen Knoten, Notiztexte und einzelne neue Prüfknoten. Die Positionen der vorhandenen Knoten blieben unverändert. In der Nacht zum 21.11.2026 wurde der Hauptworkflow neu angeordnet (Rahmen 01 bis 12 in Laufrichtung), ohne die Logik zu ändern; deshalb fielen Veröffentlichung, Messung und Fotos auf den 21.11.2026.</p>
+</section>
+
+<section aria-labelledby="k3-t" class="kapitel" id="k3">
+<div class="kkopf"><div aria-hidden="true" class="knum">03</div><div>
+<p class="kklein">Kapitel 3</p><h2 id="k3-t">Getestet</h2>
+<p class="klede">Proben am Code, Messläufe und die Abnahme am veröffentlichten Stand.</p>
+</div></div>
+<ul>
+<li><strong>Kürzung im Text-Werkzeug:</strong> 18 Fehlerfälle an einem Tag, je mit Ursache, Fix und Test, alter gegen neuer Stand; vollständig in <a href="w09t04.html#k8">W9 Tag 4, Kapitel 8</a>. Jede neue Regel für Satzzeichen erzeugte einen neuen Randfall, deshalb streicht der Code am Ende nur noch, wo es sicher ist, und lässt sonst das Modell neu schreiben.</li>
+<li><strong>Aufrufgrenze:</strong> Messläufe 4042 und 4043 an einer Messkopie. Ergebnis: Die Grenze von 14 wird nach den Werkzeugaufrufen geprüft; sie verhindert einen Beitrag mit zu vielen Aufrufen, aber nicht die Aufrufe selbst.</li>
+<li><strong>Vor dem Veröffentlichen:</strong> unabhängige Prüfung jedes Entwurfs; Lauf 4047 im Editor am Stand v26.5.3, 12 Minuten vor dem Veröffentlichen am 21.11.2026.</li>
+<li><strong>Nach dem Veröffentlichen:</strong> Läufe 4056 und 4064 über die veröffentlichte Chat-Seite, beide bis zur Ablage in Nextcloud; Freigeben und Ablehnen in Telegram belegt (<a href="w09t04.html#k5">W9 Tag 4, Kapitel 5</a>).</li>
+</ul>
+<div class="notiz"><p><strong>Projekt 1 am selben Tag:</strong> Ein Probelauf der Content-Maschine K1 brach mit einer Zeitüberschreitung beim Senden der Vorschaubilder an Telegram ab. Ein Messlauf an einer Kopie zeigte, dass das Hängen nur zeitweise auftritt. Das betrifft Projekt 1, nicht den Redaktions-Agenten; K2 schickt die Vorschau als Text.</p></div>
+</section>
+
+<section aria-labelledby="k4-t" class="kapitel" id="k4">
+<div class="kkopf"><div aria-hidden="true" class="knum">04</div><div>
+<p class="kklein">Kapitel 4</p><h2 id="k4-t">Entschieden</h2>
+<p class="klede">Festlegungen des Tages für Bau, Doku und Präsentation.</p>
+</div></div>
+<ol>
+<li>Bleibt der Post nach der Kürzung über 900 Zeichen oder müsste ein Satz abgeschnitten werden, wird eine Neufassung angefordert.</li>
+<li>Sätze mit Einschränkungswort und der Satz davor werden nie gestrichen; ein Absatz mit Schutzwort wird gar nicht gekürzt.</li>
+<li>Die Aufrufgrenze bleibt eine nachträgliche Prüfung der Ausgabe und ist so dokumentiert.</li>
+<li>Hauptworkflow, Text-Werkzeug und Freigabe-Workflow gehen zusammen live, danach folgt 1 gemeinsame Messrunde.</li>
+<li>Die Setup-Anleitung wird ein eigenes Kapitel der Dokumentation, mit einem Teil zum Aufbau und einem zum Aufsetzen.</li>
+<li>Die Präsentationsfolien werden mit der Dokumentation abgegeben.</li>
+</ol>
+</section>
+
+<section aria-labelledby="k5-t" class="kapitel" id="k5">
+<div class="kkopf"><div aria-hidden="true" class="knum">05</div><div>
+<p class="kklein">Kapitel 5</p><h2 id="k5-t">Plan des Tages</h2>
+<p class="klede">Datenfluss auf dem Endstand der Fixes.</p>
+</div></div>
+<figure id="plan"><a href="plan/plan-w09t05-v26.png"><img loading="lazy" alt="Datenflussbild des Hauptworkflows v26.5.3 mit Hauptlauf D1 bis D35, Nebenwegen D36 bis D54 und Freigabe-Workflow D55 bis D59, rechts die Tabelle der Daten je Nummer." height="3668" src="bilder/w09t05-plan-v26.png" width="3739"/></a><figcaption><strong>Datenflussbild für W9 Tag 5 (Hauptworkflow v26.5.3, Systemprompt v4.4, Freigabe-Workflow v02.1, Text-Werkzeug v09.3).</strong> Der Datenfluss ist derselbe wie an W9 Tag 4; die Fixes des Tages liegen im Code der Knoten (Notenfilter, Kürzung, Bestätigung der Statuswechsel) und ändern keinen Pfeil. <a href="plan/plan-w09t05-v26.png">Volle Auflösung</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/plan/plan-w09t05-v26.excalidraw">Excalidraw-Datei</a>. Vorgänger: <a href="w09t04.html#plan">Plan W9 Tag 4</a>.</figcaption></figure>
+</section>
+</main>
+<footer class="fuss">
+<span>Patrick Minkler · Redaktions-Agent K2 · Projekt 2</span>
+<span>Stand 24.11.2026 · W9 Tag 5</span>
+</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,1011 @@
+{
+  "name": "AGT-2606 P2 Freigabe-Fristen",
+  "nodes": [
+    {
+      "id": "2785a943-08cc-4fa6-9d39-59f25a32cb7e",
+      "name": "Alle 15 Minuten [Schedule Trigger]",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        1088
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "59e17dee-3be4-450e-9bf2-427fa9e387ec",
+      "name": "Konfiguration [Edit Fields]",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        1088
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f1",
+              "name": "status_wartend",
+              "value": "wartet_auf_freigabe",
+              "type": "string"
+            },
+            {
+              "id": "f2",
+              "name": "status_abgelaufen",
+              "value": "freigabe_abgelaufen",
+              "type": "string"
+            },
+            {
+              "id": "f3",
+              "name": "erzeugt_von",
+              "value": "p2_agent",
+              "type": "string"
+            },
+            {
+              "id": "f4",
+              "name": "workflow_name",
+              "value": "AGT-2606 P2 Freigabe-Fristen",
+              "type": "string"
+            },
+            {
+              "id": "f5",
+              "name": "zeitzone",
+              "value": "Europe/Berlin",
+              "type": "string"
+            },
+            {
+              "id": "f6",
+              "name": "supabase_basis",
+              "value": "https://SUPABASE_URL/rest/v1",
+              "type": "string"
+            },
+            {
+              "id": "f7",
+              "name": "start_time",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "732c51ba-e038-4709-a396-cf8159728c0a",
+      "name": "Einstellungen laden [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        736,
+        1088
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://SUPABASE_URL/rest/v1/k1_einstellungen?select=setting_key,setting_value",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API | KI-AGT-2606"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "68842e2f-830e-4b5e-96c6-d2e4a32e4322",
+      "name": "Grenzzeit berechnen [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        1088
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Zweck: Frist und Puffer aus k1_einstellungen pruefen, Grenzzeit und decided_at berechnen, Filteradresse bauen.\nconst k = $('Konfiguration [Edit Fields]').first().json;\n// fullResponse ist an: die Zeilen stehen in body\nconst zeilen = $input.first().json.body;\nif (!Array.isArray(zeilen)) throw new Error('Einstellungen: Antwort ist keine Liste');\nconst hole = (schluessel) => { const z = zeilen.find(r => r && r.setting_key === schluessel); return z ? z.setting_value : undefined; };\n// gleiche Regel wie im Freigabe-Sub und im Hauptworkflow: ganze Zahl von 1 bis 1440\nconst fristText = String(hole('freigabe_frist_minuten') ?? '');\nif (!/^[1-9]\\d{0,3}$/.test(fristText) || Number(fristText) > 1440) throw new Error('freigabe_frist_minuten ist keine ganze Zahl von 1 bis 1440');\n// Puffer: ganze Zahl von 0 bis 120\nconst pufferText = String(hole('freigabe_puffer_minuten') ?? '');\nif (!/^(0|[1-9]\\d{0,2})$/.test(pufferText) || Number(pufferText) > 120) throw new Error('freigabe_puffer_minuten ist keine ganze Zahl von 0 bis 120');\n// Meldeziel vor dem Markieren pruefen, sonst waeren Beitraege markiert und die Meldung haette kein Ziel\nconst chatText = String(hole('telegram_chat_id') ?? '').trim();\nif (!/^-?\\d{1,20}$/.test(chatText)) throw new Error('telegram_chat_id fehlt oder ist keine Zahl');\nconst frist = Number(fristText);\nconst puffer = Number(pufferText);\nconst jetzt = new Date();\n// decided_at wird hier festgelegt, der PATCH und die Fehlerzeile tragen denselben Wert (Wiederfinden bei verlorener Antwort)\nconst decidedAt = jetzt.toISOString();\nconst grenze = new Date(jetzt.getTime() - (frist + puffer) * 60000).toISOString();\n// eine Adresse fuer den Markier-PATCH und den Trockenlauf, UTC mit Z\nconst filterUrl = k.supabase_basis + '/k1_posts?status=eq.' + k.status_wartend + '&erzeugt_von=eq.' + k.erzeugt_von + '&created_at=lt.' + grenze;\nreturn [{ json: { frist_minuten: frist, puffer_minuten: puffer, chat_id: chatText, grenzzeit: grenze, decided_at: decidedAt, filter_url: filterUrl, status_abgelaufen: k.status_abgelaufen } }];"
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "de881763-a4af-454e-8d21-198441dc660b",
+      "name": "Abgelaufene markieren [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1664,
+        1088
+      ],
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $json.filter_url }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ status: $json.status_abgelaufen, decided_at: $json.decided_at }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API | KI-AGT-2606"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "8e715084-61ad-4bf8-b39d-d0df587bdb68",
+      "name": "Beitrag abgelaufen? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1984,
+        1088
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a1",
+              "leftValue": "={{ !Array.isArray($json.body) || $json.body.length > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "a9fbe8f6-1ba6-44b6-9b63-9c8c9726b654",
+      "name": "Meldung bauen [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2364,
+        1088
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Zweck: alle markierten Beitraege zu 1 Sammelmeldung (HTML, Zeit in Berlin, hoechstens 3500 Zeichen).\nconst g = $('Grenzzeit berechnen [Code]').first().json;\nconst zeilen = $('Abgelaufene markieren [HTTP Request]').first().json.body;\nif (!Array.isArray(zeilen) || zeilen.length === 0) throw new Error('PATCH-Antwort ist keine Liste mit Zeilen');\n// Thema fuer parse_mode HTML entschaerfen\nconst esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst zeit = (iso) => { const d = new Date(iso); return isNaN(d.getTime()) ? 'unbekannt' : d.toLocaleString('de-DE', { timeZone: 'Europe/Berlin', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); };\nconst n = zeilen.length;\nconst kopf = 'Keine Entscheidung bis zum Fristende, nicht veröffentlicht: ' + n + (n === 1 ? ' Beitrag.' : ' Beiträge.');\nconst grenze = 3500;\nlet text = kopf;\nlet gezeigt = 0;\nfor (const z of zeilen) {\n  const zeile = '\\n• ' + esc(z.topic || '(ohne Thema)') + ' (angelegt ' + zeit(z.created_at) + ')';\n  // Platz fuer die Restzeile freihalten\n  const reserve = ('\\nund ' + n + ' weitere').length;\n  if ((text + zeile).length + reserve > grenze) break;\n  text += zeile;\n  gezeigt++;\n}\nif (gezeigt < n) text += '\\nund ' + (n - gezeigt) + ' weitere';\nreturn [{ json: { text: text, chat_id: g.chat_id, anzahl: n, gezeigt: gezeigt } }];"
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "87ceae9a-20d1-4d1c-9b26-c0e8adea1e29",
+      "name": "Frist melden [Telegram]",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2684,
+        1088
+      ],
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Telegram API | Content-Generator"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "webhookId": "WEBHOOK_ID"
+    },
+    {
+      "id": "50fec5ad-36b3-48be-9498-8fce57736ed2",
+      "name": "Versand belegt? [If]",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3004,
+        1088
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "v1",
+              "leftValue": "={{ (() => { const r = $json.result; return $json.ok === true && r !== null && typeof r === 'object' && !Array.isArray(r) && Number.isSafeInteger(r.message_id) && r.message_id > 0; })() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "fa2b492b-05e2-4edc-890e-4409ae27b6ab",
+      "name": "Protokollzeilen bauen [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3324,
+        1088
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Zweck: je markiertem Beitrag 1 Zeile fuer k1_laufprotokoll (stage ende, status ok), ohne Thema.\nconst k = $('Konfiguration [Edit Fields]').first().json;\nconst zeilen = $('Abgelaufene markieren [HTTP Request]').first().json.body;\nif (!Array.isArray(zeilen) || zeilen.length === 0) throw new Error('keine markierten Zeilen fuer das Protokoll');\nconst start = Date.parse(k.start_time);\nconst dauer = Number.isFinite(start) ? Math.max(0, Date.now() - start) : null;\n// post_id ist in k1_laufprotokoll eine uuid\nconst uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;\nconst protokoll = zeilen.map(z => {\n  if (!uuid.test(String(z.id))) throw new Error('Beitrag ohne gueltige id in der PATCH-Antwort');\n  // trace_id ist die execution_id des Beitrags, execution_mode test bei manuellen Laeufen, production beim Zeitplan\n  return { workflow_name: k.workflow_name, execution_id: String($execution.id), execution_mode: $execution.mode, stage: 'ende', status: 'ok', post_id: z.id, trace_id: z.execution_id == null ? null : String(z.execution_id), duration_ms: dauer };\n});\nreturn [{ json: { zeilen: protokoll } }];"
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "a19bf7b2-52a7-4508-b26d-6527fe716a00",
+      "name": "Fehler festhalten [Code]",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        96,
+        1552
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Zweck: jeden Fehlerausgang (und Versand belegt? Nein) in 1 Fehlerzeile fassen, ohne Thema und ohne Beitragstext.\n// Die Kette ist linear: der Knoten, der als letzter lief, ist der, an dem es scheiterte.\nconst reihe = ['Einstellungen laden [HTTP Request]', 'Grenzzeit berechnen [Code]', 'Abgelaufene markieren [HTTP Request]', 'Beitrag abgelaufen? [If]', 'Meldung bauen [Code]', 'Frist melden [Telegram]', 'Versand belegt? [If]', 'Protokollzeilen bauen [Code]', 'Protokoll schreiben [HTTP Request]'];\n// Kein stiller Fehlschlag: jeder gescheiterte Zugriff landet mit Grund in hinweise und in der Fehlerzeile.\nconst hinweise = [];\nconst lief = (name) => { try { return $(name).isExecuted === true; } catch (e) { hinweise.push(name + \" isExecuted: \" + String((e && e.message) || e)); return false; } };\nlet knoten = 'unbekannt';\nfor (const name of reihe) { if (lief(name)) knoten = name; }\nconst ein = ($input.first() && $input.first().json) ? $input.first().json : {};\nlet fehlerText = 'Fehler ohne Meldung';\nif (ein.error) {\n  const e = ein.error;\n  fehlerText = typeof e === 'string' ? e : (e.message || e.description || JSON.stringify(e));\n} else if (knoten === 'Versand belegt? [If]') {\n  fehlerText = 'Telegram hat den Versand nicht bestaetigt (kein ok oder keine message_id)';\n}\n// decided_at nur, wenn Grenzzeit berechnen lief; damit sind markierte Zeilen auch ohne PATCH-Antwort auffindbar\nconst holeErstes = (name) => { const fehler = []; try { const e = $(name).first(); if (e && e.json) return { json: e.json, fehler }; fehler.push(name + ' first(): leer'); } catch (e) { fehler.push(name + ' first(): ' + String((e && e.message) || e)); } try { const a = $(name).all(0, 0); if (Array.isArray(a) && a[0] && a[0].json) return { json: a[0].json, fehler }; fehler.push(name + ' all(0,0): leer'); } catch (e) { fehler.push(name + ' all(0,0): ' + String((e && e.message) || e)); } return { json: null, fehler }; };\nlet decidedAt = '';\nif (lief('Grenzzeit berechnen [Code]')) {\n  const g = holeErstes('Grenzzeit berechnen [Code]');\n  if (g.json && g.json.decided_at) decidedAt = String(g.json.decided_at);\n  else hinweise.push('decided_at fehlt: ' + (g.fehler.join(' | ') || 'Feld leer'));\n}\n// Beitrags-IDs (je 8 Zeichen) nur, wenn der PATCH lief und eine Liste lieferte\nlet ids = [];\nif (lief('Abgelaufene markieren [HTTP Request]')) {\n  const p = holeErstes('Abgelaufene markieren [HTTP Request]');\n  if (p.json && Array.isArray(p.json.body)) ids = p.json.body.map(z => String((z && z.id) || '').slice(0, 8));\n  else if (p.json) hinweise.push('PATCH-Antwort ohne Liste');\n  else hinweise.push('Beitrags-IDs fehlen: ' + p.fehler.join(' | '));\n}\nlet start = NaN;\ntry { start = Date.parse($('Konfiguration [Edit Fields]').first().json.start_time); } catch (e) { start = NaN; hinweise.push('Startzeit fehlt: ' + String((e && e.message) || e)); }\nlet text = 'Knoten: ' + knoten + '; Fehler: ' + String(fehlerText).replace(/\\s+/g, ' ').slice(0, 120);\nif (decidedAt) text += '; decided_at: ' + decidedAt;\nif (ids.length) text += '; Beitraege (' + ids.length + '): ' + ids.join(',');\nif (hinweise.length) text += '; Zugriff: ' + hinweise.join('; ').replace(/\\s+/g, ' ');\ntext = text.slice(0, 300);\nconst zeile = { workflow_name: 'AGT-2606 P2 Freigabe-Fristen', execution_id: String($execution.id), execution_mode: $execution.mode, stage: 'fehlerweg', status: 'fehler', error_text: text, duration_ms: Number.isFinite(start) ? Math.max(0, Date.now() - start) : null };\nreturn [{ json: { knoten: knoten, decided_at: decidedAt || null, beitrag_ids: ids, hinweise: hinweise, zeile: zeile } }];"
+      }
+    },
+    {
+      "id": "3f7483f2-63fc-4043-b770-52087e6307bd",
+      "name": "Protokoll schreiben [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3644,
+        1088
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://SUPABASE_URL/rest/v1/k1_laufprotokoll",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.zeilen) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API | KI-AGT-2606"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "d7364f83-41b1-4aa2-a226-20dd0875c6af",
+      "name": "Fehlerprotokoll schreiben [HTTP Request]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        416,
+        1552
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://SUPABASE_URL/rest/v1/k1_laufprotokoll",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.zeile) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API | KI-AGT-2606"
+        }
+      },
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "fb25ec03-f70a-4214-b36f-d62a8227868e",
+      "name": "Fehler melden [Stop and Error]",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        736,
+        1552
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "={{ 'Freigabe-Fristen: Fehler in ' + $('Fehler festhalten [Code]').first().json.knoten + ', Lauf ' + $execution.id }}"
+      }
+    },
+    {
+      "id": "f00a2679-a687-4076-87f3-08e010e1709a",
+      "name": "Titelleiste",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "content": "# AGT-2606 P2 Freigabe-Fristen\nProjekt 2: Beiträge ohne Entscheidung bis zum Fristende werden alle 15 Minuten auf freigabe_abgelaufen gesetzt und gesammelt in Telegram gemeldet.",
+        "color": 5,
+        "width": 5448,
+        "height": 126
+      }
+    },
+    {
+      "id": "a5c37078-6076-4f76-88bf-7a8513e26e71",
+      "name": "Rahmen Kopf",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        160
+      ],
+      "parameters": {
+        "content": "",
+        "width": 2344,
+        "height": 444
+      }
+    },
+    {
+      "id": "eb612226-fc8a-4ada-b219-dfff357908e3",
+      "name": "Workflow-Beschreibung",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        16,
+        176
+      ],
+      "parameters": {
+        "content": "# 📋 Workflow-Beschreibung\n🎯 **Zweck:** Ein Beitrag des Redaktions-Agenten, über den bis Frist plus Puffer niemand entschieden hat, wird auf freigabe_abgelaufen gesetzt und nicht veröffentlicht; dazu kommt 1 Sammelmeldung in Telegram.\n👥 **Für wen:** die Agentur, die die Freigaben in Telegram erteilt.\n🕹️ **So nutzt du ihn:** Nichts tun, der Zeitplan prüft alle 15 Minuten. Frist und Puffer stehen in k1_einstellungen.\n## Status: 🟡 Veröffentlichung und Aktivierung erst nach der Abnahme, aktueller Stand im Versionsverlauf.",
+        "color": 7,
+        "width": 1100,
+        "height": 200
+      }
+    },
+    {
+      "id": "53961acc-e46e-48b0-85f5-5386d9692c00",
+      "name": "Version",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        176
+      ],
+      "parameters": {
+        "content": "# 🧾 Version\nv01 vom 23.11.2026: neu angelegt für die Fristen der Freigabe. 14 Arbeitsknoten: 1 atomarer PATCH markiert, 1 Sammelmeldung, je Beitrag 1 Protokollzeile, Fehlerweg mit Fehlerzeile und Stop and Error.\nWeitere Stände stehen in versionen.md des Projekt-Repos.",
+        "color": 7,
+        "width": 1184,
+        "height": 200
+      }
+    },
+    {
+      "id": "032aad3f-7d0e-4511-bc9e-960cce1c0cae",
+      "name": "Kopf",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        16,
+        384
+      ],
+      "parameters": {
+        "content": "# 🧪 Freigabe-Fristen\n**Aufgabe:** Beiträge, die nach Frist plus Puffer noch auf eine Freigabe warten, schließen und melden.\n**Die Idee:** 1 PATCH setzt nur Zeilen, die noch warten; die Antwort nennt genau die geänderten Zeilen, daraus entstehen Meldung und Protokoll.\n**Warum so?** Der Statuswechsel ist die Marke gegen doppelte Meldungen, ein eigener Zeitplan ersetzt einen langen Wait.\n**Hinweis:** Dieselbe Frist liest der Freigabe-Sub aus k1_einstellungen.\nStufe: Durchstich bis 24.11.2026",
+        "color": 2,
+        "width": 1100,
+        "height": 200
+      }
+    },
+    {
+      "id": "eb143f7a-1df1-480c-ab5b-b0fd4cbaaa38",
+      "name": "Ablauf",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        384
+      ],
+      "parameters": {
+        "content": "## Ablauf\n① Alle 15 Minuten starten, Konfiguration (Rahmen 01)\n② Frist und Puffer lesen, Grenzzeit rechnen (01)\n③ Abgelaufene Beiträge markieren (02)\n④ Sammelmeldung in Telegram (03)\n⑤ Je Beitrag 1 Protokollzeile (03)\n⑥ Fehlerweg: Fehlerzeile, Stop and Error (04)",
+        "color": 2,
+        "width": 600,
+        "height": 200
+      }
+    },
+    {
+      "id": "8697ebad-f9e7-445f-baff-087d33536c71",
+      "name": "Status",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1744,
+        384
+      ],
+      "parameters": {
+        "content": "## Status\n🟢 14 Arbeitsknoten und Fehlerweg angelegt\n🟡 Veröffentlichung und Aktivierung erst nach der Abnahme, aktueller Stand im Versionsverlauf\n🔴 Kein Retry am PATCH, decided_at in der Fehlerzeile\n🔵 Leerläufe schreiben keine Zeile\n🔵 Zeiten der Meldung in Europe/Berlin",
+        "color": 2,
+        "width": 580,
+        "height": 200
+      }
+    },
+    {
+      "id": "4baafc9a-3642-4269-91de-1f4858141017",
+      "name": "Rahmen Hilfe-Spalte",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        160
+      ],
+      "parameters": {
+        "content": "",
+        "color": 5,
+        "width": 3048,
+        "height": 440
+      }
+    },
+    {
+      "id": "438d6dea-ef49-472c-bd0d-7435b74db458",
+      "name": "Setup-Checkliste",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2416,
+        176
+      ],
+      "parameters": {
+        "content": "# ✅ Setup-Checkliste\n1. Rahmen 01: Credential Supabase API | KI-AGT-2606 an Einstellungen laden; in k1_einstellungen freigabe_frist_minuten (1 bis 1440, Standard 1440) und freigabe_puffer_minuten (0 bis 120, Standard 10).\n2. Rahmen 02: dasselbe Supabase-Credential an Abgelaufene markieren.\n3. Rahmen 03: Credential Telegram API | Content-Generator an Frist melden, Meldeziel telegram_chat_id in k1_einstellungen; Supabase-Credential an Protokoll schreiben.\n4. Rahmen 04: Supabase-Credential an Fehlerprotokoll schreiben, Error Workflow in den Einstellungen.\n5. Erster Test: manuell starten, Zeilen in k1_laufprotokoll nachsehen.\n6. Veröffentlichen erst nach der Abnahme.",
+        "color": 7,
+        "width": 584,
+        "height": 408
+      }
+    },
+    {
+      "id": "681e1823-b4c9-4560-bf3c-3fa71de60934",
+      "name": "Plattform-Hinweise",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3024,
+        176
+      ],
+      "parameters": {
+        "content": "# 🌐 Plattform-Hinweise\n**DEINE-N8N-INSTANZ (n8n):** Erlaubt: Schedule Trigger, HTTP Request, Telegram. 🟡 Besonderheit: der Error Workflow startet nur bei automatischen Läufen, manuelle Tests belegen den Fehler über die Fehlerzeile.\n**Supabase:** Erlaubt: PATCH mit Filter und Prefer return=representation. 🟡 Besonderheit: die Antwort enthält nur die Zeilen, die dieser Aufruf geändert hat.\n**Telegram:** Erlaubt: sendMessage mit parse_mode HTML. 🟡 Besonderheit: das Thema wird entschärft, die Meldung hat höchstens 3.500 Zeichen, der Rest steht als „und N weitere“.",
+        "color": 7,
+        "width": 584,
+        "height": 408
+      }
+    },
+    {
+      "id": "5493917c-4522-4a59-a23e-d28c4c1198d0",
+      "name": "Fehlerbehebung",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3632,
+        176
+      ],
+      "parameters": {
+        "content": "# 🩺 Fehlerbehebung\n👉 Lauf in den Ausführungen öffnen, die Fehlerzeile in k1_laufprotokoll (workflow_name AGT-2606 P2 Freigabe-Fristen) nennt Knoten, Fehler, decided_at und Beitrags-IDs.\n👉 Fehler nach dem Markieren: die Beiträge über status freigabe_abgelaufen und decided_at aus der Fehlerzeile finden, für sie fehlt die Meldung.\n👉 Frist oder Puffer ungültig: Wert in k1_einstellungen prüfen, Grenzzeit berechnen bricht vor dem PATCH ab.\n👉 Bei Daueralarm den Fristen-Workflow unveröffentlichen, Ursache beheben, wieder veröffentlichen.",
+        "color": 7,
+        "width": 584,
+        "height": 408
+      }
+    },
+    {
+      "id": "9924e176-7723-4070-a0bc-fc8814744161",
+      "name": "Rahmen 01",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        688
+      ],
+      "parameters": {
+        "content": "# 01 · Auslöser und Frist\nTakt, feste Konfiguration, Frist und Puffer aus den Einstellungen, Grenzzeit.\n🔧 Setup: Supabase API | KI-AGT-2606 (k1_einstellungen lesen)",
+        "color": 4,
+        "width": 1480,
+        "height": 600
+      }
+    },
+    {
+      "id": "9aca70b2-aa3e-4912-bbf9-eb04d799496b",
+      "name": "Rahmen 02",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        688
+      ],
+      "parameters": {
+        "content": "# 02 · Markieren\n1 PATCH setzt die abgelaufenen Beiträge um.\n🔧 Setup: Supabase API | KI-AGT-2606 (k1_posts ändern)",
+        "color": 5,
+        "width": 612,
+        "height": 600
+      }
+    },
+    {
+      "id": "b2110bbd-7d73-4b92-9763-5accd5ff7e2f",
+      "name": "Rahmen 03",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2268,
+        688
+      ],
+      "parameters": {
+        "content": "# 03 · Melden und Protokoll\nSammelmeldung in Telegram, danach je Beitrag 1 Protokollzeile.\n🔧 Setup: Telegram API | Content-Generator, Supabase API | KI-AGT-2606 (k1_laufprotokoll)",
+        "color": 6,
+        "width": 1572,
+        "height": 600
+      }
+    },
+    {
+      "id": "7f75cb44-2f3c-481c-a052-4c92592b38ca",
+      "name": "Rahmen 04 Fehlerweg",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1376
+      ],
+      "parameters": {
+        "content": "# 04 · Fehlerweg\nJeder Fehler endet hier: Fehlerzeile ins Protokoll, dann Stop and Error.\n🔧 Setup: Supabase API | KI-AGT-2606 (Fehlerzeile)",
+        "color": 3,
+        "width": 1480,
+        "height": 376
+      }
+    },
+    {
+      "id": "3ba86d92-4bfd-43ab-8adc-4ece66fe45c5",
+      "name": "Karte 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        48,
+        864
+      ],
+      "parameters": {
+        "content": "## ① Takt und Konfiguration\nAlle 15 Minuten startet ein Lauf. Statusnamen, erzeugt_von p2_agent, Workflow-Name und Startzeit stehen an einer Stelle.\n\n### 🟢 Takt und Konfiguration stehen",
+        "width": 560,
+        "height": 196
+      }
+    },
+    {
+      "id": "37339bb2-d872-4fa2-a83f-9af830653612",
+      "name": "Karte 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        864
+      ],
+      "parameters": {
+        "content": "## ② Frist lesen und Grenzzeit\nFrist (1 bis 1440) und Puffer (0 bis 120) aus k1_einstellungen, Lesen mit 3 Versuchen. Grenzzeit ist jetzt minus Frist plus Puffer, dazu decided_at und die Filteradresse.\n\n### 🟡 Ungültige Werte brechen vor dem PATCH ab",
+        "width": 744,
+        "height": 196
+      }
+    },
+    {
+      "id": "dc5755ee-a136-4134-b208-a0b2bc9af589",
+      "name": "Karte 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1616,
+        864
+      ],
+      "parameters": {
+        "content": "## ③ Markieren\n1 PATCH ohne Retry, nur wartende p2_agent-Beiträge vor der Grenzzeit. Leere Antwort ist Ende ohne Eintrag.\n\n### 🔴 Kein Retry, sonst ginge die Meldung verloren",
+        "width": 516,
+        "height": 196
+      }
+    },
+    {
+      "id": "89405085-17b2-4ad7-b752-3b2b1b76f7ba",
+      "name": "Karte 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2316,
+        864
+      ],
+      "parameters": {
+        "content": "## ④ Sammelmeldung\nAlle markierten Beiträge in 1 Telegram-Nachricht mit Thema und Anlegezeit in Berlin. Versand belegt? prüft ok und message_id, sonst Fehlerweg.\n\n### 🟢 Meldung höchstens 3.500 Zeichen",
+        "width": 940,
+        "height": 196
+      }
+    },
+    {
+      "id": "524f7b14-a5f6-4ef2-b195-53ed3e634954",
+      "name": "Karte 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3300,
+        864
+      ],
+      "parameters": {
+        "content": "## ⑤ Protokoll\nJe Beitrag 1 Zeile in k1_laufprotokoll (ende, ok, post_id, trace_id, execution_mode).\n\n### 🟢 Leerläufe schreiben nichts",
+        "width": 492,
+        "height": 196
+      }
+    },
+    {
+      "id": "d5504635-1fe1-4c44-abf3-54b56bf78258",
+      "name": "Karte 6 Fehlerweg",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4240,
+        176
+      ],
+      "parameters": {
+        "content": "## ⑥ Fehlerweg\nJeder Fehlerausgang (Lesen, Rechnen, Markieren, Meldung, Versand, Protokoll) führt in Rahmen 04 zu Fehler festhalten: 1 Zeile in k1_laufprotokoll mit stage fehlerweg, Knoten, decided_at und Beitrags-IDs (je 8 Zeichen), ohne Thema. Danach Stop and Error, damit der Error Workflow die Alert-Mail schickt.\n\n### 🔴 Fehlerweg steht",
+        "width": 584,
+        "height": 408,
+        "color": 3
+      }
+    },
+    {
+      "id": "0096f4c4-1319-4c49-8877-4e941bd8f71a",
+      "name": "Karte Error Report",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4848,
+        176
+      ],
+      "parameters": {
+        "content": "# 📋 Error Report\nAlle Läufe stehen unter Ausführungen dieses Workflows. Die Fehlerzeilen stehen in k1_laufprotokoll mit workflow_name AGT-2606 P2 Freigabe-Fristen und stage fehlerweg; execution_mode test heißt manueller Lauf, production heißt Zeitplan. Der Error Workflow meldet nur Fehler aus automatischen Läufen.\n\n🩺 Wenn es hakt: zuerst den Knoten aus der Fehlerzeile öffnen.",
+        "width": 584,
+        "height": 408,
+        "color": 3
+      }
+    }
+  ],
+  "connections": {
+    "Alle 15 Minuten [Schedule Trigger]": {
+      "main": [
+        [
+          {
+            "node": "Konfiguration [Edit Fields]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Konfiguration [Edit Fields]": {
+      "main": [
+        [
+          {
+            "node": "Einstellungen laden [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Einstellungen laden [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Grenzzeit berechnen [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fehler festhalten [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Grenzzeit berechnen [Code]": {
+      "main": [
+        [
+          {
+            "node": "Abgelaufene markieren [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fehler festhalten [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Abgelaufene markieren [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Beitrag abgelaufen? [If]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fehler festhalten [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Beitrag abgelaufen? [If]": {
+      "main": [
+        [
+          {
+            "node": "Meldung bauen [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Meldung bauen [Code]": {
+      "main": [
+        [
+          {
+            "node": "Frist melden [Telegram]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fehler festhalten [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Frist melden [Telegram]": {
+      "main": [
+        [
+          {
+            "node": "Versand belegt? [If]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fehler festhalten [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Versand belegt? [If]": {
+      "main": [
+        [
+          {
+            "node": "Protokollzeilen bauen [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fehler festhalten [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Protokollzeilen bauen [Code]": {
+      "main": [
+        [
+          {
+            "node": "Protokoll schreiben [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fehler festhalten [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fehler festhalten [Code]": {
+      "main": [
+        [
+          {
+            "node": "Fehlerprotokoll schreiben [HTTP Request]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Protokoll schreiben [HTTP Request]": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Fehler festhalten [Code]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fehlerprotokoll schreiben [HTTP Request]": {
+      "main": [
+        [
+          {
+            "node": "Fehler melden [Stop and Error]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "errorWorkflow": "ERROR_WORKFLOW_ID"
+  },
+  "meta": {},
+  "pinData": {},
+  "tags": [
+    {
+      "updatedAt": "2026-10-11T18:48:41.447Z",
+      "createdAt": "2026-10-11T18:48:41.447Z",
+      "id": "TAG_ID_SCHULUNG",
+      "name": "schulung"
+    },
+    {
+      "updatedAt": "2026-11-09T15:22:56.779Z",
+      "createdAt": "2026-11-09T15:22:56.779Z",
+      "id": "TAG_ID_PROJEKT_2",
+      "name": "projekt-2"
+    },
+    {
+      "updatedAt": "2026-11-18T08:33:59.801Z",
+      "createdAt": "2026-11-18T08:33:59.801Z",
+      "id": "TAG_ID_WOCHE_9",
+      "name": "woche-9"
+    },
+    {
+      "updatedAt": "2026-09-29T22:51:24.974Z",
+      "createdAt": "2026-09-29T22:51:24.974Z",
+      "id": "TAG_ID_KURS",
+      "name": "KI-AGT-2606"
+    }
+  ],
+  "id": "WORKFLOW_ID_FREIGABE_FRISTEN",
+  "versionId": "1d165b57-82ed-41bd-a72f-885ff012bcbb",
+  "active": true,
+  "activeVersionId": "1d165b57-82ed-41bd-a72f-885ff012bcbb",
+  "description": "Projekt 2 AGT-2606: setzt alle 15 Minuten wartende Beiträge des Redaktions-Agenten nach Frist plus Puffer auf freigabe_abgelaufen (1 atomarer PATCH), meldet sie gesammelt in Telegram und protokolliert je Beitrag. Bis zur Abnahme nicht veröffentlic",
+  "nodeGroups": [],
+  "staticData": null,
+  "sourceWorkflowId": null,
+  "isArchived": false,
+  "parentFolder": {
+    "id": "FOLDER_ID_PROJEKTORDNER",
+    "name": "Projektordner"
+  }
+}

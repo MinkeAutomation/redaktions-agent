@@ -35,13 +35,13 @@ Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V4.4 ist 
 | | |
 |---|---|
 | **Datum** | 19.11.2026 |
-| **Status** | ✅ Live, Hauptworkflow v26.1 bis v26.5.3 (veröffentlicht 21.11.2026 14:03) |
+| **Status** | ✅ Live, Hauptworkflow v26.1 bis v27.1 (zuletzt veröffentlicht 24.11.2026) |
 | **Agent** | Redaktions-Agent |
 | **Version** | V4.4 |
 | **Prompt-Datei** | [prompts/20261119_System-Prompt-Redaktions-Agent_V4.4.md](prompts/20261119_System-Prompt-Redaktions-Agent_V4.4.md) |
 | **Agent-Konfiguration** | der Auszug zu V4.4 liegt noch nicht vor |
 
-**Beschreibung:** V4.4 ergänzt V4.1 um die Regeln für Werkzeug 6 „Qualität prüfen“: höchstens 1 Nachbesserung, danach genau 1 erneute Prüfung, höchstens 14 Werkzeugaufrufe je Auftrag. Der Prompt, den das Modell bekommt, ist dadurch rund 36 Prozent länger (9.160 statt 6.733 Byte im Feld `systemMessage` des Workflows, Export v26.5.3 gegen v23.1); die Prompt-Datei ist mit ihrem Änderungskopf größer (13.962 Byte). Belegt in vollen Läufen am 21.11.2026 (4056 und 4064 am veröffentlichten Stand), der Test gegen die Baseline ist bis Di 24.11.2026, 11:00, vor dem Hard Freeze geplant (Stand 23.11.2026) ([W9 Tag 4](docs/w09t04.html)).
+**Beschreibung:** V4.4 ergänzt V4.1 um die Regeln für Werkzeug 6 „Qualität prüfen“: höchstens 1 Nachbesserung, danach genau 1 erneute Prüfung, höchstens 14 Werkzeugaufrufe je Auftrag. Der Prompt, den das Modell bekommt, ist dadurch rund 36 Prozent länger (9.160 statt 6.733 Byte im Feld `systemMessage` des Workflows, Export v26.5.3 gegen v23.1); die Prompt-Datei ist mit ihrem Änderungskopf größer (13.962 Byte). Belegt in vollen Läufen am 21.11.2026 (4056 und 4064 am veröffentlichten Stand), gegen die Baseline V4.1 gemessen am 24.11.2026 ([W10 Tag 2](docs/w10t02.html#k5); Vorlauf [W9 Tag 4](docs/w09t04.html)).
 
 V4.2 und V4.3 (19.11.2026) sind Zwischenstände auf dem Weg dorthin, nie veröffentlicht, Dateien unter [archiv/prompts/](archiv/prompts/).
 
@@ -171,7 +171,8 @@ V4.2 und V4.3 (19.11.2026) sind Zwischenstände auf dem Weg dorthin, nie veröff
 - **W9 Tag 3 (18.11., Stand 21.11.):** Chat-Seite mit Anmeldung, Sofortantwort mit Werkzeugliste, Freigabe als eigener Workflow ohne Warten; 7 Fehlerfälle, 6 behoben, 1 als Grenze beschrieben; Test von außen am 21.11.2026 bestanden ([W9 Tag 3](docs/w09t03.html)).
 - **W9 Tag 4 (19.11., Stand 21.11.):** Werkzeug 6 „Qualität prüfen“, Systemprompt V4.4, Feature Freeze am Abend; 23 Fehlerfälle an Freigabe, Statuswechseln und Kürzung behoben; Token, Laufzeit und Kosten vorher und nachher, Kosten nachher aus Tokens und Listenpreis berechnet ([W9 Tag 4](docs/w09t04.html)).
 - **21.11.2026, 14:03:** Hauptworkflow v26.5.3 (Anordnung in Laufrichtung, Rahmen 01 bis 12, Setup-Zeilen, abgekoppelter Block der alten Freigabe entfernt), Freigabe-Workflow v02.1 und Text-Werkzeug v09.3 veröffentlicht. Abgabestände unter [workflows/abgaben/W09T03](workflows/abgaben/W09T03/README.md) und [W09T04](workflows/abgaben/W09T04/README.md).
-- **Bis Di 24.11.2026, 11:00, vor dem Hard Freeze geplant (Stand 23.11.2026):** Fristablauf der Freigabe, Angriffsfall am Eingang, Regression über 20 Fälle am veröffentlichten Stand, Test gegen die Baseline, Kostenfolie. Erledigt am 23.11.2026: Abschnitt mit allen 6 Werkzeugen ([docs/werkzeuge.md](docs/werkzeuge.md)).
+- **24.11.2026, Hard Freeze:** Veröffentlicht sind Hauptworkflow v27.1 (Muster-Filter am Eingang, Frist an den Freigabe-Workflow, Sperrantwort nennt den Grund), Freigabe-Workflow v02.2, der neue Fristen-Workflow v01, Text-Werkzeug v09.4 (Quelle nur mit Namen, nie als Webadresse) und Werkzeug 6 v06 (Prüfmodell Mistral Small 3.2, Ersatz Particle). Alle 9 Workflows sind als Freeze-Stand in `workflows/` exportiert, die abgelösten Stände liegen in `archiv/workflows/`, interne Kennungen in Notizen und Code-Kommentaren sind sachlich umformuliert. Details in [versionen.md](versionen.md).
+- **Erledigt am 24.11.2026:** Fristablauf der Freigabe, Angriffsfall am Eingang, Regression mit 15 Funktionstests und 6 Angriffen am Freeze-Stand, Test gegen die Baseline V4.1 ([W10 Tag 2](docs/w10t02.html)). Erledigt am 23.11.2026: Abschnitt mit allen 6 Werkzeugen ([docs/werkzeuge.md](docs/werkzeuge.md)).
 
 ## Arbeitsschritte 15.11.2026 (Tag 5: Vertrauensstufen und Freigabe)
 

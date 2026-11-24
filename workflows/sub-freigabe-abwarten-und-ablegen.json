@@ -43,6 +43,10 @@
             {
               "name": "hashtags",
               "type": "any"
+            },
+            {
+              "name": "frist_minuten",
+              "type": "any"
             }
           ]
         }
@@ -245,8 +249,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        2672,
-        416
+        2640,
+        432
       ],
       "webhookId": "WEBHOOK_ID",
       "credentials": {
@@ -273,7 +277,7 @@
       "typeVersion": 1.2,
       "position": [
         2992,
-        416
+        432
       ],
       "webhookId": "WEBHOOK_ID",
       "credentials": {
@@ -286,7 +290,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Zweck: die Eingabe des Hauptworkflows pruefen, bevor irgendetwas gesendet wird (R92). Eine fehlerhafte Eingabe geht ueber den eigenen Meldeweg, nicht still verloren.\n// Warum Typpruefung hier: pfade, bilder und hashtags sind am Trigger als beliebiger Typ gefuehrt, damit ein Typfehler nicht still am Trigger endet, sondern hier gemeldet wird.\nconst e = $input.first().json;\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;\nconst f = [];\nconst text = k => typeof e[k] === 'string' && e[k].trim() !== '';\nif (!UUID.test(String(e.post_id || ''))) f.push('post_id ist keine gültige Kennung');\nfor (const k of ['kuerzel', 'trace_id', 'chat_id', 'nutzer_id', 'nachricht']) if (!text(k)) f.push(k + ' fehlt');\nif (!Array.isArray(e.pfade) || e.pfade.some(x => typeof x !== 'string' || x === '')) f.push('pfade ist keine Liste von Pfaden');\nif (typeof e.bilder !== 'boolean') f.push('bilder ist kein Ja-Nein-Wert');\nelse if (Array.isArray(e.pfade) && e.bilder !== (e.pfade.length > 0)) f.push('bilder passt nicht zu pfade');\nif (!Array.isArray(e.hashtags)) f.push('hashtags ist keine Liste');\nreturn [{ json: { gueltig: f.length === 0, grund: f.join('; ').slice(0, 300), chat_id: text('chat_id') ? e.chat_id : '', trace_id: String(e.trace_id || ''), post_id: String(e.post_id || '') } }];\n"
+        "jsCode": "// Zweck: die Eingabe des Hauptworkflows pruefen, bevor irgendetwas gesendet wird. Eine fehlerhafte Eingabe geht ueber den eigenen Meldeweg, nicht still verloren.\n// Warum Typpruefung hier: pfade, bilder und hashtags sind am Trigger als beliebiger Typ gefuehrt, damit ein Typfehler nicht still am Trigger endet, sondern hier gemeldet wird.\nconst e = $input.first().json;\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;\nconst f = [];\nconst text = k => typeof e[k] === 'string' && e[k].trim() !== '';\nconst fmRoh = e.frist_minuten;\nif (Array.isArray(fmRoh) || (fmRoh !== null && typeof fmRoh === 'object')) {\n  f.push('frist_minuten ist keine gültige Frist');\n} else {\n  const fmOk = (typeof fmRoh === 'number' && Number.isInteger(fmRoh)) || /^[1-9]\\d{0,3}$/.test(String(fmRoh));\n  const fm = Number(fmRoh);\n  if (!fmOk || fm < 1 || fm > 1440) f.push('frist_minuten ist keine gültige Frist');\n}\nif (!UUID.test(String(e.post_id || ''))) f.push('post_id ist keine gültige Kennung');\nfor (const k of ['kuerzel', 'trace_id', 'chat_id', 'nutzer_id', 'nachricht']) if (!text(k)) f.push(k + ' fehlt');\nif (!Array.isArray(e.pfade) || e.pfade.some(x => typeof x !== 'string' || x === '')) f.push('pfade ist keine Liste von Pfaden');\nif (typeof e.bilder !== 'boolean') f.push('bilder ist kein Ja-Nein-Wert');\nelse if (Array.isArray(e.pfade) && e.bilder !== (e.pfade.length > 0)) f.push('bilder passt nicht zu pfade');\nif (!Array.isArray(e.hashtags)) f.push('hashtags ist keine Liste');\nreturn [{ json: { gueltig: f.length === 0, grund: f.join('; ').slice(0, 300), chat_id: text('chat_id') ? e.chat_id : '', trace_id: String(e.trace_id || ''), post_id: String(e.post_id || '') } }];\n"
       },
       "id": "f41d73e2-5cb8-412f-bfae-3548772f4d98",
       "name": "Eingabe prüfen [Code]",
@@ -387,7 +391,8 @@
         "options": {
           "limitWaitTime": {
             "values": {
-              "resumeAmount": 24
+              "resumeAmount": "={{ Number($('Auftrag empfangen [Execute Workflow Trigger]').first().json.frist_minuten) }}",
+              "resumeUnit": "minutes"
             }
           },
           "appendAttribution": false
@@ -481,7 +486,7 @@
     {
       "parameters": {
         "method": "PATCH",
-        "url": "=https://SUPABASE_URL/rest/v1/k1_posts?id=eq.{{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.post_id }}",
+        "url": "=https://SUPABASE_URL/rest/v1/k1_posts?id=eq.{{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.post_id }}&status=eq.wartet_auf_freigabe",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
         "sendHeaders": true,
@@ -557,7 +562,7 @@
     {
       "parameters": {
         "method": "PATCH",
-        "url": "=https://SUPABASE_URL/rest/v1/k1_posts?id=eq.{{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.post_id }}",
+        "url": "=https://SUPABASE_URL/rest/v1/k1_posts?id=eq.{{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.post_id }}&status=in.(wartet_auf_freigabe,freigabe_abgelaufen)",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
         "sendHeaders": true,
@@ -601,7 +606,7 @@
     {
       "parameters": {
         "method": "PATCH",
-        "url": "=https://SUPABASE_URL/rest/v1/k1_posts?id=eq.{{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.post_id }}",
+        "url": "=https://SUPABASE_URL/rest/v1/k1_posts?id=eq.{{ $('Auftrag empfangen [Execute Workflow Trigger]').first().json.post_id }}&status=in.(wartet_auf_freigabe,freigabe_abgelaufen)",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
         "sendHeaders": true,
@@ -644,7 +649,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Zweck: nach der Freigabe die Bild-Elemente samt Beitragsdaten für den Sub 'AGT-2606 P1 SUB Nextcloud-Ablage' zusammenstellen (wie in Projekt 1, Elemente aus Bild laden).\n// Warum Gate: nur bei status fertig wird abgelegt, sonst kein Element und damit kein Aufruf.\n// v02.1 (20.11.2026, Gegenpruefung G1): Status fertig setzen liefert die volle Antwort (fullResponse), die bestaetigte Zeile steht in body[0]; Fertig bestaetigt? hat genau 1 Zeile mit dieser post_id und status fertig belegt.\nconst antwort = $input.first() ? $input.first().json : {};\nconst row = (antwort && Array.isArray(antwort.body) && antwort.body.length === 1 && antwort.body[0] !== null && typeof antwort.body[0] === 'object') ? antwort.body[0] : {};\nif (!row || row.status !== 'fertig') return [];\nconst v = $('Auftrag empfangen [Execute Workflow Trigger]').first().json;\nconst meta = { customer_code: String(v.kuerzel), post_id: String(row.id), topic: String(row.topic || ''), trace_id: String(v.trace_id), caption_instagram: String(row.caption_instagram || ''), hashtags: Array.isArray(row.hashtags) ? row.hashtags : [], linkedin_post: String(row.linkedin_post || '') };\nlet namen = [], geladen = [];\ntry { namen = $('Bilder einzeln [Code]').all().map(i => i.json.file_name); geladen = $('Bild laden [HTTP Request]').all(); } catch (e) { namen = []; geladen = []; }\nconst out = [];\ngeladen.forEach((it, i) => { if (it.binary && it.binary.data && namen[i]) out.push({ json: Object.assign({}, meta, { file_name: namen[i] }), binary: { data: it.binary.data } }); });\nif (!out.length) out.push({ json: Object.assign({}, meta, { file_name: '' }) });\nreturn out;\n"
+        "jsCode": "// Zweck: nach der Freigabe die Bild-Elemente samt Beitragsdaten für den Sub 'AGT-2606 P1 SUB Nextcloud-Ablage' zusammenstellen (wie in Projekt 1, Elemente aus Bild laden).\n// Warum Gate: nur bei status fertig wird abgelegt, sonst kein Element und damit kein Aufruf.\n// v02.1: Status fertig setzen liefert die volle Antwort (fullResponse), die bestaetigte Zeile steht in body[0]; Fertig bestaetigt? hat genau 1 Zeile mit dieser post_id und status fertig belegt.\nconst antwort = $input.first() ? $input.first().json : {};\nconst row = (antwort && Array.isArray(antwort.body) && antwort.body.length === 1 && antwort.body[0] !== null && typeof antwort.body[0] === 'object') ? antwort.body[0] : {};\nif (!row || row.status !== 'fertig') return [];\nconst v = $('Auftrag empfangen [Execute Workflow Trigger]').first().json;\nconst meta = { customer_code: String(v.kuerzel), post_id: String(row.id), topic: String(row.topic || ''), trace_id: String(v.trace_id), caption_instagram: String(row.caption_instagram || ''), hashtags: Array.isArray(row.hashtags) ? row.hashtags : [], linkedin_post: String(row.linkedin_post || '') };\nlet namen = [], geladen = [];\ntry { namen = $('Bilder einzeln [Code]').all().map(i => i.json.file_name); geladen = $('Bild laden [HTTP Request]').all(); } catch (e) { namen = []; geladen = []; }\nconst out = [];\ngeladen.forEach((it, i) => { if (it.binary && it.binary.data && namen[i]) out.push({ json: Object.assign({}, meta, { file_name: namen[i] }), binary: { data: it.binary.data } }); });\nif (!out.length) out.push({ json: Object.assign({}, meta, { file_name: '' }) });\nreturn out;\n"
       },
       "id": "546e69ae-8432-471a-ac9d-a2fac94e502d",
       "name": "Ablage-Elemente bauen [Code]",
@@ -907,7 +912,7 @@
             {
               "id": "o1",
               "name": "output",
-              "value": "Die Freigabe oder die Ablage ist gescheitert. Der Beitrag bleibt gespeichert und wartet. Ein Mensch sieht sich den Lauf an.",
+              "value": "Die Freigabe oder die Ablage ist gescheitert oder kam nach dem Fristende. Der Beitrag bleibt gespeichert, nichts wurde veröffentlicht. Ein Mensch sieht sich den Lauf an.",
               "type": "string"
             }
           ]
@@ -925,7 +930,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Zweck: der Freigabe-Sub ist gescheitert, NACHDEM der Chat schon gesagt hat, dass der Beitrag bei Patrick liegt. Patrick bekommt die Meldung ueber Telegram, im Protokoll des Hauptlaufs steht der Grund.\n// Wer scheiterte: die Fehlerausgaenge der Knoten dieses Subs liefern Elemente am Ausgang 1; der erste Knoten mit einem Element mit Feld error am Ausgang 1 wird genannt.\nconst e = $('Auftrag empfangen [Execute Workflow Trigger]').first().json;\nconst chat = String(e.chat_id || '').trim();\nconst KANDIDATEN = ['Vorschau-Adressen holen [HTTP Request]', 'Vorschau senden [Telegram]', 'Bilder einzeln [Code]', 'Bilder zusammenfassen [Code]', 'Instagram-Text senden [Telegram]', 'LinkedIn-Post senden [Telegram]', 'Freigabe abwarten [Telegram]', 'Status fertig setzen [HTTP Request]', 'Ablage-Elemente bauen [Code]', 'In Nextcloud ablegen [Execute Workflow]', 'Grund abfragen [Telegram]', 'Status abgelehnt setzen [HTTP Request]', 'Status abgelaufen setzen [HTTP Request]'];\nlet schritt = 'unbekannt';\nfor (const n of KANDIDATEN) {\n  try { if ($(n).isExecuted && $(n).all(1).some(x => x && x.json && x.json.error)) { schritt = n.replace(/\\s*\\[[^\\]]*\\]\\s*$/, ''); break; } } catch (err) { /* kein Fehlerausgang an diesem Knoten */ }\n}\n// v02.1 (20.11.2026, Gegenpruefung G1): bestaetigt die Datenbank einen Statuswechsel nicht (0 Zeilen, fremde Zeile, mehrere Zeilen), liegt das Element am Nein-Ausgang der Pruefweiche, ohne Feld error.\nconst PRUEFWEICHEN = [[\"Fertig bestätigt? [If]\",\"Status fertig setzen\"],[\"Ablehnung bestätigt? [If]\",\"Status abgelehnt setzen\"],[\"Ablauf bestätigt? [If]\",\"Status abgelaufen setzen\"]];\nif (schritt === 'unbekannt') for (const [w, s] of PRUEFWEICHEN) { try { if ($(w).isExecuted && $(w).all(1).length > 0) { schritt = s + ' (Datenbank hat den Statuswechsel nicht bestätigt)'; break; } } catch (err) { /* Weiche ohne Nein-Ausgang in diesem Lauf */ } }\nconst nachricht = 'Redaktions-Agent: Fehler im Freigabe-Sub (Sub-Lauf ' + $execution.id + ', Hauptlauf ' + e.trace_id + '). Betroffener Schritt: ' + schritt + '. Der Beitrag ' + e.post_id + ' steht in der Datenbank, der Stand ist im Leitstand sichtbar. Bitte den Lauf ansehen.';\nreturn [{ json: { chat_id: chat, nachricht: nachricht, error_text: ('Freigabe-Sub: Fehler in ' + schritt).slice(0, 300), trace_id: String(e.trace_id || '') } }];\n"
+        "jsCode": "// Zweck: der Freigabe-Sub ist gescheitert, NACHDEM der Chat schon gesagt hat, dass der Beitrag beim Betreiber liegt. Der Betreiber bekommt die Meldung ueber Telegram, im Protokoll des Hauptlaufs steht der Grund.\n// Wer scheiterte: die Fehlerausgaenge der Knoten dieses Subs liefern Elemente am Ausgang 1; der erste Knoten mit einem Element mit Feld error am Ausgang 1 wird genannt.\nconst e = $('Auftrag empfangen [Execute Workflow Trigger]').first().json;\nconst chat = String(e.chat_id || '').trim();\nconst KANDIDATEN = ['Vorschau-Adressen holen [HTTP Request]', 'Vorschau senden [Telegram]', 'Bilder einzeln [Code]', 'Bilder zusammenfassen [Code]', 'Instagram-Text senden [Telegram]', 'LinkedIn-Post senden [Telegram]', 'Freigabe abwarten [Telegram]', 'Status fertig setzen [HTTP Request]', 'Ablage-Elemente bauen [Code]', 'In Nextcloud ablegen [Execute Workflow]', 'Grund abfragen [Telegram]', 'Status abgelehnt setzen [HTTP Request]', 'Status abgelaufen setzen [HTTP Request]'];\nlet schritt = 'unbekannt';\nfor (const n of KANDIDATEN) {\n  try { if ($(n).isExecuted && $(n).all(1).some(x => x && x.json && x.json.error)) { schritt = n.replace(/\\s*\\[[^\\]]*\\]\\s*$/, ''); break; } } catch (err) { /* kein Fehlerausgang an diesem Knoten */ }\n}\n// v02.1: bestaetigt die Datenbank einen Statuswechsel nicht (0 Zeilen, fremde Zeile, mehrere Zeilen), liegt das Element am Nein-Ausgang der Pruefweiche, ohne Feld error.\nconst PRUEFWEICHEN = [[\"Fertig bestätigt? [If]\",\"Status fertig setzen\",\" (Datenbank hat den Statuswechsel nicht bestätigt, zum Beispiel Klick nach dem Fristende; nichts wurde abgelegt)\"],[\"Ablehnung bestätigt? [If]\",\"Status abgelehnt setzen\",\" (Datenbank hat den Statuswechsel nicht bestätigt)\"],[\"Ablauf bestätigt? [If]\",\"Status abgelaufen setzen\",\" (Datenbank hat den Statuswechsel nicht bestätigt)\"]];\nif (schritt === 'unbekannt') for (const [w, s, z] of PRUEFWEICHEN) { try { if ($(w).isExecuted && $(w).all(1).length > 0) { schritt = s + z; break; } } catch (err) { /* Weiche ohne Nein-Ausgang in diesem Lauf */ } }\nconst nachricht = 'Redaktions-Agent: Fehler im Freigabe-Sub (Sub-Lauf ' + $execution.id + ', Hauptlauf ' + e.trace_id + '). Betroffener Schritt: ' + schritt + '. Der Beitrag ' + e.post_id + ' steht in der Datenbank, der Stand ist im Leitstand sichtbar. Bitte den Lauf ansehen.';\nreturn [{ json: { chat_id: chat, nachricht: nachricht, error_text: ('Freigabe-Sub: Fehler in ' + schritt).slice(0, 300), trace_id: String(e.trace_id || '') } }];\n"
       },
       "id": "e777de01-0da0-4641-a9b7-2647ddafbd17",
       "name": "Fehlertext bauen [Code]",
@@ -1049,7 +1054,7 @@
     },
     {
       "parameters": {
-        "content": "# 📋 Workflow-Beschreibung\n🎯 **Zweck:** Die Freigabe läuft unabhängig vom Chat: Auch wenn der Chat-Tab geschlossen ist, kommen Vorschau, Texte und die Freigabe-Frage in Telegram an.\n👥 **Für wen:** den Redaktions-Agenten im Workflow AGT-2606 P2 Redaktions-Agent. Patrick klickt in Telegram Freigeben oder Ablehnen.\n🕹️ **So nutzt du ihn:** Der Hauptworkflow ruft ihn nach der Beitragsprüfung ohne Warten auf und übergibt 12 Felder.\n## Status: 🟡 Entwurf v02.1, Statuswechsel werden bestätigt, Test läuft",
+        "content": "# 📋 Workflow-Beschreibung\n🎯 **Zweck:** Die Freigabe läuft unabhängig vom Chat: Auch wenn der Chat-Tab geschlossen ist, kommen Vorschau, Texte und die Freigabe-Frage in Telegram an.\n👥 **Für wen:** den Redaktions-Agenten im Workflow AGT-2606 P2 Redaktions-Agent. Der Betreiber klickt in Telegram Freigeben oder Ablehnen.\n🕹️ **So nutzt du ihn:** Der Hauptworkflow ruft ihn nach der Beitragsprüfung ohne Warten auf und übergibt 13 Felder.\n## Status: 🟡 Entwurf v02.2, Frist aus den Einstellungen, Test läuft",
         "height": 200,
         "width": 1100,
         "color": 7
@@ -1065,7 +1070,7 @@
     },
     {
       "parameters": {
-        "content": "# 🧾 Version\nv02.1 vom 20.11.2026 (Entwurf): Fehlervermerk und die 3 Statuswechsel werden bestätigt (genau 1 Zeile), sonst Fehlerweg.\nv01 vom 19.11.2026: Freigabe-Zweig aus dem Hauptworkflow ausgelagert (Fehlerbehebung Chat-Lücke F5), dazu Eingabeprüfung und eigener Fehlerweg.\nAlle Änderungen stehen im Changelog n8n-WORKFLOW_ID_SUB_FREIGABE.md.",
+        "content": "# 🧾 Version\nv02.2 vom 23.11.2026 (Entwurf): Frist aus den Einstellungen (Feld frist_minuten, 1 bis 1440 Minuten), Statuswechsel nur aus wartend, Ablehnen und Ablauf auch nach dem Fristende.\nv02.1 vom 20.11.2026 (Entwurf): Fehlervermerk und die 3 Statuswechsel werden bestätigt (genau 1 Zeile), sonst Fehlerweg.\nv01 vom 19.11.2026: Freigabe-Zweig aus dem Hauptworkflow ausgelagert (Fehlerbehebung Chat-Lücke F5), dazu Eingabeprüfung und eigener Fehlerweg.\nAlle Änderungen stehen im Changelog n8n-WORKFLOW_ID_SUB_FREIGABE.md.",
         "height": 200,
         "width": 1040,
         "color": 7
@@ -1081,7 +1086,7 @@
     },
     {
       "parameters": {
-        "content": "# 🧪 Freigabe abwarten und ablegen\n**Aufgabe:** Beitrag in Telegram zeigen, auf die Entscheidung warten und je nach Antwort Status setzen und ablegen.\n**Die Idee:** Der Zweig hängt nicht mehr hinter der Chat-Antwort, sondern läuft als eigener Lauf, der auf den Klick wartet.\n**Warum so?** Der Chat-Knoten hält den Hauptlauf an, bis der Browser die Antwort abholt; ein geschlossener Tab blockierte vorher die Freigabe.\n**Hinweis:** Stufe: Durchstich bis 24.11.2026. Abweichung von R105 und R20 (Send and Wait im Sub, Start ohne Warten) von Patrick am 19.11.2026 zugelassen.",
+        "content": "# 🧪 Freigabe abwarten und ablegen\n**Aufgabe:** Beitrag in Telegram zeigen, auf die Entscheidung warten und je nach Antwort Status setzen und ablegen.\n**Die Idee:** Der Zweig hängt nicht mehr hinter der Chat-Antwort, sondern läuft als eigener Lauf, der auf den Klick wartet.\n**Warum so?** Der Chat-Knoten hält den Hauptlauf an, bis der Browser die Antwort abholt; ein geschlossener Tab blockierte vorher die Freigabe.\n**Hinweis:** Stufe: Durchstich bis 24.11.2026. Abweichung von laut Hausregel und laut Hausregel (Send and Wait im Sub, Start ohne Warten) vom Betreiber am 19.11.2026 zugelassen.",
         "height": 200,
         "width": 1100,
         "color": 7
@@ -1113,7 +1118,7 @@
     },
     {
       "parameters": {
-        "content": "## Status\n🟢 Aufbau nach Export geprüft\n🟡 Tests T-FS-1 bis T-FS-13 laufen\n🔴 Pflicht: erst Sub veröffentlichen, dann Hauptworkflow\n🔵 Start ohne Warten",
+        "content": "## Status\n🟢 Aufbau nach Export geprüft\n🟡 Tests T-FS-1 bis T-FS-13 laufen\n🔴 Pflicht: erst Hauptworkflow veröffentlichen, dann Sub\n🔵 Start ohne Warten",
         "height": 200,
         "width": 512,
         "color": 7
@@ -1129,7 +1134,7 @@
     },
     {
       "parameters": {
-        "content": "## ① Auftrag empfangen und prüfen\nDer Hauptworkflow übergibt 12 Felder. Eine fehlerhafte Eingabe meldet zuerst Telegram und endet dann mit Fehler.\n\n### 🟡 Test T-FS-3",
+        "content": "## ① Auftrag empfangen und prüfen\nDer Hauptworkflow übergibt 13 Felder, das 13. ist die Frist frist_minuten. Eine fehlerhafte Eingabe meldet zuerst Telegram und endet dann mit Fehler.\n\n### 🟡 Test T-FS-3",
         "height": 196,
         "width": 908
       },
@@ -1159,7 +1164,7 @@
     },
     {
       "parameters": {
-        "content": "## ③ Freigabe-Frage\nInstagram-Text, LinkedIn-Post, dann die Frage mit Freigeben und Ablehnen. Die Frist beträgt 24 Stunden.\n\n### 🟡 Test T-FS-1",
+        "content": "## ③ Freigabe-Frage\nInstagram-Text, LinkedIn-Post, dann die Frage mit Freigeben und Ablehnen. Die Frist kommt aus den Einstellungen (Standard 24 Stunden, höchstens 24).\n\n### 🟡 Test T-FS-1",
         "height": 196,
         "width": 640
       },
@@ -1174,7 +1179,7 @@
     },
     {
       "parameters": {
-        "content": "## ④ Entscheidung und Ablage\nFreigeben setzt den Status fertig und legt in Nextcloud ab, Ablehnen fragt den Grund, Ablauf setzt freigabe_abgelaufen.\n\n### 🟡 Test T-FS-6 nur mit Kürzel test-p2",
+        "content": "## ④ Entscheidung und Ablage\nFreigeben setzt den Status fertig und legt in Nextcloud ab, Ablehnen fragt den Grund, Ablauf setzt freigabe_abgelaufen. Freigeben wirkt nur bei einem wartenden Beitrag, Ablehnen und Ablauf auch nach dem Fristende.\n\n### 🟡 Test T-FS-6 nur mit Kürzel test-p2",
         "height": 196,
         "width": 1096
       },
@@ -1205,7 +1210,7 @@
     },
     {
       "parameters": {
-        "content": "## ⑤ Fehlerweg\nJeder Fehlerausgang führt hierher: Telegram an Patrick, nach 20 Sekunden der Grund im Protokoll; ohne Bestätigung eine 2. Meldung.\n\n### 🔴 Melden statt still scheitern",
+        "content": "## ⑤ Fehlerweg\nJeder Fehlerausgang führt hierher: Telegram an den Betreiber, nach 20 Sekunden der Grund im Protokoll; ohne Bestätigung eine 2. Meldung.\n\n### 🔴 Melden statt still scheitern",
         "height": 220,
         "width": 360,
         "color": 3
@@ -1253,7 +1258,7 @@
     },
     {
       "parameters": {
-        "content": "# ✅ Setup-Checkliste\n1. Credential Telegram API | Content-Generator an den 9 Telegram-Knoten.\n2. Credential Supabase API | KI-AGT-2606 an den 5 Supabase-Knoten.\n3. Sub WORKFLOW_ID_NEXTCLOUD_ABLAGE (Nextcloud-Ablage) muss veröffentlicht sein.\n4. Reihenfolge: erst diesen Sub veröffentlichen, dann den Hauptworkflow.\n5. Aufrufrecht: nur Workflows desselben Besitzers.\n6. Erster Test: Testaufruf mit Testkürzel, nie mit dem Kundenkürzel.",
+        "content": "# ✅ Setup-Checkliste\n1. Credential Telegram API | Content-Generator an den 9 Telegram-Knoten.\n2. Credential Supabase API | KI-AGT-2606 an den 5 Supabase-Knoten.\n3. Sub WORKFLOW_ID_NEXTCLOUD_ABLAGE (Nextcloud-Ablage) muss veröffentlicht sein.\n4. Reihenfolge: erst den Hauptworkflow veröffentlichen, dann diesen Sub (Messung M16z 23.11.2026).\n5. Aufrufrecht: nur Workflows desselben Besitzers.\n6. Erster Test: Testaufruf mit Testkürzel, nie mit dem Kundenkürzel.\n7. Einstellungen freigabe_frist_minuten und freigabe_puffer_minuten in k1_einstellungen.",
         "height": 396,
         "width": 420,
         "color": 7
@@ -1269,7 +1274,7 @@
     },
     {
       "parameters": {
-        "content": "# 🌐 Plattform-Hinweise\n**DEINE-N8N-INSTANZ (n8n):** Erlaubt: Start ohne Warten aus dem Hauptworkflow. 🟡 Besonderheit: dieser Sub muss veröffentlicht sein, sonst läuft der Aufruf ins Leere.\n**Telegram:** Erlaubt: Nachrichten an den Testchat. 🟡 Besonderheit: Den Freigabe-Klick macht nur Patrick im Testchat.",
+        "content": "# 🌐 Plattform-Hinweise\n**DEINE-N8N-INSTANZ (n8n):** Erlaubt: Start ohne Warten aus dem Hauptworkflow. 🟡 Besonderheit: dieser Sub muss veröffentlicht sein, sonst läuft der Aufruf ins Leere.\n**Telegram:** Erlaubt: Nachrichten an den Testchat. 🟡 Besonderheit: Den Freigabe-Klick macht nur der Betreiber im Testchat.",
         "height": 394,
         "width": 420,
         "color": 7
@@ -1985,9 +1990,9 @@
   "pinData": {},
   "tags": [],
   "id": "WORKFLOW_ID_SUB_FREIGABE",
-  "versionId": "b35b9792-889e-4a51-bef5-e3e0b7d16bb8",
+  "versionId": "27f4a92c-c5c9-4012-885f-dacf6c24025c",
   "active": true,
-  "activeVersionId": "b35b9792-889e-4a51-bef5-e3e0b7d16bb8",
+  "activeVersionId": "27f4a92c-c5c9-4012-885f-dacf6c24025c",
   "description": "Projekt 2 AGT-2606: Freigabe des Redaktions-Agenten, sendet Vorschau und Texte per Telegram, wartet auf Freigeben oder Ablehnen, setzt den Status und legt in Nextcloud ab. Wird ohne Warten vom Hauptworkflow gestartet.",
   "nodeGroups": [],
   "staticData": null,

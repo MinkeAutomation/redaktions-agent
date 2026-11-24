@@ -138,7 +138,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Rückgabe an den Agenten: fester Text, Nicht-Treffer-Wert NICHT_GEFUNDEN\n// v03 (10.11.2026): Lesefehler hat Vorrang. alwaysOutputData liefert bei einem Fehler zusätzlich ein leeres Element am Erfolgsausgang (Lauf 2608), dann liefen NICHT_GEFUNDEN und FEHLER parallel und die Rückgabe hing an der Reihenfolge. Jetzt prüft dieser Knoten die Fehlerausgänge selbst.\nconst lesefehler = (name) => { try { return $(name).all(1).length > 0; } catch (e) { return false; } };\nif (lesefehler('Markenwissen lesen [Supabase]') || lesefehler('Frühere Posts lesen [Supabase]')) {\n  return [{ json: { antwort: 'FEHLER: Markenwissen konnte nicht gelesen werden, Werkzeug nicht ausgeführt.' } }];\n}\nconst marken = $('Markenwissen lesen [Supabase]').all().map(i => i.json).filter(r => r && r.kuerzel);\nif (marken.length === 0) {\n  return [{ json: { antwort: 'NICHT_GEFUNDEN: Für diese Kundenkennung gibt es keine aktive Marke.' } }];\n}\nconst m = marken[0];\nconst posts = $('Frühere Posts lesen [Supabase]').all().map(i => i.json).filter(r => r && r.topic);\nconst liste = posts.map(p => '- ' + String(p.created_at || '').slice(0, 10) + ' | ' + (p.status || '') + ' | ' + p.topic + (p.rejection_reason ? ' | abgelehnt: ' + p.rejection_reason : '')).join('\\n') || '- keine früheren Posts';\nconst thema = $('Eingabe prüfen [Code]').first().json.thema || '(nicht genannt)';\nconst zeilen = [\n  'STATUS: OK',\n  'Marke: ' + (m.name || ''),\n  'Ton: ' + (m.ton || ''),\n  'Zielgruppe: ' + (m.zielgruppe || ''),\n  'No-Gos: ' + ((m.no_gos || []).join(', ') || 'keine'),\n  'Call to Action: ' + (m.cta_text || ''),\n  'Feste Hashtags: ' + ((m.hashtags_fest || []).join(' ') || 'keine'),\n  'Thema der Anfrage: ' + thema,\n  'Frühere Posts (neueste zuerst, höchstens 20):',\n  liste\n];\nreturn [{ json: { antwort: zeilen.join('\\n') } }];\n"
+        "jsCode": "// Rückgabe an den Agenten: fester Text, Nicht-Treffer-Wert NICHT_GEFUNDEN\n// v03 (10.11.2026, M-4): Lesefehler hat Vorrang. alwaysOutputData liefert bei einem Fehler zusätzlich ein leeres Element am Erfolgsausgang (Lauf 2608), dann liefen NICHT_GEFUNDEN und FEHLER parallel und die Rückgabe hing an der Reihenfolge. Jetzt prüft dieser Knoten die Fehlerausgänge selbst.\nconst lesefehler = (name) => { try { return $(name).all(1).length > 0; } catch (e) { return false; } };\nif (lesefehler('Markenwissen lesen [Supabase]') || lesefehler('Frühere Posts lesen [Supabase]')) {\n  return [{ json: { antwort: 'FEHLER: Markenwissen konnte nicht gelesen werden, Werkzeug nicht ausgeführt.' } }];\n}\nconst marken = $('Markenwissen lesen [Supabase]').all().map(i => i.json).filter(r => r && r.kuerzel);\nif (marken.length === 0) {\n  return [{ json: { antwort: 'NICHT_GEFUNDEN: Für diese Kundenkennung gibt es keine aktive Marke.' } }];\n}\nconst m = marken[0];\nconst posts = $('Frühere Posts lesen [Supabase]').all().map(i => i.json).filter(r => r && r.topic);\nconst liste = posts.map(p => '- ' + String(p.created_at || '').slice(0, 10) + ' | ' + (p.status || '') + ' | ' + p.topic + (p.rejection_reason ? ' | abgelehnt: ' + p.rejection_reason : '')).join('\\n') || '- keine früheren Posts';\nconst thema = $('Eingabe prüfen [Code]').first().json.thema || '(nicht genannt)';\nconst zeilen = [\n  'STATUS: OK',\n  'Marke: ' + (m.name || ''),\n  'Ton: ' + (m.ton || ''),\n  'Zielgruppe: ' + (m.zielgruppe || ''),\n  'No-Gos: ' + ((m.no_gos || []).join(', ') || 'keine'),\n  'Call to Action: ' + (m.cta_text || ''),\n  'Feste Hashtags: ' + ((m.hashtags_fest || []).join(' ') || 'keine'),\n  'Thema der Anfrage: ' + thema,\n  'Frühere Posts (neueste zuerst, höchstens 20):',\n  liste\n];\nreturn [{ json: { antwort: zeilen.join('\\n') } }];\n"
       },
       "id": "6f52f450-6540-4aed-81e4-5adfcb08d228",
       "name": "Antwort bauen [Code]",
@@ -222,7 +222,7 @@
     },
     {
       "parameters": {
-        "content": "## 🧾 Version\nv03 vom 10.11.2026: Lesefehler hat Vorrang vor NICHT_GEFUNDEN, gemessen in einer Testkopie. Davor v02 (Lesefehler melden), v01 vom 09.11.2026.\nDie Workflow-Stände stehen in versionen.md.",
+        "content": "## 🧾 Version\nv03 vom 10.11.2026: Lesefehler hat Vorrang vor NICHT_GEFUNDEN, gemessen in einer Testkopie. Davor v02 (Lesefehler melden), v01 vom 09.11.2026.\nAlle Änderungen stehen in ChangeLog.md im Projektunterlagen Kursaufgabe.",
         "height": 200,
         "width": 1040,
         "color": 7
@@ -393,7 +393,7 @@
     },
     {
       "parameters": {
-        "content": "# 🌐 Plattform-Hinweise\n**https://DEINE-N8N-INSTANZ (n8n):** Erlaubt: Aufruf als Werkzeug über Call n8n Workflow Tool. 🟡 Besonderheit: die letzte Knotenausgabe ist die Antwort an den Agenten.\n**Supabase:** Erlaubt: Lesen über Views mit Service-Key. 🟡 Besonderheit: Views zeigen nur aktive Kunden, anon hat keinen Zugriff.",
+        "content": "# 🌐 Plattform-Hinweise\n**DEINE-N8N-INSTANZ (n8n):** Erlaubt: Aufruf als Werkzeug über Call n8n Workflow Tool. 🟡 Besonderheit: die letzte Knotenausgabe ist die Antwort an den Agenten.\n**Supabase:** Erlaubt: Lesen über Views mit Service-Key. 🟡 Besonderheit: Views zeigen nur aktive Kunden, anon hat keinen Zugriff.",
         "height": 240,
         "width": 420,
         "color": 7
@@ -543,6 +543,7 @@
   },
   "settings": {
     "executionOrder": "v1",
+    "availableInMCP": true,
     "errorWorkflow": "ERROR_WORKFLOW_ID",
     "callerPolicy": "workflowsFromSameOwner",
     "binaryMode": "separate"
