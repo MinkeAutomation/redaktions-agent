@@ -1,9 +1,9 @@
 -- Projekt 2 Redaktions-Agent: Paket-Speicher (Entscheidung 11.11.2026: Speichern je Paket)
--- Zweck: Werkzeug 3 (Text schreiben) speichert das fertige Text-Paket unter einer paket_id, Werkzeug 4 (Bilder)
--- und Werkzeug 5 (Einreichen) lesen es per paket_id. Der Agent reicht nur die paket_id weiter und kopiert kein JSON.
+-- Zweck: Werkzeug 3 (Text schreiben) speichert das fertige Text-Paket unter einer paket_id, Werkzeug 4 (Bilder),
+-- Werkzeug 5 (Einreichen) und Werkzeug 6 (Qualität prüfen) lesen es per paket_id. Der Agent reicht nur die paket_id weiter und kopiert kein JSON.
 -- Warum eigene Tabelle und kein Feld in k1_posts: ein Beitrag (k1_posts) entsteht erst beim Einreichen (Werkzeug 5);
--- das Paket ist ein Zwischenstand je Lauf, Projekt 1 und das Dashboard von Projekt 1 bleiben unberuehrt.
--- Anlegen nur Werkzeug 3, die Spalte bilder setzt nur Werkzeug 4, lesen Werkzeug 4 und 5 (Service-Key aus dem Credential), anon und authenticated ohne Zugriff.
+-- das Paket ist ein Zwischenstand je Lauf, Projekt 1 und das Dashboard von Projekt 1 bleiben unberührt.
+-- Anlegen nur Werkzeug 3, die Spalte bilder setzt nur Werkzeug 4, lesen Werkzeug 4, 5 und 6 (Service-Key aus dem Credential), anon und authenticated ohne Zugriff.
 
 create table if not exists public.k2_pakete (
   paket_id    text primary key check (paket_id ~ '^paket-[A-Za-z0-9_-]{3,100}$'),
@@ -24,7 +24,7 @@ alter table public.k2_pakete enable row level security;
 revoke all on public.k2_pakete from anon, authenticated, public;
 grant select, insert on public.k2_pakete to service_role;
 
--- Rueckbau (nur nach Ansage): drop table if exists public.k2_pakete;
+-- Rückbau (nur bewusst, löscht alle Daten): drop table if exists public.k2_pakete;
 
 -- ---------------------------------------------------------------------------------------------
 -- v02 (11.11.2026): Spalte bilder. Werkzeug 4 (Bilder) vermerkt hier die erzeugten Bilder,

@@ -1,6 +1,6 @@
 -- Projekt 2 Redaktions-Agent: Erweiterung von k1_posts und Lese-Views
--- Voraussetzung: Tabellen k1_kunden und k1_posts aus Projekt 1.
--- Werkzeug 1 (Markenwissen) und Werkzeug 3 (Text) lesen das Markenprofil über die View k2_v_markenwissen,
+-- Voraussetzung: Tabellen k1_kunden und k1_posts aus Projekt 1 (sql/p1_k1_tabellen_v01.sql).
+-- Werkzeug 1 (Markenwissen), Werkzeug 3 (Text) und Werkzeug 6 (Qualität prüfen) lesen das Markenprofil über die View k2_v_markenwissen,
 -- Werkzeug 1 zusätzlich die frühen Posts über k2_v_fruehere_posts. Die Werkzeuge 4 und 5 lesen k1_kunden,
 -- k2_pakete und k1_posts direkt; geschrieben wird nur in k2_pakete (Werkzeug 3 und 4), in Storage (Werkzeug 4)
 -- und in k1_posts (Werkzeug 5).

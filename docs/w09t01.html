@@ -36,7 +36,7 @@
 <div>
 <p class="oberzeile"><span aria-hidden="true" class="marke"></span>Tages-Doku W09T01 · Mo 16.11.2026 (Stand 17.11.2026) · Hauptworkflow v22</p>
 <h1>Compliance <span class="leise">nach dem</span> EU AI Act</h1>
-<p class="untertitel">An Tag 1 der Woche 9 wird der Redaktions-Agent nach dem EU AI Act eingeordnet, 3 Schutzmaßnahmen werden gebaut und gemessen, und jeder Datenfluss bekommt Zieldienst, Standort und Speicherdauer. Ergebnis: ein System mit Transparenzpflichten, weder verboten noch Hochrisiko, nach eigener Zuordnung aus dem Einsatzzweck. Keine Rechtsberatung.</p>
+<p class="untertitel">An Tag 1 der Woche 9 wird der Redaktions-Agent nach dem EU AI Act eingeordnet, 3 Schutzmaßnahmen werden gebaut und gemessen, und jeder Datenfluss bekommt Zieldienst, Standort und Speicherdauer. Ergebnis: weder verboten noch Hochrisiko, es gelten aber die Transparenzpflichten aus Art. 50, nach eigener Zuordnung aus dem Einsatzzweck. Keine Rechtsberatung.</p>
 </div>
 </div>
 <dl aria-label="Kennzahlen W09T01" class="messleiste">
@@ -55,7 +55,7 @@
 <li><strong>Einordnung:</strong> nicht verboten, kein Anhang-III-Bereich, aber direkter Kontakt mit Menschen und erzeugte Texte und Bilder, deshalb gelten die Transparenzpflichten aus Art. 50. Das ist eine eigene Zuordnung nach dem Zweck, kein Rechtsurteil.</li>
 <li><strong>Maßnahmen:</strong> Freigabe durch einen Menschen in Telegram (A), Schwärzung des Auftrags vor dem ersten Modellaufruf (B) und seit 17.11.2026 die KI-Kennzeichnung im Chat, in den Texten und in den Bildern (C: Marker in jedem PNG, Schriftzug außer bei Bildern mit Pixabay-Foto). Alle 3 sind eigene Knoten im Workflow.</li>
 <li><strong>Datenflüsse:</strong> 20 Zeilen mit Datenkategorie, Zweck, Zieldienst samt Host, Standort und Speicherdauer. Wo ein Anbieter keinen Standort nennt, steht das so da.</li>
-<li><strong>Architektur:</strong> Die Begründung ist neu gefasst. Die Reihenfolge der Schritte steht im Systemprompt fest, der Agent entscheidet an 6 Stellen selbst: ein Hybrid.</li>
+<li><strong>Architektur:</strong> Die Begründung ist neu gefasst. Die Reihenfolge der Schritte steht im Systemprompt fest, an 6 Stellen trifft der Agent eigene Entscheidungen: ein Hybrid.</li>
 <li><strong>Offen:</strong> Fristablauf der Freigabe (T3 aus W8 Tag 5), Datenabfluss-Log, Löschfristen, Verträge zur Auftragsverarbeitung und alle Rechtsurteile.</li>
 </ul></div>
 
@@ -87,7 +87,7 @@
 <tr><th data-label="Frage" scope="row">Verbotene Praktik (Art. 5)?</th><td data-label="Antwort">nein</td><td data-label="Begründung">Marken-Posts für einen Kunden sind keine der dort aufgezählten Praktiken. Offen: Der Systemprompt sperrt politische Werbung und Minderjährige als Zielgruppe nicht ausdrücklich, und ob die KI-Bilder unter die ab 02.12.2026 geltenden Buchstaben ba und bb fallen könnten, ist nicht beurteilt.</td></tr>
 <tr><th data-label="Frage" scope="row">Anhang III (Hochrisiko)?</th><td data-label="Antwort">nein</td><td data-label="Begründung">Keiner der 8 Bereiche passt zum Einsatzzweck. Bei Wahlwerbung wäre Bereich 8 Buchstabe b zu prüfen.</td></tr>
 <tr><th data-label="Frage" scope="row">Direkter Kontakt mit Menschen (Art. 50)?</th><td data-label="Antwort">ja</td><td data-label="Begründung">Chat, erzeugte Texte und KI-Bilder. Art. 50 Abs. 6 lässt diese Pflichten auch neben Hochrisiko-Pflichten bestehen, deshalb wird die Frage immer geprüft.</td></tr>
-<tr><th data-label="Frage" scope="row">Sonst minimal?</th><td data-label="Antwort">nicht anwendbar</td><td data-label="Begründung">Wegen der dritten Frage gilt der Agent als System mit Transparenzpflichten.</td></tr>
+<tr><th data-label="Frage" scope="row">Sonst minimal?</th><td data-label="Antwort">nicht anwendbar</td><td data-label="Begründung">Wegen der dritten Frage gelten für den Agenten die Transparenzpflichten aus Art. 50.</td></tr>
 </tbody>
 </table>
 </div>
@@ -157,7 +157,7 @@
 <li>Kennzeichnung: ob sie nach dem Einfügen bei LinkedIn oder Instagram erhalten bleibt und ob der Marker in den abgelegten Dateien stimmt, ist nicht geprüft.</li>
 <li>Datenabfluss-Log, Löschfrist, Verträge zur Auftragsverarbeitung, Standort der Modelle: nicht gebaut oder nicht geprüft.</li>
 <li>KI-Kompetenz (Art. 4): kein Nachweis erbracht.</li>
-<li>Nachzug der Projekt-Charter mit der neuen Architekturbegründung steht aus.</li>
+<li>Nachzug der Projekt-Charter mit der neu begründeten Architektur steht aus.</li>
 </ul>
 <p>Die Exporte dieses Stands (Hauptworkflow v22, Text-Sub v08, Bilder-Sub, Einreich-Sub v02) liegen so, wie sie abgegeben wurden, bis auf ersetzte Kennungen, Ordnername und Host des Render-Dienstes, unter <a href="https://github.com/MinkeAutomation/redaktions-agent/tree/main/workflows/abgaben/W09T01">workflows/abgaben/W09T01</a>.</p>
 </section>

@@ -19,10 +19,10 @@ Dieselben 4 Statuswörter stehen in der Spalte Status von [versionen.md](version
 
 | Status | Bedeutung |
 |---|---|
-| Live | der geltende Stand |
-| In Test | Testkopie oder Kandidat in Erprobung (Testkopien werden nicht Live) |
-| Archiviert | abgelöst durch eine spätere Version, Datei unter `archiv/` |
-| Verworfen | getestet, nicht übernommen; dazu steht, welcher Stand live bleibt |
+| ✅ Live | der geltende Stand |
+| 🧪 In Test | Testkopie oder Kandidat in Erprobung (Testkopien werden nicht Live) |
+| 🗄️ Archiviert | abgelöst durch eine spätere Version, Datei unter `archiv/` |
+| 🚫 Verworfen | getestet, nicht übernommen; dazu steht, welcher Stand live bleibt |
 
 ---
 
@@ -35,13 +35,13 @@ Kürzel: F1 bis F5 sind die 5 Testfälle der Testreihe mit 1 Werkzeug. V4.4 ist 
 | | |
 |---|---|
 | **Datum** | 19.11.2026 |
-| **Status** | Live, Hauptworkflow v26.1 bis v26.5.3 (veröffentlicht 21.11.2026 14:03) |
+| **Status** | ✅ Live, Hauptworkflow v26.1 bis v26.5.3 (veröffentlicht 21.11.2026 14:03) |
 | **Agent** | Redaktions-Agent |
 | **Version** | V4.4 |
 | **Prompt-Datei** | [prompts/20261119_System-Prompt-Redaktions-Agent_V4.4.md](prompts/20261119_System-Prompt-Redaktions-Agent_V4.4.md) |
 | **Agent-Konfiguration** | der Auszug zu V4.4 liegt noch nicht vor |
 
-**Beschreibung:** V4.4 ergänzt V4.1 um die Regeln für Werkzeug 6 „Qualität prüfen“: höchstens 1 Nachbesserung, danach genau 1 erneute Prüfung, höchstens 14 Werkzeugaufrufe je Auftrag. Der Prompt, den das Modell bekommt, ist dadurch rund 36 Prozent länger (9.160 statt 6.733 Byte im Feld `systemMessage` des Workflows, Export v26.5.3 gegen v23.1); die Prompt-Datei ist mit ihrem Änderungskopf größer (13.962 Byte). Belegt in vollen Läufen am 21.11.2026 (4056 und 4064 am veröffentlichten Stand), der Test gegen die Baseline ist bis zum Freeze am 23.11.2026 geplant ([W9 Tag 4](docs/w09t04.html)).
+**Beschreibung:** V4.4 ergänzt V4.1 um die Regeln für Werkzeug 6 „Qualität prüfen“: höchstens 1 Nachbesserung, danach genau 1 erneute Prüfung, höchstens 14 Werkzeugaufrufe je Auftrag. Der Prompt, den das Modell bekommt, ist dadurch rund 36 Prozent länger (9.160 statt 6.733 Byte im Feld `systemMessage` des Workflows, Export v26.5.3 gegen v23.1); die Prompt-Datei ist mit ihrem Änderungskopf größer (13.962 Byte). Belegt in vollen Läufen am 21.11.2026 (4056 und 4064 am veröffentlichten Stand), der Test gegen die Baseline ist bis Di 24.11.2026, 11:00, vor dem Hard Freeze geplant (Stand 23.11.2026) ([W9 Tag 4](docs/w09t04.html)).
 
 V4.2 und V4.3 (19.11.2026) sind Zwischenstände auf dem Weg dorthin, nie veröffentlicht, Dateien unter [archiv/prompts/](archiv/prompts/).
 
@@ -51,7 +51,7 @@ V4.2 und V4.3 (19.11.2026) sind Zwischenstände auf dem Weg dorthin, nie veröff
 | | |
 |---|---|
 | **Datum** | 18.11.2026 |
-| **Status** | Abgelöst von V4.4 (19.11.2026), war live mit Hauptworkflow v23.1 (`54dec01b`) |
+| **Status** | 🗄️ Archiviert, abgelöst von V4.4 (19.11.2026), war live mit Hauptworkflow v23.1 (`54dec01b`); die Datei bleibt wie V4 in `prompts/` |
 | **Agent** | Redaktions-Agent |
 | **Version** | V4.1 |
 | **Prompt-Datei** | [prompts/20261118_System-Prompt-Redaktions-Agent_V4.1.md](prompts/20261118_System-Prompt-Redaktions-Agent_V4.1.md) |
@@ -66,7 +66,7 @@ V4.2 und V4.3 (19.11.2026) sind Zwischenstände auf dem Weg dorthin, nie veröff
 | | |
 |---|---|
 | **Datum** | 17.11.2026 |
-| **Status** | Verworfen; V4 blieb live, später V4.1 |
+| **Status** | 🚫 Verworfen; V4 blieb live, später V4.1 |
 | **Agent** | Redaktions-Agent |
 | **Version** | V5 |
 | **Prompt-Datei** | liegt nicht im Repository (Test an einer Hilfskopie des Workflows, nie live) |
@@ -81,7 +81,7 @@ V4.2 und V4.3 (19.11.2026) sind Zwischenstände auf dem Weg dorthin, nie veröff
 | | |
 |---|---|
 | **Datum** | 12.11.2026 |
-| **Status** | Von V4.1 abgelöst (18.11.2026); bleibt als Baseline für Vergleiche in `prompts/` und liegt deshalb nicht unter `archiv/` |
+| **Status** | 🗄️ Archiviert, von V4.1 abgelöst (18.11.2026); bleibt als Baseline für Vergleiche in `prompts/` und liegt deshalb nicht unter `archiv/` |
 | **Agent** | Redaktions-Agent |
 | **Version** | V4 |
 | **Prompt-Datei** | [prompts/20261112_System-Prompt-Redaktions-Agent_V4.md](prompts/20261112_System-Prompt-Redaktions-Agent_V4.md) |
@@ -96,7 +96,7 @@ V4.2 und V4.3 (19.11.2026) sind Zwischenstände auf dem Weg dorthin, nie veröff
 | | |
 |---|---|
 | **Datum** | 10.11.2026 (seit 11.11.2026 mit allen 5 Werkzeugen) |
-| **Status** | Archiviert, von V4 abgelöst |
+| **Status** | 🗄️ Archiviert, von V4 abgelöst |
 | **Agent** | Redaktions-Agent |
 | **Version** | V2 |
 | **Prompt-Datei** | [archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V2.md](archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V2.md) |
@@ -123,13 +123,13 @@ V4.2 und V4.3 (19.11.2026) sind Zwischenstände auf dem Weg dorthin, nie veröff
 | | |
 |---|---|
 | **Datum** | 10.11.2026 |
-| **Status** | Verworfen; zunächst blieb V2 live, später V4, heute gilt V4.1 |
+| **Status** | 🚫 Verworfen; zunächst blieb V2 live, später V4, heute gilt V4.4 |
 | **Agent** | Redaktions-Agent |
 | **Version** | V3 |
 | **Prompt-Datei** | [archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md](archiv/prompts/20261110_System-Prompt-Redaktions-Agent_V3.md) |
 | **Agent-Konfiguration** | [archiv/konfiguration/20261110_Redaktions-Agent_V3_Agent-Konfiguration.json](archiv/konfiguration/20261110_Redaktions-Agent_V3_Agent-Konfiguration.json) |
 
-**Beschreibung:** V3 ergänzte Schritt 8 um einen Satz (fehlen Schreiben, Bilder oder Einreichen in der Werkzeugliste, sofort `status` fehler). Wirkung: keine, F2 und F4 endeten weiter im Fehlerweg. Verworfen: getestet, nicht übernommen; zunächst blieb V2 live, später V4, heute gilt V4.1.
+**Beschreibung:** V3 ergänzte Schritt 8 um einen Satz (fehlen Schreiben, Bilder oder Einreichen in der Werkzeugliste, sofort `status` fehler). Wirkung: keine, F2 und F4 endeten weiter im Fehlerweg. Verworfen: getestet, nicht übernommen; zunächst blieb V2 live, später V4, heute gilt V4.4.
 
 **Änderungen:**
 
@@ -146,7 +146,7 @@ V4.2 und V4.3 (19.11.2026) sind Zwischenstände auf dem Weg dorthin, nie veröff
 | | |
 |---|---|
 | **Datum** | 09.11.2026 |
-| **Status** | Archiviert |
+| **Status** | 🗄️ Archiviert |
 | **Agent** | Redaktions-Agent |
 | **Version** | V1 |
 | **Prompt-Datei** | [archiv/prompts/20261109_System-Prompt-Redaktions-Agent_V1.md](archiv/prompts/20261109_System-Prompt-Redaktions-Agent_V1.md) |
@@ -171,7 +171,7 @@ V4.2 und V4.3 (19.11.2026) sind Zwischenstände auf dem Weg dorthin, nie veröff
 - **W9 Tag 3 (18.11., Stand 21.11.):** Chat-Seite mit Anmeldung, Sofortantwort mit Werkzeugliste, Freigabe als eigener Workflow ohne Warten; 7 Fehlerfälle, 6 behoben, 1 als Grenze beschrieben; Test von außen am 21.11.2026 bestanden ([W9 Tag 3](docs/w09t03.html)).
 - **W9 Tag 4 (19.11., Stand 21.11.):** Werkzeug 6 „Qualität prüfen“, Systemprompt V4.4, Feature Freeze am Abend; 23 Fehlerfälle an Freigabe, Statuswechseln und Kürzung behoben; Token, Laufzeit und Kosten vorher und nachher, Kosten nachher aus Tokens und Listenpreis berechnet ([W9 Tag 4](docs/w09t04.html)).
 - **21.11.2026, 14:03:** Hauptworkflow v26.5.3 (Anordnung in Laufrichtung, Rahmen 01 bis 12, Setup-Zeilen, abgekoppelter Block der alten Freigabe entfernt), Freigabe-Workflow v02.1 und Text-Werkzeug v09.3 veröffentlicht. Abgabestände unter [workflows/abgaben/W09T03](workflows/abgaben/W09T03/README.md) und [W09T04](workflows/abgaben/W09T04/README.md).
-- **Bis zum Freeze am 23.11.2026 geplant:** Fristablauf der Freigabe, Angriffsfall am Eingang, Regression über 20 Fälle am veröffentlichten Stand, Test gegen die Baseline, Abschnitt mit allen 6 Werkzeugen, Kostenfolie.
+- **Bis Di 24.11.2026, 11:00, vor dem Hard Freeze geplant (Stand 23.11.2026):** Fristablauf der Freigabe, Angriffsfall am Eingang, Regression über 20 Fälle am veröffentlichten Stand, Test gegen die Baseline, Kostenfolie. Erledigt am 23.11.2026: Abschnitt mit allen 6 Werkzeugen ([docs/werkzeuge.md](docs/werkzeuge.md)).
 
 ## Arbeitsschritte 15.11.2026 (Tag 5: Vertrauensstufen und Freigabe)
 
@@ -219,7 +219,7 @@ Die Prompt-Versionen stehen oben, hier die Arbeitsschritte des Tages (Zeit lokal
 | 12:56 | Notiztext der Karte „Entscheidung und Ablage“ (v16) | nur Text |
 | 13:00 | Ablehnen mit Grund getestet | Lauf 2735, Grund-Abfrage per Webformular |
 | 18:05 | Archiv, Status, Versionsmatrix, `.env.example`, Verbindung zu Projekt 1 | 54 ältere Workflow-Versionen bereinigt unter [archiv/workflows/](archiv/workflows/), Testkopien in [workflows/test/](workflows/test/), Spalten Status und Archivdatei in [versionen.md](versionen.md) (6 Live, 4 In Test, 2 Verworfen, 50 Archiviert), [docs/versionsmatrix.md](docs/versionsmatrix.md), [.env.example](.env.example), Tabelle der Workflow-Dateien und Abschnitt „Grundlage aus Projekt 1“ im [README](README.md); Prompt und Konfiguration V3 als Verworfen geführt, Funktion der Workflows unverändert |
-| abends | Korrekturen nach Durchsicht: Archiv und Status, Doku-Seiten, Testzahl, Zusatzfunktionen | Archiv und Status: V3 überall als Verworfen geführt (live bleibt V2), Tag 1 verweist für ältere Stände aufs Archiv. Doku-Seiten: Selbsthinweis zur Gliederung entfernt, Zahlen als Ziffern. Testzahl: Tag 2 und Plan v07 nennen „3 von 3 ausgeführten“ Fällen mit Testprompt statt „5 von 5“ (Frage 3 und 5 sind nicht mit dem Testprompt gelaufen). Neuer Abschnitt „Zusatzfunktionen“ im [README](README.md) und in [docs/index.html](docs/index.html): Human in the Loop umgesetzt (3 Freigaben, 1 Ablehnung), Monitoring und Alerting als Ansatz, die übrigen 5 nicht umgesetzt. [docs/versionsmatrix.md](docs/versionsmatrix.md): Zusatzexport „7 Felder mehr“ statt „3“ (nachgezählt an allen 3 Zusatzexporten). Funktion der Workflows unverändert |
+| abends | Korrekturen nach Durchsicht: Archiv und Status, Doku-Seiten, Testzahl, Zusatzfunktionen | Archiv und Status: V3 überall als Verworfen geführt (live bleibt V2), Tag 1 verweist für ältere Stände aufs Archiv. Doku-Seiten: Selbsthinweis zur Gliederung entfernt, Zahlen als Ziffern. Testzahl: Tag 2 und Plan v07 nennen „3 von 3 ausgeführten“ Fällen mit Testprompt statt „5 von 5“ (Frage 3 und 5 sind nicht mit dem Testprompt gelaufen). Neuer Abschnitt „Zusatzfunktionen“ im [README](README.md) und in [docs/index.html](docs/index.html): Human in the Loop umgesetzt (3 Freigaben, 1 Ablehnung), Monitoring mit Meldungen als Ansatz, die übrigen 5 nicht umgesetzt. [docs/versionsmatrix.md](docs/versionsmatrix.md): Zusatzexport „7 Felder mehr“ statt „3“ (nachgezählt an allen 3 Zusatzexporten). Funktion der Workflows unverändert |
 | 21:00 | Anordnung der Werkzeug-Workflows im Editor und Notiztexte überarbeitet: Hauptworkflow v16.2, Markenwissen v03.3, Recherche v03.2, Text v07.1, Bilder v01.2, Freigabe v01.2 | Funktion unverändert; die bisherigen Stände liegen unverändert unter [archiv/workflows/](archiv/workflows/), Zeilen in [versionen.md](versionen.md) |
 | später | Planbild Tag 3 überarbeitet: alle Pfeile schwarz, die 5 Werkzeuge hängen mit 1 beschrifteten Eingangspfeil am Agenten, Einstiege markiert; Projekt-Charter in Fassung 6 und als Webseite | [docs/plan/](docs/plan/), [docs/charter.html](docs/charter.html), der Stand davor unter [archiv/plaene/](archiv/plaene/) |
 

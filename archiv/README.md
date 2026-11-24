@@ -19,7 +19,7 @@ Hier liegen die abgelösten Stände des Redaktions-Agenten: ältere Fassungen de
 | `bilder/` | Bildschirmfoto der Werkzeuge 4 und 5 vom Tag 3 (vor der Anordnung am Abend) | 1 |
 | `plaene/` | Plan des Tages 3 (v16) und seine verkleinerte Fassung vor der Reparatur der Pfeile und der Anbindung der Werkzeuge, jeweils als Bild; Quelle als Excalidraw-Datei | 3 |
 
-Die Testkopien Jina Reader und Markenwissen-Lesefehler haben nur 1 Stand, er liegt in `workflows/test/`. Die Agent-Konfiguration V1 liegt weiter in `konfiguration/`, weil die Abgabe vom 11.11.2026 dorthin verweist; ihr Status ist Archiviert.
+Die Testkopien Jina Reader und Markenwissen-Lesefehler haben nur 1 Stand, er liegt in `workflows/test/`. Die Konfiguration des Agenten (V1) liegt weiter in `konfiguration/`, weil die Abgabe vom 11.11.2026 dorthin verweist; ihr Status ist Archiviert.
 
 ## Was sich an alten Ständen ändert
 
@@ -31,11 +31,11 @@ Inhalt und Funktion der Dateien bleiben so, wie sie am 11.11.2026 abgelegt wurde
 
 ## Bereinigt und nicht ohne Anpassung lauffähig
 
-Jede Archivdatei ist wie die heutigen Exporte bereinigt: Credential-IDs, Workflow-IDs, Tag- und Ordner-Kennungen, Webhook-IDs, Adresse der Datenbank, Adresse der n8n-Instanz und der Host des Bild-Dienstes sind durch Platzhalter ersetzt, interne Verweise in Code-Kommentaren und Notizen sind entfernt. Der Name eines Testkunden ist in den Exporten durch `KUNDE_B` ersetzt, live in n8n steht der Originalwert. Die Funktion ist gleich. Die Dateien sind deshalb zum Nachlesen und Vergleichen gedacht, nicht zum Import; für den Import gelten die Hinweise im [README](../README.md) und die Live-Dateien in `workflows/`. In die JSON-Dateien ist kein Status geschrieben, der Status steht nur in `versionen.md` und in der ersten Zeile der Markdown-Dateien.
+Jede Archivdatei ist wie die heutigen Exporte bereinigt: Credential-IDs, Workflow-IDs, Tag- und Ordner-Kennungen, Webhook-IDs, Adresse der Datenbank, Adresse der n8n-Instanz und der Host des Bild-Dienstes sind durch Platzhalter ersetzt. Code-Kommentare und Notiztexte tragen teils noch interne Kennungen; ihre Bereinigung folgt mit dem Export zum Hard Freeze. Der Name eines Testkunden ist in den Exporten durch `KUNDE_B` ersetzt, live in n8n steht der Originalwert. Die Funktion ist gleich. Die Dateien sind deshalb zum Nachlesen und Vergleichen gedacht, nicht zum Import; für den Import gelten die Hinweise im [README](../README.md) und die Live-Dateien in `workflows/`. In die JSON-Dateien ist kein Status geschrieben, der Status steht nur in `versionen.md` und in der ersten Zeile der Markdown-Dateien.
 
 ## Status
 
 | Status | Bedeutung hier |
 |---|---|
 | Archiviert | abgelöst, durch eine spätere Version ersetzt |
-| Verworfen | getestet, nicht übernommen: Systemprompt V3 (Hauptworkflow v06, Testkopie v02) und die Agent-Konfiguration V3; zunächst blieb V2 live, danach V4, bis 19.11.2026 V4.1, seitdem V4.4; dazu der Systemprompt V5 vom 17.11.2026, gegen V4 gemessen und nicht übernommen (ohne eigene Datei, siehe CHANGELOG) |
+| Verworfen | getestet, nicht übernommen: Systemprompt V3 (Hauptworkflow v06, Testkopie v02) und die Konfiguration des Agenten in V3; zunächst blieb V2 live, danach V4, bis 19.11.2026 V4.1, seitdem V4.4; dazu der Systemprompt V5 vom 17.11.2026, gegen V4 gemessen und nicht übernommen (ohne eigene Datei, siehe CHANGELOG) |
