@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#FAFAF8" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#121416" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<title>Setup-Anleitung Redaktions-Agent</title>
+<meta content="Schritt-für-Schritt-Anleitung: den Redaktions-Agenten in einer eigenen n8n-Instanz mit Supabase, OpenRouter, Telegram, Nextcloud, Pixabay, Cloudflare Workers AI und Gotenberg einrichten." name="description"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&amp;display=swap" rel="stylesheet"/>
+<link href="assets/doku.css" rel="stylesheet"/>
+<style>
+  figure { margin: 1.4rem 0 2rem; max-width: 100%; }
+  figure img { display: block; max-width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; }
+  figure.schmal img { max-width: 420px; }
+  figure.mittel img { max-width: 640px; }
+  figcaption { font-size: 0.92rem; color: var(--muted); margin-top: 0.5rem; max-width: 85ch; }
+  .schritt { border-left: 3px solid var(--accent); padding: 0.2rem 0 0.2rem 1.1rem; margin: 0 0 2.4rem; }
+  .schritt h3 { margin-top: 0.4rem; }
+  .ziel { font-family: var(--display); font-weight: 600; margin: 0 0 0.8rem; }
+  .pruef { background: var(--accent-soft); border-radius: 8px; padding: 0.7rem 1rem; margin: 1rem 0; max-width: 85ch; }
+  .fehler { background: var(--warn-soft); border-radius: 8px; padding: 0.7rem 1rem; margin: 1rem 0; max-width: 85ch; }
+  .pruef > b, .fehler > b { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; display: block; margin-bottom: 0.3rem; }
+  .fehler > b { color: var(--warn); }
+  .pruef p, .fehler p, .fehler ul { margin: 0; }
+  .fehler ul { padding-left: 1.2rem; }
+  pre { background: var(--code-bg); border-radius: 8px; padding: 0.9rem 1rem; overflow-x: auto; font-family: var(--mono); font-size: 0.82rem; line-height: 1.5; max-width: 100%; }
+  code { font-family: var(--mono); font-size: 0.88em; overflow-wrap: anywhere; }
+  .check { list-style: none; padding-left: 0 !important; }
+  .check li { padding-left: 1.7rem; position: relative; }
+  .check li::before { content: ""; position: absolute; left: 0; top: 0.3rem; width: 0.95rem; height: 0.95rem; border: 1.5px solid var(--line-strong); border-radius: 3px; }
+  .pdfknopf { margin: 3rem 0 1rem; }
+  @media print {
+    @page { size: A4; margin: 14mm 13mm 16mm; }
+    body { background: #fff; font-size: 10.5pt; }
+    .huelle { max-width: none; padding: 0; }
+    .knoepfe, .pdfknopf, .sprung { display: none !important; }
+    .titelkopf > *, .messleiste, .knoepfe, .inhalt { animation: none !important; }
+    figure img { max-height: 95mm; width: auto; }
+    figure.hoch img { max-height: 230mm; }
+    figure.schmal img { max-height: 110mm; }
+    .bildpaar { display: grid; grid-template-columns: 1fr 1fr; gap: 0 6mm; }
+    .kapitel { margin-bottom: 1.6rem; }
+    .kkopf { margin-bottom: 1rem; }
+    h2, h3, .kkopf { break-after: avoid; }
+    .kkopf, .kapitel h3 { break-inside: avoid; }
+    #k7, #k11 { break-before: page; }
+    .pruef, .fehler, pre, figure, .tabelle { break-inside: avoid; }
+    a { color: inherit; }
+    .fuss { break-before: avoid; margin-top: 0.6rem; padding-top: 0.4rem; }
+  }
+</style>
+</head>
+<body>
+<a class="sprung" href="#inhalt">Zum Inhalt springen</a>
+<div class="huelle">
+<header class="leiste">
+<span>Redaktions-Agent · Setup-Anleitung</span>
+<nav aria-label="Seiten">
+<a href="https://github.com/MinkeAutomation/redaktions-agent#setup">README, Abschnitt Setup</a>
+<a href="https://github.com/MinkeAutomation/redaktions-agent">Repository</a>
+</nav>
+</header>
+
+<div class="titelkopf">
+<div>
+<p class="oberzeile"><span aria-hidden="true" class="marke"></span>Setup-Anleitung · Stand 25.11.2026 · Hauptworkflow v27.1</p>
+<h1>Redaktions-Agent <span class="leise">selbst</span> einrichten</h1>
+<p class="untertitel">Diese Anleitung führt Schritt für Schritt vom leeren Server bis zum ersten Beitrag, den ein Mensch in Telegram freigibt. Sie nutzt nur die Dateien aus dem Repository und die Seiten der Dienste. Zugangswerte stehen nirgends in den Dateien, du trägst sie nur in die Credentials deiner eigenen n8n-Instanz ein.</p>
+</div>
+</div>
+
+<dl aria-label="Kennzahlen" class="messleiste">
+<div><dt>Workflows</dt><dd>10<small>6 Werkzeuge, Ablage, Freigabe, Fristen, Hauptworkflow</small></dd></div>
+<div><dt>SQL-Dateien</dt><dd>4<small>in fester Reihenfolge</small></dd></div>
+<div><dt>Zugänge in n8n</dt><dd>8<small>7 für dieses Repository (2 OpenRouter, Supabase, Telegram, Pixabay, Cloudflare, Basic Auth), 1 Nextcloud für die Ablage</small></dd></div>
+<div><dt>Modellkosten</dt><dd>rund 0,007&nbsp;$<small>je normalem Lauf, mit Recherche rund 0,016&nbsp;$</small></dd></div>
+</dl>
+
+<div class="knoepfe">
+<a class="knopf" href="setup-anleitung.pdf" download>Als PDF herunterladen <span aria-hidden="true" class="pfeil">↓</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/tree/main/workflows">Workflows (JSON) <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/tree/main/sql">SQL-Dateien <span aria-hidden="true" class="pfeil">↗</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/.env.example">.env.example <span aria-hidden="true" class="pfeil">↗</span></a>
+</div>
+
+<main id="inhalt">
+
+<div class="merksatz einminute"><span class="ktag">In 1 Minute</span>
+<ul>
+<li><strong>Was am Ende läuft:</strong> Du schreibst auf einer Chat-Seite ein Thema. Ein Agent in n8n prüft es gegen die Markenregeln, schreibt Texte für Instagram und LinkedIn, baut die Bilder und reicht den Beitrag zur Freigabe ein. In Telegram gibst du ihn frei oder lehnst ihn ab, erst danach wird er in Nextcloud abgelegt.</li>
+<li><strong>Reihenfolge:</strong> Server und n8n, Supabase, Zugänge in n8n, Platzhalter in den Dateien ersetzen, Workflows importieren und Zugänge wählen, veröffentlichen, Testauftrag.</li>
+<li><strong>Wichtig:</strong> Werte für Zugänge gehören nur in die n8n-Credentials, nie in eine Datei. Der Import in eine fremde Instanz ist bisher nicht nachgespielt; die Schritte beschreiben den erwarteten Weg. Die <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/LICENSE">LICENSE</a> erlaubt ausschließlich das Lesen zur Durchsicht und zum Lernen. Kopieren, Weitergeben, Verändern oder Betreiben ist nur nach vorheriger schriftlicher Absprache mit dem Rechteinhaber erlaubt; Anfragen über ein <a href="https://github.com/MinkeAutomation/redaktions-agent/issues">Issue im Repository</a> (Kapitel 12).</li>
+</ul></div>
+
+<nav aria-label="Inhalt" class="inhalt">
+<h2>Inhalt</h2>
+<ol>
+<li><a href="#k1"><span class="nr">01</span>Was am Ende läuft</a></li>
+<li><a href="#k2"><span class="nr">02</span>Zeit, Voraussetzungen, Kosten</a></li>
+<li><a href="#k3"><span class="nr">03</span>Konten-Checkliste</a></li>
+<li><a href="#k4"><span class="nr">04</span>Schritt 1: Server und n8n</a></li>
+<li><a href="#k5"><span class="nr">05</span>Schritt 2: Supabase</a></li>
+<li><a href="#k6"><span class="nr">06</span>Schritt 3: Zugänge in n8n</a></li>
+<li><a href="#k7"><span class="nr">07</span>Schritt 4: Platzhalter ersetzen</a></li>
+<li><a href="#k8"><span class="nr">08</span>Schritt 5: Workflows importieren</a></li>
+<li><a href="#k9"><span class="nr">09</span>Schritt 6: Veröffentlichen</a></li>
+<li><a href="#k10"><span class="nr">10</span>Schritt 7: Testauftrag und Freigabe</a></li>
+<li><a href="#k11"><span class="nr">11</span>Fehlerbehebung</a></li>
+<li><a href="#k12"><span class="nr">12</span>Sicherheit und Grenzen</a></li>
+</ol>
+</nav>
+
+<section aria-labelledby="k1-t" class="kapitel" id="k1">
+<div class="kkopf"><div aria-hidden="true" class="knum">01</div><div>
+<p class="kklein">Kapitel 1</p><h2 id="k1-t">Was am Ende läuft</h2>
+<p class="klede">1 Agent mit 6 Werkzeugen, dazu ein eigener Freigabe-Workflow und ein Fristen-Workflow.</p>
+</div></div>
+<p>Der Hauptworkflow nimmt den Auftrag über eine Chat-Seite mit Anmeldung an und prüft ihn am Eingang (Schwärzen, Angriffe, Themenbindung). Der Agent ruft dann seine Werkzeuge auf: Markenwissen abfragen, bei Bedarf das Thema recherchieren, Text schreiben, Qualität prüfen, Bilder gestalten und zur Freigabe einreichen. Danach prüft der Hauptworkflow den Beitrag am Ausgang und startet den Freigabe-Workflow, ohne auf ihn zu warten. Dieser schickt eine Vorschau mit 2 Knöpfen nach Telegram und legt den Beitrag erst nach der Freigabe in Nextcloud ab. Der Fristen-Workflow setzt Beiträge, die zu lange auf eine Freigabe warten, auf den Status <code>freigabe_abgelaufen</code>.</p>
+<figure class="hoch"><a href="bilder/setup/00-architektur-datenfluss.png"><img alt="Architekturbild des Redaktions-Agenten: Chat-Seite, Eingangsprüfung, Konfiguration, Agent mit 6 Werkzeugen und deren Dienste, Ausgangsprüfung, Freigabe-Workflow mit Telegram und Nextcloud, Antwort und Laufprotokoll, darunter der Fristen-Workflow." height="2153" loading="lazy" src="bilder/setup/00-architektur-datenfluss.png" width="1600"/></a>
+<figcaption>Bild 1: Architektur mit Datenfluss je Pfeil (blau: Schritt in n8n, grün: externer Dienst, gelb: Supabase, rosa: Neben- und Fehlerweg). In der Webfassung öffnet ein Klick das Bild in voller Größe; was jedes Werkzeug liest und liefert, steht in <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/werkzeuge.md">docs/werkzeuge.md</a>.</figcaption></figure>
+</section>
+
+<section aria-labelledby="k2-t" class="kapitel" id="k2">
+<div class="kkopf"><div aria-hidden="true" class="knum">02</div><div>
+<p class="kklein">Kapitel 2</p><h2 id="k2-t">Zeit, Voraussetzungen, Kosten</h2>
+</div></div>
+<h3>Zeitbedarf</h3>
+<p>Rund 3 bis 4 Stunden, wenn alle Konten schon bestehen. Das ist eine Schätzung, nicht gemessen; der Import in eine fremde Instanz wurde bisher nicht nachgespielt.</p>
+<h3>Voraussetzungen</h3>
+<ul>
+<li>Eine eigene n8n-Instanz (selbst gehostet oder n8n Cloud) mit Rechten zum Importieren und Veröffentlichen. Die Workflows laufen in der Ursprungsinstanz mit n8n 2.47.7 (Stand 25.11.2026). Ältere Versionen ohne Publish und Guardrails-Knoten funktionieren nicht.</li>
+<li>Die n8n-Instanz ist über HTTPS aus dem Internet erreichbar. Die Freigabe-Knöpfe in Telegram und das Formular für den Ablehnungsgrund rufen sie von außen auf; auf einem Rechner ohne öffentliche Adresse endet der Test bei der Freigabe.</li>
+<li>Ein Gotenberg-Dienst, den n8n erreicht, auf Port 3000. Selbst gehostet am einfachsten als Container im selben Netz wie n8n. Bei n8n Cloud muss dein Gotenberg-Server aus dem Internet auf Port 3000 erreichbar sein; Gotenberg hat keine eigene Anmeldung, sichere den Zugriff ab.</li>
+<li>Ein Texteditor mit Suchen und Ersetzen über alle Treffer (für die Platzhalter in den JSON-Dateien).</li>
+<li>Telegram auf Handy oder PC für die Freigabe.</li>
+<li>Der Ablage-Workflow <code>sub-nextcloud-ablage.json</code> aus dem Repository <a href="https://github.com/MinkeAutomation/content-maschine-k1/blob/main/workflows/sub-nextcloud-ablage.json">content-maschine-k1</a>, er ist nicht in diesem Repository.</li>
+<li>Lizenz: Die <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/LICENSE">LICENSE</a> erlaubt ausschließlich das Lesen zur Durchsicht und zum Lernen. Kopieren, Weitergeben, Verändern oder Betreiben ist nur nach vorheriger schriftlicher Absprache mit dem Rechteinhaber erlaubt; Anfragen über ein <a href="https://github.com/MinkeAutomation/redaktions-agent/issues">Issue im Repository</a>.</li>
+</ul>
+<h3>Kosten</h3>
+<div aria-labelledby="t-kosten" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-kosten">Laufende Kosten (nur was Geld kostet)</caption>
+<thead><tr><th scope="col">Posten</th><th scope="col">Betrag</th><th scope="col">Herkunft</th></tr></thead>
+<tbody>
+<tr><th data-label="Posten" scope="row">Normaler Lauf mit Bildern, Qualitätsprüfung und Einreichen</th><td data-label="Betrag">0,007144&nbsp;$</td><td data-label="Herkunft">aus den Tokens eines Laufs zum Listenpreis gerechnet (Agent Claude Haiku 5.5 und Prüfmodell über OpenRouter)</td></tr>
+<tr><th data-label="Posten" scope="row">Lauf mit Recherche</th><td data-label="Betrag">0,015963&nbsp;$</td><td data-label="Herkunft">gemessen an 1 Lauf, davon Recherche 0,005560&nbsp;$</td></tr>
+<tr><th data-label="Posten" scope="row">Hochrechnung bei 300 Anfragen am Tag</th><td data-label="Betrag">2,14&nbsp;$ am Tag, 47,15&nbsp;$ im Monat</td><td data-label="Herkunft">nicht gemessen; 300 Anfragen sind eine Annahme, Monat mit 22 Arbeitstagen, ohne Recherche</td></tr>
+<tr><th data-label="Posten" scope="row">Kleiner Server (VPS)</th><td data-label="Betrag">8,79&nbsp;$ im Monat</td><td data-label="Herkunft">Hostinger KVM 2 bei 24 Monaten Laufzeit (210,96&nbsp;$ für 24 Monate), Stand 25.11.2026; Verlängerung danach 14,99&nbsp;$ im Monat</td></tr>
+<tr><th data-label="Posten" scope="row">Supabase, Pixabay, Telegram</th><td data-label="Betrag">0&nbsp;$</td><td data-label="Herkunft">kostenlose Stufen reichen für den Testbetrieb</td></tr>
+</tbody>
+</table>
+</div>
+<p>Text-Werkzeug, Eingangs- und Ausgangsprüfung laufen über kostenlose Modelle. Für den kostenpflichtigen OpenRouter-Zugang lädst du Guthaben; ein paar Dollar reichen für viele Testläufe. Server, Datenbank und Ablage sind in den Laufkosten nicht enthalten.</p>
+<figure><a href="bilder/setup/01-hostinger-kvm-preise.png"><img alt="Preisübersicht Hostinger VPS KVM 1 bis KVM 8, KVM 2 rot markiert: 8,79 Dollar im Monat, 2 vCPU, 8 GB RAM, 100 GB NVMe." height="578" loading="lazy" src="bilder/setup/01-hostinger-kvm-preise.png" width="1598"/></a>
+<figcaption>Bild 2: Preise der Hostinger-VPS am 25.11.2026. KVM 2 (2 vCPU, 8 GB RAM) reicht für n8n plus Gotenberg. Aktuelle Preise: <a href="https://www.hostinger.com/vps-hosting">hostinger.com/vps-hosting</a>.</figcaption></figure>
+</section>
+
+<section aria-labelledby="k3-t" class="kapitel" id="k3">
+<div class="kkopf"><div aria-hidden="true" class="knum">03</div><div>
+<p class="kklein">Kapitel 3</p><h2 id="k3-t">Konten-Checkliste</h2>
+<p class="klede">Lege diese Konten an, bevor du anfängst. Die Namen aller Werte stehen in <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/.env.example">.env.example</a> (nur Namen, keine Werte).</p>
+</div></div>
+<div aria-labelledby="t-konten" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-konten">Konten und was du dort holst</caption>
+<thead><tr><th scope="col">Dienst</th><th scope="col">Wozu</th><th scope="col">Was du holst</th><th scope="col">Anmeldeseite</th></tr></thead>
+<tbody>
+<tr><th data-label="Dienst" scope="row">n8n</th><td data-label="Wozu">alle Workflows, Chat-Seite</td><td data-label="Was du holst">eigene Instanz</td><td data-label="Anmeldeseite"><a href="https://docs.n8n.io/hosting/">selbst hosten</a> oder <a href="https://n8n.io/pricing/">n8n Cloud</a></td></tr>
+<tr><th data-label="Dienst" scope="row">Supabase</th><td data-label="Wozu">Datenbank und Bildspeicher</td><td data-label="Was du holst">Projekt-Adresse, Service-Key</td><td data-label="Anmeldeseite"><a href="https://supabase.com/dashboard">supabase.com/dashboard</a></td></tr>
+<tr><th data-label="Dienst" scope="row">OpenRouter</th><td data-label="Wozu">alle Sprachmodelle</td><td data-label="Was du holst">2 API-Keys (kostenpflichtig, kostenlos), Guthaben</td><td data-label="Anmeldeseite"><a href="https://openrouter.ai/settings/keys">openrouter.ai/settings/keys</a></td></tr>
+<tr><th data-label="Dienst" scope="row">Telegram</th><td data-label="Wozu">Vorschau, Freigabe, Meldungen</td><td data-label="Was du holst">Bot-Token, Chat-ID, Nutzer-ID</td><td data-label="Anmeldeseite"><a href="https://t.me/BotFather">t.me/BotFather</a></td></tr>
+<tr><th data-label="Dienst" scope="row">Nextcloud</th><td data-label="Wozu">Ablage nach der Freigabe</td><td data-label="Was du holst">Adresse der Nextcloud, Benutzername, App-Passwort</td><td data-label="Anmeldeseite"><a href="https://nextcloud.com">nextcloud.com</a> oder eigene Instanz</td></tr>
+<tr><th data-label="Dienst" scope="row">Pixabay</th><td data-label="Wozu">Fotos zu Schlagwörtern</td><td data-label="Was du holst">API-Key</td><td data-label="Anmeldeseite"><a href="https://pixabay.com/api/docs/">pixabay.com/api/docs</a></td></tr>
+<tr><th data-label="Dienst" scope="row">Cloudflare Workers AI</th><td data-label="Wozu">KI-Bild, wenn kein Foto passt</td><td data-label="Was du holst">API-Token, Account-ID</td><td data-label="Anmeldeseite"><a href="https://dash.cloudflare.com/profile/api-tokens">dash.cloudflare.com/profile/api-tokens</a></td></tr>
+<tr><th data-label="Dienst" scope="row">Gotenberg</th><td data-label="Wozu">Folien als PNG rendern</td><td data-label="Was du holst">Docker-Image, kein Konto</td><td data-label="Anmeldeseite"><a href="https://hub.docker.com/r/gotenberg/gotenberg">hub.docker.com/r/gotenberg/gotenberg</a></td></tr>
+</tbody>
+</table>
+</div>
+<ul class="check">
+<li>n8n-Instanz erreichbar, du bist angemeldet</li>
+<li>Supabase-Projekt angelegt</li>
+<li>OpenRouter: 2 API-Keys erzeugt, Guthaben geladen</li>
+<li>Telegram-Bot angelegt, Token notiert</li>
+<li>Nextcloud-Zugang bereit</li>
+<li>Pixabay-Key und Cloudflare-Token mit Account-ID bereit</li>
+<li>Gotenberg-Container läuft</li>
+</ul>
+</section>
+
+<section aria-labelledby="k4-t" class="kapitel" id="k4">
+<div class="kkopf"><div aria-hidden="true" class="knum">04</div><div>
+<p class="kklein">Kapitel 4</p><h2 id="k4-t">Schritt 1: Server und n8n</h2>
+</div></div>
+<div class="schritt">
+<p class="ziel">Ziel: n8n läuft und erreicht einen Gotenberg-Dienst.</p>
+<ol>
+<li>n8n bereitstellen: entweder n8n Cloud buchen oder n8n auf einem eigenen Server nach der <a href="https://docs.n8n.io/hosting/">Hosting-Anleitung von n8n</a> installieren.</li>
+<li>Gotenberg als Container im selben Netz wie n8n starten, Port 3000. Das Image heißt <code>gotenberg/gotenberg</code>.</li>
+<li>Notiere 2 Adressen für später: den Hostnamen deiner n8n-Instanz ohne <code>https://</code> und ohne Schrägstrich am Ende, zum Beispiel <code>n8n.example.org</code>, und den Hostnamen von Gotenberg ohne Protokoll und ohne Port, zum Beispiel <code>gotenberg</code>. Den Port 3000 hängt der Workflow selbst an.</li>
+</ol>
+<div class="pruef"><b>So siehst du, dass es geklappt hat</b><p>Du kannst dich in n8n anmelden und siehst die leere Workflow-Liste. Gotenberg läuft als Container und ist aus dem n8n-Netz unter Port 3000 erreichbar.</p></div>
+<div class="fehler"><b>Typische Fehler</b><ul>
+<li>Gotenberg ist nur von außen erreichbar, nicht aus dem n8n-Netz: das Bild-Werkzeug kann die Folien dann nicht rendern.</li>
+<li>Port 3999 statt 3000: Diese Einstellung ist im Workflow ein Testschalter für einen absichtlichen Ausfall.</li>
+</ul></div>
+</div>
+</section>
+
+<section aria-labelledby="k5-t" class="kapitel" id="k5">
+<div class="kkopf"><div aria-hidden="true" class="knum">05</div><div>
+<p class="kklein">Kapitel 5</p><h2 id="k5-t">Schritt 2: Supabase</h2>
+<p class="klede">4 SQL-Dateien, 1 Bucket, 5 Einstellungszeilen, 1 Testkunde.</p>
+</div></div>
+
+<div class="schritt">
+<h3>2a SQL-Dateien ausführen</h3>
+<p class="ziel">Ziel: Alle Tabellen und Views liegen im Schema <code>public</code>.</p>
+<ol>
+<li>Im Supabase-Projekt links den <b>SQL Editor</b> öffnen, oben <b>New</b>.</li>
+<li>Den Inhalt der ersten Datei einfügen und mit <b>Run</b> ausführen (Bild 3, rot markiert).</li>
+<li>Die übrigen Dateien genau in dieser Reihenfolge, je in einer neuen Abfrage:</li>
+</ol>
+<div aria-labelledby="t-sql" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-sql">Reihenfolge der SQL-Dateien</caption>
+<thead><tr><th scope="col">Nr</th><th scope="col">Datei</th><th scope="col">Legt an</th></tr></thead>
+<tbody>
+<tr><th data-label="Nr" scope="row">1</th><td data-label="Datei"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/sql/p1_k1_tabellen_v01.sql">sql/p1_k1_tabellen_v01.sql</a></td><td data-label="Legt an"><code>k1_kunden</code>, <code>k1_posts</code>, <code>k1_einstellungen</code>, <code>k1_laufprotokoll</code></td></tr>
+<tr><th data-label="Nr" scope="row">2</th><td data-label="Datei"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/sql/p2_k2_views_v01.sql">sql/p2_k2_views_v01.sql</a></td><td data-label="Legt an">Spalte <code>erzeugt_von</code> in <code>k1_posts</code>, dann die Views <code>k2_v_markenwissen</code> und <code>k2_v_fruehere_posts</code></td></tr>
+<tr><th data-label="Nr" scope="row">3</th><td data-label="Datei"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/sql/p2_k2_pakete_v01.sql">sql/p2_k2_pakete_v01.sql</a></td><td data-label="Legt an">Paket-Speicher <code>k2_pakete</code></td></tr>
+<tr><th data-label="Nr" scope="row">4</th><td data-label="Datei"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/sql/p2_k2_sitzungen_laeufe_tests_v01.sql">sql/p2_k2_sitzungen_laeufe_tests_v01.sql</a></td><td data-label="Legt an"><code>k2_sitzungen</code>, <code>k2_agent_laeufe</code>, <code>k2_agent_testfaelle</code>, <code>k2_agent_testergebnisse</code>, View <code>k2_v_kosten_tag</code></td></tr>
+</tbody>
+</table>
+</div>
+<figure><a href="bilder/setup/10-supabase-sql-editor.png"><img alt="Supabase SQL Editor mit leerer neuer Abfrage, oben rechts der Knopf Run rot markiert." height="497" loading="lazy" src="bilder/setup/10-supabase-sql-editor.png" width="1600"/></a>
+<figcaption>Bild 3: Der SQL Editor mit einer leeren Abfrage. Datei einfügen, dann <b>Run</b> (rot).</figcaption></figure>
+<div class="pruef"><b>So siehst du, dass es geklappt hat</b><p>Unter <b>Database</b>, <b>Tables</b> mit dem Suchfilter <code>k2_</code> stehen 5 Tabellen und 3 Views (Bild 4), mit dem Filter <code>k1_</code> die 4 Tabellen aus Datei 1.</p></div>
+<figure><a href="bilder/setup/11-supabase-tabellen-k2.png"><img alt="Supabase Database Tables, Suchfeld mit k2_ rot markiert, darunter k2_agent_laeufe, k2_agent_testergebnisse, k2_agent_testfaelle, k2_pakete, k2_sitzungen und die Views k2_v_fruehere_posts, k2_v_kosten_tag, k2_v_markenwissen; 8 tables." height="685" loading="lazy" src="bilder/setup/11-supabase-tabellen-k2.png" width="1520"/></a>
+<figcaption>Bild 4: Tabellen und Views mit dem Filter <code>k2_</code>. Die Zeilenzahlen stammen aus der eigenen Instanz; bei dir stehen dort Nullen. Beschreibungstexte geschwärzt.</figcaption></figure>
+<div class="fehler"><b>Typische Fehler</b><ul>
+<li>Falsche Reihenfolge: Datei 2 ändert <code>k1_posts</code>, Datei 4 verweist mit einem Fremdschlüssel auf <code>k1_posts</code>. Fehlt die Tabelle, bricht das Skript ab. Dann Datei 1 nachholen und die abgebrochene Datei erneut ausführen.</li>
+</ul></div>
+</div>
+
+<div class="schritt">
+<h3>2b Bucket für die Bilder</h3>
+<p class="ziel">Ziel: Ein Storage-Bucket mit dem Namen <code>k1-medien</code>.</p>
+<ol>
+<li>Links <b>Storage</b>, Reiter <b>Buckets</b>, Knopf <b>New bucket</b>.</li>
+<li>Name genau <code>k1-medien</code>; der Name steht fest in den Workflows.</li>
+</ol>
+<figure><a href="bilder/setup/12-supabase-bucket-k1-medien.png"><img alt="Supabase Storage, Reiter Buckets, Zeile k1-medien mit 10 MB Dateigrenze und den Typen image/png, image/jpeg, image/svg+xml, rot markiert." height="305" loading="lazy" src="bilder/setup/12-supabase-bucket-k1-medien.png" width="1121"/></a>
+<figcaption>Bild 5: Der Bucket <code>k1-medien</code> in der eigenen Instanz, mit 10 MB Dateigrenze und den Bildtypen PNG, JPEG und SVG.</figcaption></figure>
+<div class="pruef"><b>So siehst du, dass es geklappt hat</b><p>Der Bucket steht in der Liste. Nach dem ersten Testlauf liegen dort die Folien des Beitrags.</p></div>
+</div>
+
+<div class="schritt">
+<h3>2c Einstellungen und Testkunde</h3>
+<p class="ziel">Ziel: Die Workflows finden ihre Einstellungen und einen Kunden mit Markenprofil.</p>
+<ol>
+<li>Im SQL Editor die Einstellungszeilen anlegen. Die Werte in spitzen Klammern ersetzt du durch deine eigenen. Chat-ID und Nutzer-ID kennst du erst nach Schritt 3c, die Account-ID von Cloudflare nach Schritt 3d; führe diesen Block deshalb erst danach aus, oder trage die 3 Werte mit einem <code>update</code> nach.</li>
+<li>Einen Testkunden mit erfundenen Daten anlegen. Sein Kürzel trägst du in Schritt 5 im Knoten <code>Konfiguration</code> ein.</li>
+</ol>
+<p>Zum Kopieren die Webfassung nehmen; im PDF bricht der Block um.</p>
+<pre tabindex="0"><code translate="no">insert into public.k1_einstellungen (setting_key, setting_value, description) values
+  ('telegram_chat_id',            '&lt;deine Chat-ID&gt;',          'Ziel für Vorschau und Meldungen'),
+  ('telegram_freigabe_nutzer_id', '&lt;deine Telegram-Nutzer-ID&gt;', 'nur diese Person darf freigeben'),
+  ('cloudflare_account_id',       '&lt;deine Account-ID&gt;',       'Workers AI für das KI-Bild'),
+  ('freigabe_frist_minuten',      '1440',                        'ganze Zahl von 1 bis 1440'),
+  ('freigabe_puffer_minuten',     '10',                          'ganze Zahl von 0 bis 120');
+
+insert into public.k1_kunden (kuerzel, name, ton, zielgruppe, no_gos, cta_text, hashtags_fest)
+values ('test-p2', 'Testkunde', 'sachlich, freundlich', 'kleine Betriebe',
+        array['keine Preisversprechen'], 'Schreib uns eine Nachricht.', array['#Beispiel']);</code></pre>
+<p>Die Spaltennamen stammen aus <code>sql/p1_k1_tabellen_v01.sql</code>. Farben, Schriften, Logo und <code>branding_pack</code> sind optional; das Bild-Werkzeug nutzt sie für das Layout der Folien.</p>
+<div class="pruef"><b>So siehst du, dass es geklappt hat</b><p>Im <b>Table Editor</b> zeigt <code>k1_einstellungen</code> 5 Zeilen und <code>k1_kunden</code> deinen Testkunden mit <code>aktiv = true</code>.</p></div>
+<div class="fehler"><b>Typische Fehler</b><ul>
+<li><code>freigabe_frist_minuten</code> ist keine ganze Zahl von 1 bis 1440, oder <code>freigabe_puffer_minuten</code> nicht von 0 bis 120: Hauptworkflow und Fristen-Workflow brechen mit dieser Meldung ab; den Puffer prüft nur der Fristen-Workflow.</li>
+<li>Chat-ID oder Nutzer-ID fehlt: der Hauptworkflow meldet „Freigabe: Der Telegram-Zugang fehlt in den Einstellungen.“</li>
+</ul></div>
+</div>
+</section>
+
+<section aria-labelledby="k6-t" class="kapitel" id="k6">
+<div class="kkopf"><div aria-hidden="true" class="knum">06</div><div>
+<p class="kklein">Kapitel 6</p><h2 id="k6-t">Schritt 3: Zugänge in n8n</h2>
+<p class="klede">8 Credentials: 7 für dieses Repository, 1 für den Ablage-Workflow. Jeder Zugang wird in n8n über <b>Create credential</b> angelegt; beim Import wählst du ihn in jedem Knoten aus.</p>
+</div></div>
+<p>So legst du jeden Zugang an: In n8n auf der Übersicht oben rechts <b>Create credential</b>, im Dialog den Typ suchen (Bild 6), <b>Continue</b>, die Werte eintragen, einen sprechenden Namen vergeben und speichern. Die Bilder dieses Kapitels zeigen die Masken mit verdeckten Werten; Adressen aus der eigenen Instanz sind geschwärzt.</p>
+<figure class="mittel"><a href="bilder/setup/20-n8n-neuer-zugang-supabase.png"><img alt="n8n Dialog Add new credential, Suchfeld mit Supabase, Treffer Supabase API rot markiert." height="312" loading="lazy" src="bilder/setup/20-n8n-neuer-zugang-supabase.png" width="575"/></a>
+<figcaption>Bild 6: Der Dialog <b>Add new credential</b>. Typ suchen, hier „Supabase API“.</figcaption></figure>
+<div aria-labelledby="t-cred" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-cred">Die 8 Zugänge</caption>
+<thead><tr><th scope="col">Zugang</th><th scope="col">Typ in n8n</th><th scope="col">Felder</th><th scope="col">Gebraucht von</th></tr></thead>
+<tbody>
+<tr><th data-label="Zugang" scope="row">Supabase</th><td data-label="Typ">Supabase API</td><td data-label="Felder">Host = Projekt-Adresse, Secret Key = Service-Key</td><td data-label="Gebraucht von">Hauptworkflow, Freigabe, Fristen, Werkzeuge 1, 3, 4, 5, 6</td></tr>
+<tr><th data-label="Zugang" scope="row">OpenRouter, kostenpflichtig</th><td data-label="Typ">OpenAI</td><td data-label="Felder">API Key, Base URL <code>https://openrouter.ai/api/v1</code></td><td data-label="Gebraucht von">Agent, Recherche (Werkzeug 2), Prüfmodell in Werkzeug 6</td></tr>
+<tr><th data-label="Zugang" scope="row">OpenRouter, kostenlos</th><td data-label="Typ">OpenAI</td><td data-label="Felder">API Key, Base URL <code>https://openrouter.ai/api/v1</code></td><td data-label="Gebraucht von">Text-Werkzeug, Eingangs- und Ausgangsprüfung, Ersatzmodell der Qualitätsprüfung, Reserve-Modell des Agenten; im Export endet der Name dieses Zugangs auf <code>CHAT</code></td></tr>
+<tr><th data-label="Zugang" scope="row">Telegram</th><td data-label="Typ">Telegram API</td><td data-label="Felder">Access Token = Bot-Token</td><td data-label="Gebraucht von">Hauptworkflow, Freigabe, Fristen</td></tr>
+<tr><th data-label="Zugang" scope="row">Pixabay</th><td data-label="Typ">Query Auth</td><td data-label="Felder">Name <code>key</code>, Value = API-Key</td><td data-label="Gebraucht von">Werkzeug 4</td></tr>
+<tr><th data-label="Zugang" scope="row">Cloudflare Workers AI</th><td data-label="Typ">Header Auth</td><td data-label="Felder">Name <code>Authorization</code>, Value <code>Bearer &lt;Token&gt;</code></td><td data-label="Gebraucht von">Werkzeug 4</td></tr>
+<tr><th data-label="Zugang" scope="row">Chat-Seite</th><td data-label="Typ">Basic Auth</td><td data-label="Felder">User, Password (frei gewählt)</td><td data-label="Gebraucht von">Chat-Eingang im Hauptworkflow</td></tr>
+<tr><th data-label="Zugang" scope="row">Nextcloud</th><td data-label="Typ">NextCloud API</td><td data-label="Felder">Web-DAV-Adresse, Benutzername, App-Passwort</td><td data-label="Gebraucht von">nur der Ablage-Workflow aus content-maschine-k1 (7 Nextcloud-Knoten und der Knoten Freigabelink erzeugen)</td></tr>
+</tbody>
+</table>
+</div>
+<p>Der Nextcloud-Zugang (Typ <b>NextCloud API</b>) wird nur im Ablage-Workflow aus content-maschine-k1 gebraucht, siehe 3f.</p>
+
+<div class="schritt">
+<h3>3a Supabase</h3>
+<ol>
+<li>Typ <b>Supabase API</b>, als Host die Projekt-Adresse (<code>https://&lt;projekt&gt;.supabase.co</code>), als Secret Key den Service-Key aus den Projekteinstellungen von Supabase.</li>
+<li>Speichern; n8n testet die Verbindung selbst.</li>
+</ol>
+<figure><a href="bilder/setup/21-n8n-zugang-supabase.png"><img alt="n8n Credential vom Typ Supabase API: Meldung Connection tested successfully, Feld Host geschwärzt, Secret Key verdeckt." height="580" loading="lazy" src="bilder/setup/21-n8n-zugang-supabase.png" width="1194"/></a>
+<figcaption>Bild 7: Zugang Supabase API nach dem Speichern, grün „Connection tested successfully“. Name und Host geschwärzt.</figcaption></figure>
+</div>
+
+<div class="schritt">
+<h3>3b OpenRouter (2 Zugänge)</h3>
+<ol>
+<li>Auf <a href="https://openrouter.ai/settings/keys">openrouter.ai/settings/keys</a> 2 Keys erzeugen; für den kostenpflichtigen unter <a href="https://openrouter.ai/settings/credits">Credits</a> Guthaben laden.</li>
+<li>In n8n je Key einen Zugang vom Typ <b>OpenAI</b> anlegen. API Key eintragen und die <b>Base URL</b> auf <code>https://openrouter.ai/api/v1</code> ändern (Bild 8).</li>
+<li>Die Namen so wählen, dass du kostenpflichtig und kostenlos unterscheiden kannst.</li>
+</ol>
+<figure><a href="bilder/setup/22-n8n-zugang-openrouter-base-url.png"><img alt="n8n Credential vom Typ OpenAI (helle Ansicht), API Key verdeckt, Base URL https://openrouter.ai/api/v1 rot markiert, Name geschwärzt." height="690" loading="lazy" src="bilder/setup/22-n8n-zugang-openrouter-base-url.png" width="1203"/></a>
+<figcaption>Bild 8: Ein OpenRouter-Zugang ist ein OpenAI-Zugang mit geänderter Base URL (rot). Dieses Bild zeigt n8n in der hellen Ansicht.</figcaption></figure>
+</div>
+
+<div class="schritt">
+<h3>3c Telegram</h3>
+<ol>
+<li>In Telegram den <a href="https://t.me/BotFather">BotFather</a> öffnen, <code>/newbot</code> senden (Bild 9), Anzeigename und Nutzername wählen (der Nutzername muss auf <code>bot</code> enden). Der BotFather antwortet mit dem Token.</li>
+<li>In n8n Typ <b>Telegram API</b>, Token als Access Token eintragen (Bild 10), speichern.</li>
+<li>Dem Bot 1 Nachricht schreiben. Dann im Browser <code translate="no">https://api.telegram.org/bot&lt;Token&gt;/getUpdates</code> öffnen: <code>message.chat.id</code> ist die Chat-ID, <code>message.from.id</code> deine Nutzer-ID; im Einzelchat mit dem Bot sind die 2 Zahlen gleich. Du trägst sie in <code>k1_einstellungen</code> ein (Schritt 2c). Die Adresse enthält den Token, also nicht teilen und nicht fotografieren.</li>
+</ol>
+<p>Hinweis: Der Weg über <code>getUpdates</code> folgt der Telegram Bot API und ist nicht an dieser Instanz nachgespielt. Liefert die Adresse eine leere Liste, dem Bot erneut schreiben und die Seite neu laden.</p>
+<div class="bildpaar">
+<figure class="schmal"><a href="bilder/setup/23-telegram-botfather-newbot.png"><img alt="Telegram-Chat mit dem BotFather, Befehlsliste, unten im Eingabefeld /newbot rot markiert." height="972" loading="lazy" src="bilder/setup/23-telegram-botfather-newbot.png" width="700"/></a>
+<figcaption>Bild 9: <code>/newbot</code> im Chat mit dem BotFather.</figcaption></figure>
+<figure><a href="bilder/setup/24-n8n-zugang-telegram.png"><img alt="n8n Credential vom Typ Telegram API, Access Token verdeckt und rot markiert, Base URL https://api.telegram.org, Knopf Save rot markiert." height="753" loading="lazy" src="bilder/setup/24-n8n-zugang-telegram.png" width="1202"/></a>
+<figcaption>Bild 10: Zugang Telegram API mit verdecktem Token.</figcaption></figure>
+</div>
+</div>
+
+<div class="schritt">
+<h3>3d Pixabay und Cloudflare Workers AI</h3>
+<ol>
+<li>Pixabay: Den API-Key zeigt die <a href="https://pixabay.com/api/docs/">API-Dokumentation</a> nach der Anmeldung. In n8n Typ <b>Query Auth</b>, Name <code>key</code>, Value = Key (Bild 11). Unter Allowed HTTP Request Domains kannst du <code>pixabay.com</code> eintragen.</li>
+<li>Cloudflare: Unter <a href="https://dash.cloudflare.com/profile/api-tokens">API-Tokens</a> einen Token mit der Berechtigung <b>Workers AI</b>, <b>Bearbeiten</b> erstellen (Bild 12). Die Account-ID steht im Cloudflare-Dashboard; sie kommt in <code>k1_einstellungen</code>.</li>
+<li>In n8n Typ <b>Header Auth</b>, Name <code>Authorization</code>, Value <code>Bearer &lt;Token&gt;</code> (Bild 13).</li>
+</ol>
+<div class="bildpaar">
+<figure><a href="bilder/setup/25-n8n-zugang-pixabay.png"><img alt="n8n Credential vom Typ Query Auth: Name key, Value verdeckt, Allowed Domains pixabay.com." height="817" loading="lazy" src="bilder/setup/25-n8n-zugang-pixabay.png" width="950"/></a>
+<figcaption>Bild 11: Pixabay als Query Auth mit dem Parameter <code>key</code>.</figcaption></figure>
+<figure class="schmal"><a href="bilder/setup/26-cloudflare-token-workers-ai.png"><img alt="Cloudflare-Dialog Workers AI-API-Token erstellen: Name des Tokens, Berechtigung Konto, Workers AI, Bearbeiten rot markiert, Knopf API-Token erstellen." height="1267" loading="lazy" src="bilder/setup/26-cloudflare-token-workers-ai.png" width="392"/></a>
+<figcaption>Bild 12: Token-Dialog bei Cloudflare mit der Berechtigung Workers AI, Bearbeiten.</figcaption></figure>
+</div>
+<figure><a href="bilder/setup/27-n8n-zugang-cloudflare.png"><img alt="n8n Credential vom Typ Header Auth: Name Authorization und Value rot markiert, Value verdeckt." height="754" loading="lazy" src="bilder/setup/27-n8n-zugang-cloudflare.png" width="1204"/></a>
+<figcaption>Bild 13: Cloudflare als Header Auth mit <code>Authorization</code>.</figcaption></figure>
+</div>
+
+<div class="schritt">
+<h3>3e Anmeldung der Chat-Seite</h3>
+<ol>
+<li>Typ <b>Basic Auth</b>, Benutzername und Passwort frei wählen. Mit diesen Daten meldest du dich später auf der Chat-Seite an.</li>
+<li>Allowed HTTP Request Domains auf <b>None</b> setzen; so kann kein HTTP-Knoten diesen Zugang nutzen (Bild 14).</li>
+</ol>
+<figure><a href="bilder/setup/28-n8n-zugang-basic-auth.png"><img alt="n8n Credential vom Typ Basic Auth: User abgedeckt, Password verdeckt, Allowed HTTP Request Domains mit Auswahl None." height="751" loading="lazy" src="bilder/setup/28-n8n-zugang-basic-auth.png" width="1205"/></a>
+<figcaption>Bild 14: Basic Auth für die Chat-Seite, Domains auf None.</figcaption></figure>
+</div>
+
+<div class="schritt">
+<h3>3f Nextcloud (für den Ablage-Workflow)</h3>
+<ol>
+<li>In deiner Nextcloud unter den persönlichen Einstellungen, <b>Sicherheit</b>, ein App-Passwort für n8n erzeugen.</li>
+<li>In n8n Typ <b>NextCloud API</b>: die Web-DAV-Adresse deiner Nextcloud, deinen Benutzernamen und das App-Passwort eintragen, speichern.</li>
+<li>Diesen Zugang wählst du in Schritt 5 beim Import in den 7 Nextcloud-Knoten und im Knoten <code>Freigabelink erzeugen [HTTP Request]</code> des Ablage-Workflows aus.</li>
+</ol>
+<p>Die Feldnamen der Maske sind hier ohne Bild beschrieben; lies sie an deiner eigenen Maske ab.</p>
+<div class="pruef"><b>So siehst du, dass es geklappt hat</b><p>Unter <b>Credentials</b> stehen 8 neue Zugänge: 7 für dieses Repository und 1 für Nextcloud. Supabase, Telegram und OpenRouter zeigen beim Öffnen „Connection tested successfully“.</p></div>
+<div class="fehler"><b>Typische Fehler</b><ul>
+<li>OpenRouter-Zugang mit der Standard-Base-URL von OpenAI: die Modelle werden nicht gefunden.</li>
+<li>Bei Header Auth fehlt <code>Bearer</code> vor dem Token: Cloudflare lehnt den Aufruf ab.</li>
+</ul></div>
+</div>
+</section>
+
+<section aria-labelledby="k7-t" class="kapitel" id="k7">
+<div class="kkopf"><div aria-hidden="true" class="knum">07</div><div>
+<p class="kklein">Kapitel 7</p><h2 id="k7-t">Schritt 4: Platzhalter in den Dateien ersetzen</h2>
+<p class="klede">Vor dem ersten Import: Adressen und Kennungen in allen Dateien, damit kein Workflow mit einem Platzhalter in n8n landet.</p>
+</div></div>
+<div class="schritt">
+<p class="ziel">Ziel: In allen Dateien stehen deine Adressen, bevor du die erste Datei importierst.</p>
+<ol>
+<li>Die 9 Dateien direkt im Ordner <a href="https://github.com/MinkeAutomation/redaktions-agent/tree/main/workflows">workflows/</a> (ohne die Unterordner) und den Ablage-Workflow <a href="https://github.com/MinkeAutomation/content-maschine-k1/blob/main/workflows/sub-nextcloud-ablage.json">sub-nextcloud-ablage.json</a> herunterladen (auf der GitHub-Seite jeder Datei der Knopf zum Herunterladen der Rohdatei, oder das Repository als ZIP).</li>
+<li>Im Texteditor mit Suchen und Ersetzen (alle Treffer, über alle Dateien) die Platzhalter aus der Tabelle ersetzen. Ausnahmen: <code>WEBHOOK_ID</code> (je Knoten einzeln, siehe Tabelle) und <code>CREDENTIAL_ID</code> (bleibt stehen).</li>
+<li>Die Platzhalter der Workflow-IDs bleiben noch stehen. Die neuen IDs kennst du erst nach dem Import; du trägst sie in Schritt 5 Datei für Datei ein.</li>
+</ol>
+<div aria-labelledby="t-platz" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-platz">Platzhalter, die du vor dem Import ersetzt</caption>
+<thead><tr><th scope="col">Platzhalter</th><th scope="col">Wo</th><th scope="col">Ersetzen durch</th></tr></thead>
+<tbody>
+<tr><th data-label="Platzhalter" scope="row"><code translate="no">SUPABASE_URL</code></th><td data-label="Wo">30 Stellen, im Export immer als <code>https://SUPABASE_URL</code>: 12 Hauptworkflow, 7 Freigabe, 5 Werkzeug 4, 4 Fristen, je 1 in Werkzeug 3 und 5</td><td data-label="Ersetzen durch">Projekt-Adresse aus Schritt 3a (<code>https://&lt;projekt&gt;.supabase.co</code>) ohne <code>https://</code> davor, weil es im Export schon steht, und ohne Schrägstrich am Ende, zum Beispiel <code>abcdefgh.supabase.co</code> (nicht die Adresse der Postgres-Verbindung)</td></tr>
+<tr><th data-label="Platzhalter" scope="row"><code translate="no">DEINE-N8N-INSTANZ</code></th><td data-label="Wo">ohne <code>https://</code> suchen, alle Treffer in allen Dateien: 1 Stelle mit Funktion im Chat-Eingang, Feld der erlaubten Herkunft (<code>allowedOrigins</code>, dort steht <code>https://</code> schon davor), 1 Stelle in der Sperrliste im Code-Knoten „Agent-Antwort prüfen“ des Hauptworkflows (<code>/DEINE-N8N-INSTANZ/i</code>), dazu 11 Notizen in 9 Dateien ohne Funktion</td><td data-label="Ersetzen durch">Hostname deiner n8n-Instanz ohne <code>https://</code>, ohne Schrägstrich am Ende und ohne Pfad, zum Beispiel <code>n8n.example.org</code>. Das trifft Chat-Eingang, Sperrliste und Notizen in 1 Durchgang. Der Punkt im Hostnamen passt in der Sperrliste auf jedes Zeichen, die Sperre greift also eher zu oft als zu selten</td></tr>
+<tr><th data-label="Platzhalter" scope="row"><code translate="no">GOTENBERG_HOST</code></th><td data-label="Wo">Werkzeug 4, in der Adresse <code>http://GOTENBERG_HOST:3000/…</code></td><td data-label="Ersetzen durch">nur der Hostname deines Gotenberg-Dienstes, ohne <code>http://</code> und ohne Port (der Workflow hängt <code>:3000</code> an), zum Beispiel <code>gotenberg</code></td></tr>
+<tr><th data-label="Platzhalter" scope="row"><code translate="no">ERROR_WORKFLOW_ID</code></th><td data-label="Wo">Einstellungen jedes der 9 Workflows dieses Repositorys, je 1 Stelle (<code>"errorWorkflow"</code>); im Ablage-Workflow steht dort eine feste Kennung, siehe unten</td><td data-label="Ersetzen durch">ID eines eigenen Fehler-Workflows, oder in jeder Datei die Zeile <code>"errorWorkflow": "ERROR_WORKFLOW_ID"</code> entfernen</td></tr>
+<tr><th data-label="Platzhalter" scope="row"><code translate="no">NEXTCLOUD_URL</code></th><td data-label="Wo">Ablage-Workflow <code>sub-nextcloud-ablage.json</code>, 3 Stellen, davon 1 mit Funktion im Aufruf für den Freigabelink (<code>https://NEXTCLOUD_URL/ocs/…</code>)</td><td data-label="Ersetzen durch">Adresse deiner Nextcloud ohne <code>https://</code>, einschließlich eines vorhandenen Installationspfads und ohne abschließenden Schrägstrich, zum Beispiel <code>cloud.example.org</code> oder <code>cloud.example.org/nextcloud</code></td></tr>
+<tr><th data-label="Platzhalter" scope="row"><code translate="no">WEBHOOK_ID</code></th><td data-label="Wo">Feld <code>webhookId</code>: 7 Knoten im Hauptworkflow, 11 im Freigabe-Workflow, 1 im Fristen-Workflow („Frist melden [Telegram]“)</td><td data-label="Ersetzen durch">Feld in diesen Knoten entfernen oder je Knoten eine eigene, neue UUID eintragen, nie überall denselben Wert</td></tr>
+<tr><th data-label="Platzhalter" scope="row"><code translate="no">CREDENTIAL_ID</code></th><td data-label="Wo">jeder Knoten mit Zugang</td><td data-label="Ersetzen durch">nicht in der Datei ersetzen; beim Import in Schritt 5 je Knoten den eigenen Zugang auswählen, der angezeigte Name sagt, welcher gemeint ist</td></tr>
+</tbody>
+</table>
+</div>
+<p>Wer keinen eigenen Fehler-Workflow hat, entfernt die Zeile mit <code>errorWorkflow</code>. Achte dabei auf das Komma davor oder danach, damit die Datei gültiges JSON bleibt. Wie n8n mit einer unbekannten Fehler-Workflow-ID umgeht, ist nicht geprüft; lass den Platzhalter deshalb nicht stehen. Im Ablage-Workflow steht an dieser Stelle kein Platzhalter, sondern eine feste Kennung der Ursprungsinstanz. Suche dort nach <code>errorWorkflow</code> und trage deine eigene ID ein oder entferne die Zeile.</p>
+<div class="pruef"><b>So siehst du, dass es geklappt hat</b><p>Die Suche nach <code>SUPABASE_URL</code>, <code>DEINE-N8N-INSTANZ</code>, <code>GOTENBERG_HOST</code>, <code>ERROR_WORKFLOW_ID</code>, <code>NEXTCLOUD_URL</code> und <code>WEBHOOK_ID</code> findet in den 10 Dateien nichts mehr. Die Suche nach <code>https://https://</code> findet nichts. Die Suche nach <code>/https:</code> findet nichts. Die Suche nach <code>//i,</code> (mit dem Komma dahinter) findet nichts. Die Suche nach <code>errorWorkflow</code> zeigt in allen 10 Dateien nur noch deine eigene ID oder keinen Treffer.</p></div>
+<div class="fehler"><b>Typische Fehler</b><ul>
+<li><code>GOTENBERG_HOST</code> samt Port ersetzt: der Port steht dann doppelt in der Adresse (<code>:3000:3000</code>), und es entstehen keine Folienbilder.</li>
+<li>Beim Entfernen einer Zeile ein Komma zu viel oder zu wenig: die Datei ist kein gültiges JSON mehr und lässt sich nicht importieren.</li>
+<li><code>SUPABASE_URL</code> oder <code>DEINE-N8N-INSTANZ</code> samt <code>https://</code> eingesetzt: in der Datei steht dann <code>https://https://…</code>, die Aufrufe an Supabase scheitern, die Chat-Seite lädt nicht, und in der Sperrliste steht <code>/https://…/i</code>: der Code-Knoten „Agent-Antwort prüfen“ bricht dann bei jedem Lauf ab. Dasselbe gilt, wenn <code>DEINE-N8N-INSTANZ</code> mit Schrägstrich am Ende oder mit Pfad ersetzt wird.</li>
+</ul></div>
+</div>
+</section>
+
+<section aria-labelledby="k8-t" class="kapitel" id="k8">
+<div class="kkopf"><div aria-hidden="true" class="knum">08</div><div>
+<p class="kklein">Kapitel 8</p><h2 id="k8-t">Schritt 5: Workflows importieren und Zugänge wählen</h2>
+<p class="klede">Die Reihenfolge ist fest, weil die späteren Workflows die früheren per ID aufrufen.</p>
+</div></div>
+<div class="schritt">
+<p class="ziel">Ziel: Alle 10 Workflows sind importiert, jeder Knoten hat seinen Zugang, und jeder Platzhalter einer Workflow-ID steht auf der neuen ID.</p>
+<ol>
+<li>Die 6 Werkzeuge einzeln importieren: in n8n einen neuen Workflow öffnen, Menü oben rechts, <b>Import from File</b>, Datei wählen, in jedem Knoten mit Warnsymbol den eigenen Zugang auswählen, speichern und veröffentlichen.</li>
+<li>Nach jedem Import die neue ID aus der Adressleiste notieren (<code>/workflow/&lt;ID&gt;</code>).</li>
+<li>Den Ablage-Workflow aus content-maschine-k1 importieren (<code>NEXTCLOUD_URL</code> hast du in Schritt 4 ersetzt), in den 7 Nextcloud-Knoten und im Knoten <code>Freigabelink erzeugen [HTTP Request]</code> deinen Nextcloud-Zugang aus 3f auswählen, speichern, veröffentlichen, ID notieren.</li>
+<li>In <code>sub-freigabe-abwarten-und-ablegen.json</code> den Platzhalter <code>WORKFLOW_ID_NEXTCLOUD_ABLAGE</code> durch diese ID ersetzen, dann importieren, Zugänge wählen, speichern, veröffentlichen, ID notieren.</li>
+<li><code>freigabe-fristen.json</code> importieren, Zugänge wählen und speichern; veröffentlicht wird er erst in Schritt 6.</li>
+<li>In <code>redaktions-agent.json</code> im Texteditor mit Suchen und Ersetzen (alle Treffer) die Platzhalter aus der Tabelle durch die neuen IDs ersetzen, dann als Letztes importieren, Zugänge wählen und speichern.</li>
+</ol>
+<div aria-labelledby="t-import" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-import">Importreihenfolge und Platzhalter</caption>
+<thead><tr><th scope="col">Nr</th><th scope="col">Datei</th><th scope="col">Rolle</th><th scope="col">Platzhalter für seine ID</th></tr></thead>
+<tbody>
+<tr><th data-label="Nr" scope="row">1</th><td data-label="Datei"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/sub-markenwissen-abfragen.json">sub-markenwissen-abfragen.json</a></td><td data-label="Rolle">Werkzeug 1</td><td data-label="Platzhalter"><code>WORKFLOW_ID_SUB_MARKENWISSEN</code></td></tr>
+<tr><th data-label="Nr" scope="row">2</th><td data-label="Datei"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/sub-thema-recherchieren.json">sub-thema-recherchieren.json</a></td><td data-label="Rolle">Werkzeug 2</td><td data-label="Platzhalter"><code>WORKFLOW_ID_SUB_RECHERCHE</code></td></tr>
+<tr><th data-label="Nr" scope="row">3</th><td data-label="Datei"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/sub-text-schreiben.json">sub-text-schreiben.json</a></td><td data-label="Rolle">Werkzeug 3</td><td data-label="Platzhalter"><code>WORKFLOW_ID_SUB_TEXT</code></td></tr>
+<tr><th data-label="Nr" scope="row">4</th><td data-label="Datei"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/sub-bilder-gestalten.json">sub-bilder-gestalten.json</a></td><td data-label="Rolle">Werkzeug 4</td><td data-label="Platzhalter"><code>WORKFLOW_ID_SUB_BILDER</code></td></tr>
+<tr><th data-label="Nr" scope="row">5</th><td data-label="Datei"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/sub-zur-freigabe-einreichen.json">sub-zur-freigabe-einreichen.json</a></td><td data-label="Rolle">Werkzeug 5</td><td data-label="Platzhalter"><code>WORKFLOW_ID_SUB_EINREICHEN</code></td></tr>
+<tr><th data-label="Nr" scope="row">6</th><td data-label="Datei"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/sub-qualitaet-pruefen.json">sub-qualitaet-pruefen.json</a></td><td data-label="Rolle">Werkzeug 6</td><td data-label="Platzhalter"><code>WORKFLOW_ID_SUB_QUALITAET</code></td></tr>
+<tr><th data-label="Nr" scope="row">7</th><td data-label="Datei"><a href="https://github.com/MinkeAutomation/content-maschine-k1/blob/main/workflows/sub-nextcloud-ablage.json">sub-nextcloud-ablage.json</a> (anderes Repository)</td><td data-label="Rolle">Ablage in Nextcloud</td><td data-label="Platzhalter"><code>WORKFLOW_ID_NEXTCLOUD_ABLAGE</code></td></tr>
+<tr><th data-label="Nr" scope="row">8</th><td data-label="Datei"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/sub-freigabe-abwarten-und-ablegen.json">sub-freigabe-abwarten-und-ablegen.json</a></td><td data-label="Rolle">Freigabe-Workflow</td><td data-label="Platzhalter"><code>WORKFLOW_ID_SUB_FREIGABE</code></td></tr>
+<tr><th data-label="Nr" scope="row">9</th><td data-label="Datei"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/freigabe-fristen.json">freigabe-fristen.json</a></td><td data-label="Rolle">Fristen-Workflow</td><td data-label="Platzhalter">keiner (steht nur im eigenen Feld <code>id</code>)</td></tr>
+<tr><th data-label="Nr" scope="row">10</th><td data-label="Datei"><a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/workflows/redaktions-agent.json">redaktions-agent.json</a></td><td data-label="Rolle">Hauptworkflow</td><td data-label="Platzhalter">keiner; <code>WORKFLOW_ID_REDAKTIONS_AGENT</code> und <code>WORKFLOW_ID_PROJEKT_1</code> stehen nur im Feld <code>id</code> und in der Sperrliste und müssen nicht ersetzt werden</td></tr>
+</tbody>
+</table>
+</div>
+<p>Die Platzhalter <code>TAG_ID_…</code>, <code>FOLDER_ID_PROJEKTORDNER</code> und <code>WORKFLOW_ID_TEST_…</code> brauchst du nicht. Die Dateien in den Unterordnern von <code>workflows/</code> und in <code>archiv/</code> sind nicht zum Import gedacht. Wer nicht über das Menü importiert, entfernt vorher das Feld <code>id</code> der obersten Ebene (in den 9 Dateien dieses Repositorys weit hinten, im Ablage-Workflow ganz vorn), damit n8n eine neue ID vergibt.</p>
+
+<h3>Im Hauptworkflow anpassen</h3>
+<ol>
+<li>Den Knoten <code>Konfiguration [Edit Fields]</code> öffnen und das Feld <code>kunde_kuerzel</code> auf das Kürzel deines Testkunden setzen (im Export steht <code>ordwin</code>).</li>
+<li>Im Knoten <code>Chat-Eingang [Chat Trigger]</code> den Begrüßungstext und den Untertitel auf deine Marke und deine freigebende Person ändern; im Export stehen dort die Angaben der Ursprungsinstanz. Derselbe Vorname steht in den Antworttexten der Knoten <code>Meldung fehlgeschlagen [Edit Fields]</code> und <code>Freigabe-Meldung gescheitert [Edit Fields]</code>.</li>
+<li>Im Code-Knoten „Agent-Antwort prüfen“ nachsehen, dass in der Sperrliste dein Hostname steht (aus Schritt 4), zum Beispiel <code>/n8n.example.org/i</code>.</li>
+<li>Je Knoten mit Warnsymbol den eigenen Zugang wählen. Jeder Rahmen im Hauptworkflow trägt im Titel eine Zeile „Setup:“, die nennt, welcher Zugang dort gebraucht wird; in den Werkzeugen steht eine Notiz Setup-Checkliste. Nennt eine Notiz eine andere Reihenfolge beim Veröffentlichen, gilt für die Neueinrichtung die Reihenfolge dieser Anleitung.</li>
+</ol>
+<div class="pruef"><b>So siehst du, dass es geklappt hat</b><p>Die Workflow-Liste zeigt 10 neue Workflows, und kein Knoten zeigt mehr ein Warnsymbol für fehlende Zugänge. In <code>redaktions-agent.json</code> findet die Suche nach <code>WORKFLOW_ID_SUB_</code> keinen Treffer mehr.</p></div>
+<div class="fehler"><b>Typische Fehler</b><ul>
+<li>Hauptworkflow zu früh importiert: seine Werkzeug-Knoten zeigen auf Platzhalter statt auf echte Workflows. Platzhalter in der Datei ersetzen und neu importieren, oder je Werkzeug-Knoten den Workflow im Editor neu auswählen.</li>
+<li>Überall dieselbe <code>webhookId</code>: mehrere Telegram-Knoten teilen sich dann einen Webhook.</li>
+<li>Begrüßung und Untertitel nicht angepasst: die Chat-Seite nennt Marke und Person der Ursprungsinstanz.</li>
+</ul></div>
+</div>
+</section>
+
+<section aria-labelledby="k9-t" class="kapitel" id="k9">
+<div class="kkopf"><div aria-hidden="true" class="knum">09</div><div>
+<p class="kklein">Kapitel 9</p><h2 id="k9-t">Schritt 6: Veröffentlichen</h2>
+</div></div>
+<div class="schritt">
+<p class="ziel">Ziel: Werkzeuge, Ablage-Workflow, Freigabe-Workflow und Hauptworkflow sind veröffentlicht, der Fristen-Workflow läuft alle 15 Minuten.</p>
+<ol>
+<li>Die 6 Werkzeuge, den Ablage-Workflow und den Freigabe-Workflow öffnen und oben rechts <b>Publish</b> wählen, falls noch nicht geschehen.</li>
+<li>Den Hauptworkflow veröffentlichen.</li>
+<li>Den Fristen-Workflow veröffentlichen (<b>Publish</b>); der Zeitplan startet ihn dann alle 15 Minuten. Er liest Frist und Puffer aus <code>k1_einstellungen</code> und setzt wartende Beiträge nach Frist plus Puffer auf <code>freigabe_abgelaufen</code>, mit 1 Sammelmeldung in Telegram.</li>
+</ol>
+<figure><a href="bilder/setup/30-n8n-workflows-veroeffentlicht.png"><img alt="n8n Workflow-Liste mit Suchfilter, Werkzeuge Text schreiben, Qualität prüfen, Freigabe abwarten und ablegen und Bilder gestalten mit grüner Marke Published, rot markiert; Tags und Ordner geschwärzt." height="550" loading="lazy" src="bilder/setup/30-n8n-workflows-veroeffentlicht.png" width="1480"/></a>
+<figcaption>Bild 15: Ausschnitt der Workflow-Liste der eigenen Instanz. Veröffentlichte Workflows tragen die grüne Marke <b>Published</b> (rot markiert); eine Testkopie ohne Marke liegt dazwischen. Tags und Ordner geschwärzt.</figcaption></figure>
+<div class="pruef"><b>So siehst du, dass es geklappt hat</b><p>Alle 10 Workflows tragen <b>Published</b>: 6 Werkzeuge, Ablage, Freigabe, Hauptworkflow und Fristen-Workflow. Unter <b>Executions</b> erscheint nach spätestens 15 Minuten ein Lauf des Fristen-Workflows.</p></div>
+<div class="fehler"><b>Typische Fehler</b><ul>
+<li>Ein Werkzeug nicht veröffentlicht oder seine ID nicht eingetragen: der Aufruf aus dem Hauptworkflow scheitert. Liste und Platzhalter aus Kapitel 8 prüfen.</li>
+</ul></div>
+</div>
+</section>
+
+<section aria-labelledby="k10-t" class="kapitel" id="k10">
+<div class="kkopf"><div aria-hidden="true" class="knum">10</div><div>
+<p class="kklein">Kapitel 10</p><h2 id="k10-t">Schritt 7: Testauftrag und Freigabe in Telegram</h2>
+</div></div>
+<div class="schritt">
+<p class="ziel">Ziel: Ein Beitrag läuft von der Chat-Seite bis zur Ablage in Nextcloud.</p>
+<ol>
+<li>Im Hauptworkflow den Chat-Eingang öffnen; dort steht nach dem Veröffentlichen die Adresse der Chat-Seite.</li>
+<li>Die Chat-Seite im Browser öffnen und mit dem Basic-Auth-Zugang anmelden.</li>
+<li>Ein Thema schicken, zum Beispiel „Post über sprechende Namen in n8n“.</li>
+<li>Die Seite offen und im Vordergrund lassen, bis die Antwort da ist. Das dauert 2 bis 5 Minuten. Die Antwort endet mit der Zeile „Werkzeuge genutzt“.</li>
+<li>In Telegram kommt die Vorschau mit 2 Knöpfen. <b>Freigeben</b> legt den Beitrag mit Bildern in Nextcloud ab; <b>Ablehnen</b> fragt über ein Formular nach dem Grund.</li>
+</ol>
+<div class="pruef"><b>So siehst du, dass es geklappt hat</b><p>In <code>k1_posts</code> steht der Beitrag erst mit Status <code>wartet_auf_freigabe</code>, nach der Freigabe mit <code>fertig</code>. In Nextcloud liegen Text und Bilder, in <code>k2_agent_laeufe</code> steht 1 Zeile für den Lauf, und der Bucket <code>k1-medien</code> enthält die Folien. Nach der Freigabe meldet Telegram „Freigegeben und in Nextcloud abgelegt“ mit dem Link „Kundenordner öffnen“ und dem Ablaufdatum; der Link öffnet den Ordner des Beitrags.</p></div>
+<div class="fehler"><b>Typische Fehler</b><ul>
+<li>Statt der Bestätigung kommt in Telegram „Freigegeben und abgelegt, aber ohne Freigabelink“ mit dem gemeldeten Fehlergrund: <code>NEXTCLOUD_URL</code> ist nicht oder falsch ersetzt (der Platzhalter wirkt nur in diesem Aufruf), oder im Knoten <code>Freigabelink erzeugen [HTTP Request]</code> des Ablage-Workflows ist der Nextcloud-Zugang nicht gewählt. Die Ablage selbst ist trotzdem erledigt.</li>
+<li>Chat-Seite geschlossen, Handy gesperrt oder App gewechselt: der letzte Knoten wartet, bis die Seite die Antwort abholt, und die Ausführung bleibt in n8n auf „Waiting“. Einreichung und Freigabe laufen trotzdem, weil der Freigabe-Workflow eigenständig läuft.</li>
+<li>Lauf im Editor statt über die Chat-Seite: dieselbe „Waiting“-Ausführung, weil niemand die Antwort abholt.</li>
+<li>Eine unpassende Anfrage (kein Thema für einen Beitrag) wird am Eingang mit einem festen Satz abgelehnt; das ist gewollt.</li>
+</ul></div>
+</div>
+</section>
+
+<section aria-labelledby="k11-t" class="kapitel" id="k11">
+<div class="kkopf"><div aria-hidden="true" class="knum">11</div><div>
+<p class="kklein">Kapitel 11</p><h2 id="k11-t">Fehlerbehebung</h2>
+</div></div>
+<div aria-labelledby="t-fehler" class="tabelle" role="region" tabindex="0">
+<table class="breit">
+<caption id="t-fehler">Fehlerbild, Ursache, Abhilfe</caption>
+<thead><tr><th scope="col">Fehlerbild</th><th scope="col">Ursache</th><th scope="col">Abhilfe</th></tr></thead>
+<tbody>
+<tr><th data-label="Fehlerbild" scope="row">Chat-Seite lädt nicht</th><td data-label="Ursache">erlaubte Herkunft im Chat-Eingang steht noch auf dem Platzhalter oder trägt <code>https://</code> doppelt</td><td data-label="Abhilfe">eigene n8n-Adresse samt <code>https://</code> und ohne Schrägstrich am Ende in <code>allowedOrigins</code> eintragen</td></tr>
+<tr><th data-label="Fehlerbild" scope="row">Ausführung bleibt auf „Waiting“</th><td data-label="Ursache">Chat-Seite war vor der Antwort zu, oder Lauf aus dem Editor</td><td data-label="Abhilfe">Seite bis zur Antwort offen lassen. Der Freigabe-Workflow kann unabhängig weiterlaufen. Vorschau, Entscheidung und Ablagebestätigung in Telegram prüfen.</td></tr>
+<tr><th data-label="Fehlerbild" scope="row">Import schlägt fehl, Datei ungültig</th><td data-label="Ursache">beim Entfernen einer Zeile (<code>errorWorkflow</code>, <code>webhookId</code>) ein Komma zu viel oder zu wenig</td><td data-label="Abhilfe">Kommas an dieser Stelle prüfen, dann erneut importieren</td></tr>
+<tr><th data-label="Fehlerbild" scope="row">Werkzeug wird nicht gefunden</th><td data-label="Ursache">Platzhalter der Workflow-ID nicht ersetzt oder Werkzeug nicht veröffentlicht</td><td data-label="Abhilfe">Tabelle in Kapitel 8 prüfen, Werkzeug veröffentlichen</td></tr>
+<tr><th data-label="Fehlerbild" scope="row">Keine Vorschau in Telegram</th><td data-label="Ursache"><code>telegram_chat_id</code> oder <code>telegram_freigabe_nutzer_id</code> fehlt</td><td data-label="Abhilfe">Zeilen in <code>k1_einstellungen</code> eintragen (Schritt 2c)</td></tr>
+<tr><th data-label="Fehlerbild" scope="row">Hauptworkflow oder Fristen-Workflow bricht mit einer Meldung zur Frist ab</th><td data-label="Ursache"><code>freigabe_frist_minuten</code> nicht 1 bis 1440 oder <code>freigabe_puffer_minuten</code> nicht 0 bis 120</td><td data-label="Abhilfe">ganze Zahl eintragen</td></tr>
+<tr><th data-label="Fehlerbild" scope="row">Keine Folienbilder</th><td data-label="Ursache">Gotenberg nicht erreichbar, Platzhalter samt Port ersetzt (Port doppelt, <code>:3000:3000</code>) oder Port 3999 (Testschalter für Ausfall)</td><td data-label="Abhilfe"><code>GOTENBERG_HOST</code> nur als Hostname ohne Port eintragen, Gotenberg auf Port 3000, Container im selben Netz</td></tr>
+<tr><th data-label="Fehlerbild" scope="row">Telegram meldet „Freigegeben, aber die Ablage in Nextcloud meldet ein Problem“</th><td data-label="Ursache">Nextcloud-Zugang in den 7 Nextcloud-Knoten des Ablage-Workflows nicht gewählt oder Web-DAV-Adresse im Zugang falsch; der Grund steht in der Meldung</td><td data-label="Abhilfe">Schritt 3f prüfen, Zugang in allen 7 Knoten wählen, Ablage-Workflow speichern und neu veröffentlichen</td></tr>
+<tr><th data-label="Fehlerbild" scope="row">Telegram meldet „Freigegeben und abgelegt, aber ohne Freigabelink“</th><td data-label="Ursache"><code>NEXTCLOUD_URL</code> nicht oder falsch ersetzt, oder Zugang im Knoten <code>Freigabelink erzeugen [HTTP Request]</code> nicht gewählt</td><td data-label="Abhilfe">Kapitel 7 und Schritt 5 Punkt 3 prüfen; der Grund steht in der Meldung</td></tr>
+<tr><th data-label="Fehlerbild" scope="row">Telegram meldet „Fehler im Freigabe-Sub“ mit „Betroffener Schritt: In Nextcloud ablegen“</th><td data-label="Ursache">Der Aufruf <code>In Nextcloud ablegen [Execute Workflow]</code> im Freigabe-Workflow scheitert: <code>WORKFLOW_ID_NEXTCLOUD_ABLAGE</code> nicht ersetzt oder Ablage-Workflow nicht veröffentlicht</td><td data-label="Abhilfe">Ablage-ID und Veröffentlichung prüfen (Schritt 5 Punkt 3 und 4). Der Beitrag kann schon auf <code>fertig</code> stehen, obwohl die Ablage gescheitert ist</td></tr>
+<tr><th data-label="Fehlerbild" scope="row">KI-Bild fehlt, nur Foto oder nichts</th><td data-label="Ursache">Cloudflare-Token ohne Workers-AI-Recht, <code>Bearer</code> fehlt, oder <code>cloudflare_account_id</code> fehlt</td><td data-label="Abhilfe">Token und Einstellung prüfen (Schritt 3d)</td></tr>
+<tr><th data-label="Fehlerbild" scope="row">Agent antwortet mit festem Ausfalltext</th><td data-label="Ursache">Ausfall beim Agenten, zum Beispiel kein Guthaben auf dem kostenpflichtigen OpenRouter-Zugang</td><td data-label="Abhilfe">Ursache steht als Code im Lauf; Guthaben und Zugang prüfen</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section aria-labelledby="k12-t" class="kapitel" id="k12">
+<div class="kkopf"><div aria-hidden="true" class="knum">12</div><div>
+<p class="kklein">Kapitel 12</p><h2 id="k12-t">Sicherheit und Grenzen</h2>
+</div></div>
+<div class="grenze"><span class="ktag">Sicherheit</span>
+<p>Werte für Zugänge stehen nur in den Credentials deiner n8n-Instanz. Die Datei <code>.env.example</code> listet nur Namen. Eine Datei mit echten Werten darf nie <code>.env.example</code> heißen und nie in ein Repository; <code>.gitignore</code> schützt <code>.env</code> und <code>*.env</code>.</p>
+<p>Chat-ID und Nutzer-ID stehen in der Datenbank, nicht im Workflow, damit sie in keinem Export auftauchen. Der Agent veröffentlicht nie selbst: ohne Klick in Telegram wird nichts abgelegt.</p>
+<p>Der Ablage-Workflow erzeugt nach jeder Ablage in Nextcloud einen öffentlichen Link auf den Ordner des Beitrags: nur lesend, 30 Tage gültig, ohne Passwort.</p>
+</div>
+<div class="notiz"><span class="ktag">Grenzen</span>
+<p>Der Import in eine fremde Instanz ist bisher nicht nachgespielt. Die Schritte beschreiben den erwarteten Weg aus den Importhinweisen der README.</p>
+<p>Die Freigabe läuft nur über Telegram. Die Chat-Seite muss bis zur Antwort offen bleiben. Die Notizen in den Exporten können im Wortlaut von einer laufenden Instanz abweichen, die Funktion ist gleich.</p>
+<p>Die <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/LICENSE">LICENSE</a> erlaubt ausschließlich das Lesen zur Durchsicht und zum Lernen. Kopieren, Weitergeben, Verändern oder Betreiben ist nur nach vorheriger schriftlicher Absprache mit dem Rechteinhaber erlaubt; Anfragen über ein <a href="https://github.com/MinkeAutomation/redaktions-agent/issues">Issue im Repository</a>.</p>
+</div>
+<p>Weiterlesen: <a href="https://github.com/MinkeAutomation/redaktions-agent#importhinweise">Importhinweise in der README</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/werkzeuge.md">Werkzeuge mit Eingabe und Ausgabe</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/.env.example">.env.example</a>.</p>
+</section>
+
+<div class="knoepfe pdfknopf">
+<a class="knopf" href="setup-anleitung.pdf" download>Als PDF herunterladen <span aria-hidden="true" class="pfeil">↓</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent">Repository <span aria-hidden="true" class="pfeil">↗</span></a>
+</div>
+</main>
+
+<footer class="fuss">
+<span>Redaktions-Agent · Setup-Anleitung · Stand 25.11.2026</span>
+<span><a href="https://github.com/MinkeAutomation/redaktions-agent">github.com/MinkeAutomation/redaktions-agent</a></span>
+</footer>
+</div>
+</body>
+</html>
