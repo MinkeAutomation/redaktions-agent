@@ -88,7 +88,7 @@
 <caption id="t-doku">Was in der Endfassung neu ist</caption>
 <thead><tr><th scope="col">Teil</th><th scope="col">Änderung</th></tr></thead>
 <tbody>
-<tr><th data-label="Teil" scope="row">Testzählung</th><td data-label="Änderung">Gezählt werden 21 Testfälle: 15 Funktionstests und 6 Angriffe. Der Angriff über 3 Nachrichten (K22) lief zusätzlich und zählt nicht in die 21. Die Ergebnisse sind die vom Freeze-Stand (<a href="w10t02.html#k3">W10 Tag 2, Kapitel 3</a>).</td></tr>
+<tr><th data-label="Teil" scope="row">Testzählung</th><td data-label="Änderung">Gezählt werden 15 Funktionstests (<a href="w10t02.html#t-funktion">Tabelle</a>) und 6 Angriffe (<a href="w10t02.html#t-angriff">Tabelle</a>), zusammen 21. Der Angriff über 3 Nachrichten (K22) lief zusätzlich und zählt nicht in die 21. Die Ergebnisse sind die vom Freeze-Stand (<a href="w10t02.html#k3">W10 Tag 2, Kapitel 3</a>).</td></tr>
 <tr><th data-label="Teil" scope="row">Architektur-Entscheidung</th><td data-label="Änderung">Begründet nach Kosten, Komplexität, Zuverlässigkeit und Kontrollierbarkeit, dazu eine Tabelle der 6 Werkzeuge. Offen benannt ist der Preis: Mit der Qualitätsprüfung wird der Lauf teurer und länger, und was der Agent entscheidet, ist schwerer nachzuvollziehen.</td></tr>
 <tr><th data-label="Teil" scope="row">Architekturbilder</th><td data-label="Änderung">Die Blätter waren in der Vorabversion zu kleinteilig. Jetzt steht jedes Blatt als Übersicht da, darunter 9 vergrößerte Ausschnitte der einzelnen Bereiche.</td></tr>
 <tr><th data-label="Teil" scope="row">Kosten</th><td data-label="Änderung">Ein Lauf im Normalfall rund 0,007 $. Für den Betrieb des Agenten reicht ein kleiner Server: Hostinger KVM 2 für 8,79 $ im Monat. Die früher genannten 47 $ im Monat sind Modellkosten bei 300 Anfragen am Tag, keine Serverkosten.</td></tr>
@@ -146,7 +146,8 @@
 <p class="kklein">Kapitel 6</p><h2 id="k6-t">Plan des Tages</h2>
 <p class="klede">Datenfluss unverändert seit dem Hard Freeze.</p>
 </div></div>
-<p>Neu ist nur der Begrüßungstext der Chat-Seite, am Datenfluss ändert er nichts. Es gilt der <a href="w10t02.html#plan">Plan W10 Tag 2</a> (Hauptworkflow v27.1, Freigabe-Workflow v02.2, Fristen-Workflow, Text-Werkzeug v09.4, Werkzeug 6 v06).</p>
+<p>Neu ist nur der Begrüßungstext der Chat-Seite, am Datenfluss ändert er nichts. Es gilt der <a href="w10t02.html#plan">Plan W10 Tag 2</a> (Hauptworkflow v27.1, Freigabe-Workflow v02.2, Fristen-Workflow, Text-Werkzeug v09.4, Werkzeug 6 v06). Er steht hier unverändert als Plan des Tages, nicht neu gezeichnet.</p>
+<figure id="plan"><a href="plan/plan-w10t03-v27.png"><img loading="lazy" alt="Datenflussbild des Hauptworkflows am Freeze-Stand mit Hauptlauf D1 bis D35, Nebenwegen D36 bis D54, Freigabe-Workflow v02.2 (D55 bis D59) und aktivem Fristen-Workflow (D60 bis D63); rechts die Tabelle der Daten je Nummer. Dasselbe Bild wie an W10 Tag 2." height="3828" src="bilder/w10t03-plan-v27.png" width="3739"/></a><figcaption><strong>Datenflussbild für W10 Tag 3, gleich dem Freeze-Stand von W10 Tag 2.</strong> Das Bild ist dieselbe Datei wie der Plan W10 Tag 2, deshalb steht darin noch „Neu an W10 Tag 2“. v27.2 ändert nur den Begrüßungstext der Chat-Seite und keinen Pfeil. <a href="plan/plan-w10t03-v27.png">Volle Auflösung</a>, <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/plan/plan-w10t03-v27.excalidraw">Excalidraw-Datei</a>. Vorgänger: <a href="w10t02.html#plan">Plan W10 Tag 2</a>.</figcaption></figure>
 </section>
 </main>
 <footer class="fuss">
