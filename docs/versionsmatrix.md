@@ -2,7 +2,7 @@
 
 Je Version des Hauptworkflows steht hier, was es dazu im Repository gibt: Plan, Testtabelle, Tages-Doku und Workflow-Export. Jede Zelle ist entweder ein Link auf eine Datei im Repository oder ein Satz „gab es nicht: <Grund>“. Die Datei wird bei jeder neuen Version nachgezogen. Stand: Hauptworkflow v27.2 vom 25.11.2026 (v27 bis v27.2 am 26.11.2026 nachgetragen, v24 bis v26.5.3 am 21.11.2026, v21 bis v23.1 am 19.11.2026).
 
-Die Versionen der 6 Werkzeuge und des Freigabe-Workflows stehen mit Status, Archivdatei und n8n-Versions-ID in [versionen.md](../versionen.md) (Stand 21.11.2026: Hauptworkflow bis v26.5.3, Freigabe-Workflow bis v02.1, Text-Werkzeug bis v09.3, Werkzeug 6 bis v05.1, Bild-Werkzeug bis v05, Werkzeug 5 bis v03), die älteren Stände liegen unter [archiv/](../archiv/README.md). Git-Tags gibt es nur für Abgabestände (Tag `v16`, er zeigt auf den Stand v16 der Abgabe), nicht je Workflow-Version. Der Abgabestand W09T03 und W09T04 trägt den Tag v26.5.3 (21.11.2026).
+Die Versionen der 6 Werkzeuge und des Freigabe-Workflows stehen mit Status, Archivdatei und n8n-Versions-ID in [versionen.md](../versionen.md) (Stand 26.11.2026: Hauptworkflow bis v27.2, Freigabe-Workflow bis v02.2, Text-Werkzeug bis v09.4, Werkzeug 6 bis v06, Bild-Werkzeug bis v05, Werkzeug 5 bis v03, dazu der Fristen-Workflow v01), die älteren Stände liegen unter [archiv/](../archiv/README.md). Git-Tags gibt es nur für Abgabestände (Tag `v16`, er zeigt auf den Stand v16 der Abgabe), nicht je Workflow-Version. Der Abgabestand W09T03 und W09T04 trägt den Tag v26.5.3 (21.11.2026).
 
 ## Hauptworkflow
 

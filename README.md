@@ -2,7 +2,7 @@
 
 Projekt 2 im Kurs KI-Automatisierung (AGT-2606): Ein Agent in n8n plant Social-Media-Posts (Instagram und LinkedIn) für einen Kunden, prüft das Thema gegen Markenrichtlinien und frühere Posts, holt bei Bedarf belegte Fakten, schreibt das Text-Paket, baut die Bilder im Branding des Kunden und reicht alles zur Freigabe durch einen Menschen ein. Nach der Freigabe in Telegram wird der Beitrag in Nextcloud abgelegt.
 
-> Stand 24.11.2026, Hard Freeze: Die 9 veröffentlichten Workflows (Hauptworkflow v27.1, Freigabe-Workflow v02.2, Fristen-Workflow v01, Werkzeuge 1 bis 6) liegen als Freeze-Export in [workflows/](workflows/), die Versionen in [versionen.md](versionen.md). Testtabelle mit K24 bis K29 und Datenflussbild am Freeze-Stand liegen in [docs/](docs/); die Endfassung der Dokumentations-PDF folgt am 25.11.2026.
+> Stand 26.11.2026, Abschluss: In n8n läuft der Hauptworkflow v27.2 (seit 25.11.2026, nur der Begrüßungstext der Chat-Seite ist neu). Der Export in [workflows/](workflows/) zeigt weiter den Hard Freeze vom 24.11.2026 (Hauptworkflow v27.1, Freigabe-Workflow v02.2, Fristen-Workflow v01, Werkzeuge 1 bis 6), die Versionen stehen in [versionen.md](versionen.md). Testtabelle mit K24 bis K29 und Datenflussbild am Freeze-Stand liegen in [docs/](docs/). Die Dokumentations-PDF wurde auf der Kursplattform abgegeben und liegt nicht im Repository; im Repository dokumentieren die [Wochen-Doku](https://minkeautomation.github.io/redaktions-agent/) und die Tagesseiten das Projekt.
 
 ## Präsentationsvideo
 
@@ -16,7 +16,7 @@ Status heißt hier ✅ Live (geltender Stand), 🧪 In Test (Testkopie, wird nic
 
 | Bestandteil | Version | Status | Datei |
 |---|---|---|---|
-| Hauptworkflow Redaktions-Agent | v27.1 | ✅ Live, in n8n veröffentlicht am 24.11.2026 (Notiztexte am 24.11.2026 abends nachgezogen und veröffentlicht) | [workflows/redaktions-agent.json](workflows/redaktions-agent.json) |
+| Hauptworkflow Redaktions-Agent | v27.2 in n8n, Export v27.1 | ✅ Live, Export vom Hard Freeze am 24.11.2026 (Notiztexte am 24.11.2026 abends nachgezogen und veröffentlicht); in n8n seit 25.11.2026 v27.2 (nur Begrüßungstext neu, noch nicht exportiert) | [workflows/redaktions-agent.json](workflows/redaktions-agent.json) |
 | Freigabe-Workflow (Freigabe abwarten und ablegen) | v02.2 | ✅ Live, veröffentlicht am 24.11.2026 | [workflows/sub-freigabe-abwarten-und-ablegen.json](workflows/sub-freigabe-abwarten-und-ablegen.json) |
 | Fristen-Workflow (Freigabe-Fristen) | v01 | ✅ Live, aktiv seit 24.11.2026 10:24 | [workflows/freigabe-fristen.json](workflows/freigabe-fristen.json) |
 | Werkzeug 1 Markenwissen abfragen | v03.3 | ✅ Live | [workflows/sub-markenwissen-abfragen.json](workflows/sub-markenwissen-abfragen.json) |
@@ -62,6 +62,9 @@ Je Kurstag der Endstand des Hauptworkflows, dazu der Abgabestand mit Git-Tag. Je
 
 | Version | Datum | Tag | Export-Datei | Tages-Doku | Kurzinhalt | Git-Tag |
 |---|---|---|---|---|---|---|
+| v27.2 | 25.11.2026 | W10 Tag 3 und Tag 4 | gab es nicht: Export im Repository noch v27.1 vom Hard Freeze | [W10 Tag 3](docs/w10t03.html), [W10 Tag 4](docs/w10t04.html) | Begrüßung der Chat-Seite „Das dauert 2 bis 7 Minuten.“ | keiner |
+| v27.1 | 24.11.2026 | W10 Tag 2, Hard Freeze | [workflows/redaktions-agent.json](workflows/redaktions-agent.json) | [W10 Tag 2](docs/w10t02.html) | Sperrantwort nennt den Grund | keiner |
+| v27 | 23.11.2026 | W10 Tag 1, Entwurf, veröffentlicht 24.11.2026 | gab es nicht: am 24.11.2026 durch v27.1 abgelöst | [W10 Tag 1](docs/w10t01.html) | Musterfilter am Eingang, Frist an den Freigabe-Workflow | keiner |
 | v26.5.3 | 21.11.2026 | W9 Tag 3 und Tag 4, Endstand, veröffentlicht 14:03 | [archiv/workflows/redaktions-agent/20261121_redaktions-agent_v26.5.3.json](archiv/workflows/redaktions-agent/20261121_redaktions-agent_v26.5.3.json), Abgabestände [W09T03](workflows/abgaben/W09T03/README.md) und [W09T04](workflows/abgaben/W09T04/README.md) | [W9 Tag 3](docs/w09t03.html), [W9 Tag 4](docs/w09t04.html) | Anordnung in Laufrichtung, Rahmen 01 bis 12, Setup-Zeile je Rahmen; abgekoppelter Block der alten Freigabe entfernt; Logik wie v26.5.2 | `v26.5.3` |
 | v26.5.2 | 20.11.2026 | W9 Tag 3 und Tag 4, Stand der ersten Pläne vom 20.11.2026 (seit der Nachreichung vom 22.11.2026 zeigen die Pläne v26.5.3) | gab es nicht als Datei: Entwurf, vor der Veröffentlichung in v26.5.3 aufgegangen | [W9 Tag 3](docs/w09t03.html), [W9 Tag 4](docs/w09t04.html) | Chat-Seite mit Anmeldung, Sofortantwort, Freigabe-Workflow ohne Warten, Werkzeug 6, Systemprompt V4.4, Statuswechsel werden bestätigt | keiner |
 | v23.1 | 18.11.2026 | W9 Tag 2 | [Abgabestand W09T02](workflows/abgaben/W09T02/AGT-2606_W09T02_Redaktions-Agent_Hauptworkflow_2026-11-18_v23.1.json) | [W9 Tag 2](docs/w09t02.html) | Status `auskunft`, Systemprompt V4.1, Reserve-Kasten | keiner |
@@ -101,6 +104,8 @@ Die Projektdokumentation liegt als Webseite im Ordner [docs/](docs/):
 - [W9 Tag 5 (20.11.2026, Stand 24.11.2026)](docs/w09t05.html): Retro und Freeze-Stufen, letzte Fixes ohne neue Funktion an Hauptworkflow, Text-Werkzeug und Freigabe-Workflow, gemeinsam veröffentlicht am 21.11.2026, Plan v26
 - [W10 Tag 1 (23.11.2026)](docs/w10t01.html): Fristablauf der Freigabe mit Fristen-Workflow, engerer Eingangsfilter, Statusschutz, Tests am veröffentlichten Stand und am Entwurf v27, MUSS 19 von 25, Plan v27 (Entwurf)
 - [W10 Tag 2 (24.11.2026, Hard Freeze)](docs/w10t02.html): Freeze-Stand veröffentlicht, Fristen-Workflow aktiv, Regression 13 von 15 Funktionstests am Freeze-Stand (K26 nach Fix im Nachtest bestanden), Angriffe 6 von 6, Fixes am Prüfmodell und an Quellen im Text, Baseline gegen V4.1 mit unveränderter Abwehr (5 von 5) und 9 von 12 gleichen Agent-Fällen, Plan v27
+- [W10 Tag 3 (25.11.2026)](docs/w10t03.html): Endfassung der Dokumentation abgegeben, Setup-Anleitung als eigene Seite mit PDF, 2 Generalproben der Demo (Läufe 4560 und 4565), Hauptworkflow v27.2 mit neuem Begrüßungstext, MUSS 24 von 25
+- [W10 Tag 4 (26.11.2026)](docs/w10t04.html): Abschlusspräsentation mit Live-Demo (Lauf 4630), Präsentationsvideo, Folien V1.12, MUSS 25 von 25
 
 Dazu gehören:
 
