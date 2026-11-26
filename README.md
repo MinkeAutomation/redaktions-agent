@@ -4,6 +4,12 @@ Projekt 2 im Kurs KI-Automatisierung (AGT-2606): Ein Agent in n8n plant Social-M
 
 > Stand 24.11.2026, Hard Freeze: Die 9 veröffentlichten Workflows (Hauptworkflow v27.1, Freigabe-Workflow v02.2, Fristen-Workflow v01, Werkzeuge 1 bis 6) liegen als Freeze-Export in [workflows/](workflows/), die Versionen in [versionen.md](versionen.md). Testtabelle mit K24 bis K29 und Datenflussbild am Freeze-Stand liegen in [docs/](docs/); die Endfassung der Dokumentations-PDF folgt am 25.11.2026.
 
+## Präsentationsvideo
+
+[![Präsentationsvideo: der Ablauf in 10 Minuten](docs/bilder/praesentationsvideo-vorschau-klein.png)](https://minkeautomation.github.io/redaktions-agent/praesentation.html)
+
+Die Abschlusspräsentation vom 26.11.2026 als Video (10:15 Minuten): Problem, Architektur, Live-Demo von der Chat-Seite über die Freigabe in Telegram bis zur Ablage in Nextcloud, danach Tests, Compliance, Kosten und Lessons Learned. Die [Videoseite](https://minkeautomation.github.io/redaktions-agent/praesentation.html) hat eine Kapitelliste mit Sprungmarken. Die MP4-Datei (48 MB) zum Herunterladen: [docs/video/praesentation-projekt-2.mp4](docs/video/praesentation-projekt-2.mp4).
+
 ## Stand (21.11.2026, SQL und Doku 23.11.2026)
 
 Status heißt hier ✅ Live (geltender Stand), 🧪 In Test (Testkopie, wird nicht Live), 🗄️ Archiviert (abgelöst, Datei unter `archiv/` oder als Abgabestand unter `workflows/abgaben/`) oder 🚫 Verworfen (getestet, nicht übernommen). Der Status je Version steht in [versionen.md](versionen.md), die Datei zu jeder Version in der Spalte Archivdatei.

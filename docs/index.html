@@ -11,6 +11,15 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&amp;display=swap" rel="stylesheet"/>
 <link href="assets/doku.css" rel="stylesheet"/>
+<style>
+  .videokasten { display: grid; grid-template-columns: minmax(0, 320px) 1fr; gap: 1rem 1.4rem; align-items: center; background: var(--surface); border: 1.5px solid var(--line-strong); border-radius: 10px; padding: 1rem; margin: 0 0 2.6rem; max-width: 85ch; }
+  .videokasten img { display: block; width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); }
+  .videokasten .ktag { color: var(--accent); }
+  .videokasten p { margin: 0; }
+  .videokasten p + p { margin-top: 0.45rem; }
+  .videokasten .vtitel { font-family: var(--display); font-weight: 700; font-size: 1.12rem; line-height: 1.35; }
+  @media (max-width: 620px) { .videokasten { grid-template-columns: 1fr; } }
+</style>
 </head>
 <body>
 <a class="sprung" href="#inhalt">Zum Inhalt springen</a>
@@ -51,6 +60,7 @@
 </dl>
 <div class="knoepfe">
 <a class="knopf" href="setup.html">Setup-Anleitung <span aria-hidden="true" class="pfeil">→</span></a>
+<a class="knopf" href="praesentation.html">Präsentationsvideo <span aria-hidden="true" class="pfeil">→</span></a>
 <a class="knopf" href="w10t02.html">Woche 10 Tag 2 <span aria-hidden="true" class="pfeil">→</span></a>
 <a class="knopf zweit" href="w10t01.html">Woche 10 Tag 1 <span aria-hidden="true" class="pfeil">→</span></a>
 <a class="knopf zweit" href="w09t05.html">Woche 9 Tag 5 <span aria-hidden="true" class="pfeil">→</span></a>
@@ -69,6 +79,15 @@
 <a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/docs/projekt-charter.md">Projekt-Charter <span aria-hidden="true" class="pfeil">↗</span></a>
 <a class="knopf zweit" href="charter.html">Charter als Webseite <span aria-hidden="true" class="pfeil">→</span></a>
 <a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/CHANGELOG.md">CHANGELOG <span aria-hidden="true" class="pfeil">↗</span></a>
+</div>
+
+<div class="videokasten">
+<a href="praesentation.html"><img alt="Vorschaubild des Präsentationsvideos: Titelfolie Redaktions-Agent K2 mit Play-Symbol und der Zeile Präsentationsvideo: der Ablauf in 10 Minuten" height="360" src="bilder/praesentationsvideo-vorschau-klein.png" width="640"/></a>
+<div>
+<span class="ktag">Video</span>
+<p class="vtitel"><a href="praesentation.html">Präsentationsvideo: der Ablauf in 10 Minuten</a></p>
+<p>Abschlusspräsentation vom 26.11.2026: Problem, Architektur, Live-Demo von der Chat-Seite über die Freigabe in Telegram bis zur Ablage, dann Tests, Compliance, Kosten und Lessons Learned. Die Videoseite hat eine Kapitelliste mit Sprungmarken.</p>
+</div>
 </div>
 
 <main id="inhalt">

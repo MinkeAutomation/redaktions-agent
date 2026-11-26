@@ -32,7 +32,15 @@
   .check li { padding-left: 1.7rem; position: relative; }
   .check li::before { content: ""; position: absolute; left: 0; top: 0.3rem; width: 0.95rem; height: 0.95rem; border: 1.5px solid var(--line-strong); border-radius: 3px; }
   .pdfknopf { margin: 3rem 0 1rem; }
+  .videokasten { display: grid; grid-template-columns: minmax(0, 320px) 1fr; gap: 1rem 1.4rem; align-items: center; background: var(--surface); border: 1.5px solid var(--line-strong); border-radius: 10px; padding: 1rem; margin: 1.7rem 0; max-width: 85ch; }
+  .videokasten img { display: block; width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); }
+  .videokasten .ktag { color: var(--accent); }
+  .videokasten p { margin: 0; }
+  .videokasten p + p { margin-top: 0.45rem; }
+  .videokasten .vtitel { font-family: var(--display); font-weight: 700; font-size: 1.12rem; line-height: 1.35; }
+  @media (max-width: 620px) { .videokasten { grid-template-columns: 1fr; } }
   @media print {
+    .videokasten { break-inside: avoid; grid-template-columns: 62mm 1fr; padding: 3mm; }
     @page { size: A4; margin: 14mm 13mm 16mm; }
     body { background: #fff; font-size: 10.5pt; }
     .huelle { max-width: none; padding: 0; }
@@ -94,6 +102,15 @@
 <li><strong>Reihenfolge:</strong> Server und n8n, Supabase, Zugänge in n8n, Platzhalter in den Dateien ersetzen, Workflows importieren und Zugänge wählen, veröffentlichen, Testauftrag.</li>
 <li><strong>Wichtig:</strong> Werte für Zugänge gehören nur in die n8n-Credentials, nie in eine Datei. Der Import in eine fremde Instanz ist bisher nicht nachgespielt; die Schritte beschreiben den erwarteten Weg. Die <a href="https://github.com/MinkeAutomation/redaktions-agent/blob/main/LICENSE">LICENSE</a> erlaubt ausschließlich das Lesen zur Durchsicht und zum Lernen. Kopieren, Weitergeben, Verändern oder Betreiben ist nur nach vorheriger schriftlicher Absprache mit dem Rechteinhaber erlaubt; Anfragen über ein <a href="https://github.com/MinkeAutomation/redaktions-agent/issues">Issue im Repository</a> (Kapitel 12).</li>
 </ul></div>
+
+<div class="videokasten">
+<a href="praesentation.html"><img alt="Vorschaubild des Präsentationsvideos: Titelfolie Redaktions-Agent K2 mit Play-Symbol und der Zeile Präsentationsvideo: der Ablauf in 10 Minuten" height="360" src="bilder/praesentationsvideo-vorschau-klein.png" width="640"/></a>
+<div>
+<span class="ktag">Video</span>
+<p class="vtitel"><a href="praesentation.html">Präsentationsvideo: der Ablauf in 10 Minuten</a></p>
+<p>Die Abschlusspräsentation vom 26.11.2026 zeigt den fertigen Agenten in einem Lauf: Auftrag in der Chat-Seite, Agent in n8n, Freigabe in Telegram und Ablage in Nextcloud, danach ein abgewehrter Angriff. Die Kapitelliste auf der Videoseite springt direkt zu jedem Teil.</p>
+</div>
+</div>
 
 <nav aria-label="Inhalt" class="inhalt">
 <h2>Inhalt</h2>

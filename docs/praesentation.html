@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#FAFAF8" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#121416" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<title>Präsentationsvideo Redaktions-Agent</title>
+<meta content="Abschlusspräsentation von Projekt 2 am 26.11.2026 als Video: Problem, Architektur, Live-Demo mit Freigabe in Telegram, Tests, Compliance, Kosten und Lessons Learned in rund 10 Minuten." name="description"/>
+<meta content="https://minkeautomation.github.io/redaktions-agent/bilder/praesentationsvideo-vorschau.png" property="og:image"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&amp;display=swap" rel="stylesheet"/>
+<link href="assets/doku.css" rel="stylesheet"/>
+<style>
+  .spieler { margin: 0 0 2.4rem; }
+  .spieler video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #16181B; border: 1.5px solid var(--line-strong); border-radius: 10px; }
+  .spieler figcaption { font-size: 0.92rem; color: var(--muted); margin-top: 0.6rem; max-width: 85ch; }
+  .kapitel .kapitelliste { list-style: none; padding: 0; margin: 0; max-width: 62rem; border-top: 1px solid var(--line); }
+  .kapitel .kapitelliste li { max-width: none; margin: 0; }
+  .kapitel .kapitelliste > li { border-bottom: 1px solid var(--line); }
+  .kapitelliste a { display: grid; grid-template-columns: 4.6rem 1fr; gap: 0 1rem; align-items: baseline; padding: 0.7rem 0.6rem; color: var(--ink); text-decoration: none; border-radius: 6px; }
+  .kapitelliste a:hover { background: var(--accent-soft); }
+  .kapitelliste a[aria-current="true"] { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+  .kapitelliste .zeit { font-family: var(--mono); font-size: 0.9rem; font-weight: 600; color: var(--accent); }
+  .kapitelliste .name { font-family: var(--display); font-weight: 600; font-size: 1.06rem; }
+  .kapitel .kapitelliste ul { list-style: none; padding: 0 0 0.5rem; margin: 0; }
+  .kapitelliste ul a { padding: 0.25rem 0.6rem; }
+  .kapitelliste ul .name { font-family: var(--body); font-weight: 400; font-size: 0.98rem; }
+  .kapitelliste ul .zeit { font-weight: 500; font-size: 0.84rem; }
+</style>
+</head>
+<body>
+<a class="sprung" href="#inhalt">Zum Inhalt springen</a>
+<div class="huelle">
+<header class="leiste">
+<span>Redaktions-Agent · Präsentationsvideo</span>
+<nav aria-label="Seiten">
+<a href="index.html">Wochen-Doku</a>
+<a href="setup.html">Setup-Anleitung</a>
+<a aria-current="page" href="praesentation.html">Präsentationsvideo</a>
+<a href="https://github.com/MinkeAutomation/redaktions-agent">Repository</a>
+</nav>
+</header>
+
+<div class="titelkopf">
+<div>
+<p class="oberzeile"><span aria-hidden="true" class="marke"></span>Präsentationsvideo · Abschlusspräsentation Projekt 2 · 26.11.2026</p>
+<h1>Redaktions-Agent <span class="leise">im</span> Video</h1>
+<p class="untertitel">Das Video zeigt die Abschlusspräsentation von Projekt 2 am 26.11.2026: vom Problem über die Architektur und eine Live-Demo mit Freigabe in Telegram bis zu Tests, Compliance, Kosten und Lessons Learned. Längere Sprechpausen sind herausgeschnitten, private Inhalte wie fremde Chats in Telegram sind unkenntlich gemacht.</p>
+</div>
+</div>
+
+<dl aria-label="Kennzahlen" class="messleiste">
+<div><dt>Länge</dt><dd>10:15<small>Minuten, Pausen gekürzt</small></dd></div>
+<div><dt>Kapitel</dt><dd>9<small>von der Titelfolie bis zum Rundgang im Repository</small></dd></div>
+<div><dt>Datei</dt><dd>MP4<small>1920x1080, 48 MB</small></dd></div>
+</dl>
+
+<main id="inhalt">
+
+<figure class="spieler">
+<video controls id="video" playsinline poster="bilder/praesentationsvideo-vorschau.png" preload="metadata">
+<source src="video/praesentation-projekt-2.mp4" type="video/mp4"/>
+Dein Browser spielt das Video hier nicht ab. <a href="video/praesentation-projekt-2.mp4">Video als MP4 öffnen</a>.
+</video>
+<figcaption>Abschlusspräsentation Projekt 2, Redaktions-Agent K2. Ein Klick auf eine Zeitmarke unten springt an diese Stelle.</figcaption>
+</figure>
+
+<section aria-labelledby="kapitel-t" class="kapitel" id="kapitel">
+<h2 id="kapitel-t">Kapitel</h2>
+<ol class="kapitelliste">
+<li><a data-t="0" href="video/praesentation-projekt-2.mp4#t=0"><span class="zeit">0:00</span><span class="name">Titelfolie</span></a></li>
+<li><a data-t="25" href="video/praesentation-projekt-2.mp4#t=25"><span class="zeit">0:25</span><span class="name">Problem: Nicht jeder Auftrag braucht denselben Weg</span></a>
+<ul><li><a data-t="29" href="video/praesentation-projekt-2.mp4#t=29"><span class="zeit">0:29</span><span class="name">Rückblick auf Projekt 1 als Kurzvideo</span></a></li></ul></li>
+<li><a data-t="102" href="video/praesentation-projekt-2.mp4#t=102"><span class="zeit">1:42</span><span class="name">Architektur: 1 Agent, 6 Werkzeuge, geprüft wird im Code</span></a>
+<ul><li><a data-t="121" href="video/praesentation-projekt-2.mp4#t=121"><span class="zeit">2:01</span><span class="name">Warum ein Agent, und warum nur einer</span></a></li></ul></li>
+<li><a data-t="147" href="video/praesentation-projekt-2.mp4#t=147"><span class="zeit">2:27</span><span class="name">Demo: ein Lauf vom Auftrag bis zur Ablage, danach ein Angriff</span></a>
+<ul>
+<li><a data-t="164" href="video/praesentation-projekt-2.mp4#t=164"><span class="zeit">2:44</span><span class="name">Auftrag in der Chat-Seite</span></a></li>
+<li><a data-t="180" href="video/praesentation-projekt-2.mp4#t=180"><span class="zeit">3:00</span><span class="name">Der Lauf des Agenten in n8n</span></a></li>
+<li><a data-t="272" href="video/praesentation-projekt-2.mp4#t=272"><span class="zeit">4:32</span><span class="name">Freigabe in Telegram</span></a></li>
+<li><a data-t="328" href="video/praesentation-projekt-2.mp4#t=328"><span class="zeit">5:28</span><span class="name">Ablage in Nextcloud</span></a></li>
+<li><a data-t="358" href="video/praesentation-projekt-2.mp4#t=358"><span class="zeit">5:58</span><span class="name">Angriff über die Chat-Seite</span></a></li>
+</ul></li>
+<li><a data-t="373" href="video/praesentation-projekt-2.mp4#t=373"><span class="zeit">6:13</span><span class="name">Evaluation: 15 Funktionstests plus 6 Angriffe</span></a>
+<ul>
+<li><a data-t="415" href="video/praesentation-projekt-2.mp4#t=415"><span class="zeit">6:55</span><span class="name">Ein Fall: der Name mit Doktortitel blieb stehen</span></a></li>
+<li><a data-t="417" href="video/praesentation-projekt-2.mp4#t=417"><span class="zeit">6:57</span><span class="name">Ergebnis der Demo: der Angriff wird am Eingang gestoppt</span></a></li>
+</ul></li>
+<li><a data-t="461" href="video/praesentation-projekt-2.mp4#t=461"><span class="zeit">7:41</span><span class="name">Compliance: kein Hochrisiko, aber Transparenzpflicht</span></a></li>
+<li><a data-t="483" href="video/praesentation-projekt-2.mp4#t=483"><span class="zeit">8:03</span><span class="name">Kosten: ein voller Lauf kostet unter 1 Cent</span></a></li>
+<li><a data-t="526" href="video/praesentation-projekt-2.mp4#t=526"><span class="zeit">8:46</span><span class="name">Lessons Learned und eine Frage an die Runde</span></a></li>
+<li><a data-t="572" href="video/praesentation-projekt-2.mp4#t=572"><span class="zeit">9:32</span><span class="name">Rundgang im Repository: Testtabelle, Archiv, Changelog</span></a></li>
+</ol>
+</section>
+
+<div class="knoepfe pdfknopf">
+<a class="knopf" download href="video/praesentation-projekt-2.mp4">Video herunterladen (MP4, 48 MB) <span aria-hidden="true" class="pfeil">↓</span></a>
+<a class="knopf zweit" href="index.html">Startseite <span aria-hidden="true" class="pfeil">→</span></a>
+<a class="knopf zweit" href="setup.html">Setup-Anleitung <span aria-hidden="true" class="pfeil">→</span></a>
+<a class="knopf zweit" href="https://github.com/MinkeAutomation/redaktions-agent">Repository <span aria-hidden="true" class="pfeil">↗</span></a>
+</div>
+</main>
+
+<footer class="fuss">
+<span>Redaktions-Agent · Präsentationsvideo · Stand 26.11.2026</span>
+<span><a href="https://github.com/MinkeAutomation/redaktions-agent">github.com/MinkeAutomation/redaktions-agent</a></span>
+</footer>
+</div>
+<script>
+(function () {
+  var video = document.getElementById("video");
+  var marken = Array.prototype.slice.call(document.querySelectorAll(".kapitelliste a[data-t]"));
+  if (!video || !marken.length) { return; }
+  marken.forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      e.preventDefault();
+      video.currentTime = Number(a.getAttribute("data-t"));
+      var p = video.play();
+      if (p && p.catch) { p.catch(function () {}); }
+      video.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+  video.addEventListener("timeupdate", function () {
+    var aktiv = null;
+    marken.forEach(function (a) { if (Number(a.getAttribute("data-t")) <= video.currentTime + 0.25) { aktiv = a; } });
+    marken.forEach(function (a) { if (a === aktiv) { a.setAttribute("aria-current", "true"); } else { a.removeAttribute("aria-current"); } });
+  });
+})();
+</script>
+</body>
+</html>
